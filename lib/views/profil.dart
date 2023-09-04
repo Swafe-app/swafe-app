@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swafe/views/profil/ModifierInformationPersonnelle.dart';
+import 'package:swafe/views/profil/coordonnees.dart';
 import 'package:swafe/views/welcome_view/welcome_view.dart';
 
 class ProfilContent extends StatelessWidget {
@@ -22,78 +23,124 @@ class ProfilContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          // Photo de profil
-          Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(16.0),
-            child: CircleAvatar(
-              radius: 60,
-              backgroundImage: NetworkImage(
-                  'URL_DE_LA_PHOTO_DE_PROFIL'), // Remplacez par l'URL de la photo de profil de l'utilisateur
+      appBar: AppBar(
+        title: Text(
+          'Profil',
+          style: TextStyle(
+            color: Color(0xFF002B5D),
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      backgroundColor: Color.fromARGB(
+          255, 255, 255, 255), // Fond de couleur comme dans la page Répertoire
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: 16), // Ajustement des marges gauche et droite
+        child: ListView(
+          children: [
+            // Catégorie "Paramètres"
+            _buildCategory(
+              context,
+              'Paramètres',
+              [
+                'Information personnelle',
+                'Coordonnées',
+                'Mot de passe',
+                'Mentions légales',
+              ],
+              [
+                Icons.person,
+                Icons.location_on,
+                Icons.lock,
+                Icons.book,
+              ],
+              // Navigation vers la page de modification d'informations personnelles
+              [
+                ModifierInformationPersonnelle(),
+                ModifierCoordonnees(),
+                null,
+                null
+              ],
+              FontWeight.normal, // Définir le poids de police à normal
             ),
-          ),
-          // Catégorie "Paramètres"
-          _buildCategory(
-            context,
-            'Paramètres',
-            [
-              'Information personnelle',
-              'Coordonnées',
-              'Mot de passe',
-              'Mentions légales',
-            ],
-            [
-              Icons.person,
-              Icons.location_on,
-              Icons.lock,
-              Icons.book,
-            ],
-            // Navigation vers la page de modification d'informations personnelles
-            [ModifierInformationPersonnelle(), null, null, null],
-          ),
-          // Catégorie "Nous contacter"
-          _buildCategory(
-            context,
-            'Nous contacter',
-            [
-              'FAQ / Aide',
-            ],
-            [
-              Icons.help,
-              Icons.help,
-            ],
-            // Ajoutez ici la navigation vers les pages correspondantes (FAQ, Aide)
-            [null, null],
-          ),
-          // Catégorie "Soutenir l'app"
-          _buildCategory(
-            context,
-            'Soutenir l\'app',
-            [
-              'Partager l\'application',
-            ],
-            [
-              Icons.share,
-            ],
-            // Ajoutez ici la navigation vers la page de partage de l'application
-            [null],
-          ),
-          // Bouton "Se déconnecter"
-          ElevatedButton(
-            onPressed: () => _signOut(context),
-            child: Text('Se déconnecter'),
-          ),
-          // Bouton "Supprimer le compte"
-          ElevatedButton(
-            onPressed: () {
-              // Action à effectuer lors du clic sur "Supprimer le compte"
-            },
-            style: ElevatedButton.styleFrom(primary: Colors.red),
-            child: Text('Supprimer le compte'),
-          ),
-        ],
+            // Catégorie "Nous contacter"
+            _buildCategory(
+              context,
+              'Nous contacter',
+              [
+                'FAQ / Aide',
+              ],
+              [
+                Icons.help,
+                Icons.help,
+              ],
+              // Ajoutez ici la navigation vers les pages correspondantes (FAQ, Aide)
+              [null, null],
+              FontWeight.normal, // Définir le poids de police à normal
+            ),
+            // Catégorie "Soutenir l'app"
+            _buildCategory(
+              context,
+              'Soutenir l\'app',
+              [
+                'Partager l\'application',
+              ],
+              [
+                Icons.share,
+              ],
+              // Ajoutez ici la navigation vers la page de partage de l'application
+              [null],
+              FontWeight.normal, // Définir le poids de police à normal
+            ),
+            // Ajoutez une marge inférieure entre le bouton "Supprimer le compte" et le bouton "Se déconnecter"
+            SizedBox(height: 24),
+            // Bouton "Se déconnecter"
+            SizedBox(
+              height: 48, // Hauteur personnalisée
+              child: ElevatedButton(
+                onPressed: () => _signOut(context),
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFF714DD8), // Couleur 714DD8
+                  elevation: 0, // Supprimer l'ombre
+                ),
+                child: Text('Se déconnecter'),
+              ),
+            ),
+            // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"
+            SizedBox(height: 12),
+            // Bouton "Supprimer le compte"
+            Container(
+              height: 48, // Hauteur personnalisée
+              margin: EdgeInsets.symmetric(vertical: 6),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Color(0xFF714DD8), // Bordure rouge
+                ),
+                borderRadius: BorderRadius.circular(8), // Arrondi de 8 pixels
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Action à effectuer lors du clic sur "Supprimer le compte"
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.transparent, // Fond transparent
+                  elevation: 0, // Supprimer l'ombre
+                  side: BorderSide.none, // Supprimer la bordure
+                ),
+                child: Text(
+                  'Supprimer le compte',
+                  style: TextStyle(
+                    color: Color(0xFF714DD8), // Texte en rouge
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -105,6 +152,7 @@ class ProfilContent extends StatelessWidget {
     List<IconData> icons,
     List<Widget?>?
         navigation, // Liste de pages à naviguer (ou null si pas de navigation)
+    FontWeight fontWeight, // Poids de police pour le texte
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,18 +162,39 @@ class ProfilContent extends StatelessWidget {
           child: Text(
             categoryName,
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF002B5D), // Couleur de texte bleu
             ),
           ),
         ),
         ...List.generate(items.length, (index) {
-          return Card(
-            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          return Container(
+            margin: EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Color(0xFFB8BBBE),
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
             child: ListTile(
-              leading: Icon(icons[index]),
-              title: Text(items[index]),
-              trailing: Icon(Icons.keyboard_arrow_right),
+              contentPadding: EdgeInsets.only(left: 12, right: 12),
+              leading: Icon(
+                icons[index],
+                color: Color(0xFF002B5D),
+              ),
+              title: Text(
+                items[index],
+                style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w300,
+                  color: Color(0xFF002B5D),
+                ),
+              ),
+              trailing: Icon(
+                Icons.keyboard_arrow_right,
+                color: Color(0xFF714DD8),
+              ),
               onTap: () {
                 // Vérifiez s'il y a une page de navigation associée
                 if (navigation != null && navigation[index] != null) {
