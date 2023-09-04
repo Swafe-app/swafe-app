@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'repertoire.dart';
+import 'profil.dart';
+import 'homecontent.dart';
+
+class HomeView extends StatelessWidget {
+  final String welcomeMessage;
+
+  HomeView({required this.welcomeMessage});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBarExample();
+  }
+}
+
+class BottomNavigationBarExample extends StatefulWidget {
+  const BottomNavigationBarExample({Key? key}) : super(key: key);
+
+  @override
+  State<BottomNavigationBarExample> createState() =>
+      _BottomNavigationBarExampleState();
+}
+
+class _BottomNavigationBarExampleState
+    extends State<BottomNavigationBarExample> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.phone),
+            label: 'Répertoire',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profil',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Color(0xFF714DD8),
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  final List<Widget> _widgetOptions = <Widget>[
+    HomeContent(),
+    RepertoireContent(),
+    ProfilContent(),
+  ];
+}
