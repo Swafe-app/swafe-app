@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Importez Firestore
 import 'package:swafe/firebase_auth_implementation%20/firebase_auth_services.dart';
 import 'package:swafe/views/home.dart';
 
@@ -77,6 +78,38 @@ class _RegisterViewState extends State<RegisterView> {
         confirmPasswordErrorMessage = '';
       }
     });
+  }
+
+  Future<void> signUp() async {
+    if (isButtonEnabled()) {
+      User? user = await _authService.signUpWithEmailAndPassword(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (user != null) {
+        // Inscription réussie
+        // Enregistrez les informations de l'utilisateur dans Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': user.email,
+          // Ajoutez d'autres champs d'informations de l'utilisateur ici si nécessaire
+        });
+
+        // Faites ce que vous devez faire après l'inscription
+        // Par exemple, naviguez vers une nouvelle page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeView(
+              welcomeMessage: "Bienvenue ${user.email} !",
+            ),
+          ),
+        );
+      } else {
+        // L'inscription a échoué, vous pouvez afficher un message d'erreur
+        // (Vous pouvez utiliser la variable `emailErrorMessage` pour afficher un message d'erreur spécifique)
+      }
+    }
   }
 
   @override
@@ -205,31 +238,8 @@ class _RegisterViewState extends State<RegisterView> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: isButtonEnabled()
-                          ? () async {
-                              User? user =
-                                  await _authService.signUpWithEmailAndPassword(
-                                _emailController.text,
-                                _passwordController.text,
-                              );
-
-                              if (user != null) {
-                                // Inscription réussie, faites ce que vous devez faire après l'inscription
-                                // Par exemple, naviguez vers une nouvelle page
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomeView(
-                                      welcomeMessage:
-                                          "Bienvenue ${user.email} !", // Message de bienvenue
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                // L'inscription a échoué, vous pouvez afficher un message d'erreur
-                              }
-                            }
-                          : null,
+                      onPressed:
+                          signUp, // Utilisez la fonction signUp pour l'inscription
                       child: Text('Continuer'),
                       style: ElevatedButton.styleFrom(
                         primary: isButtonEnabled()

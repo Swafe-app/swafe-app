@@ -22,9 +22,6 @@ class ProfilContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profil'),
-      ),
       body: ListView(
         children: [
           // Photo de profil
@@ -61,8 +58,7 @@ class ProfilContent extends StatelessWidget {
             context,
             'Nous contacter',
             [
-              'FAQ',
-              'Aide',
+              'FAQ / Aide',
             ],
             [
               Icons.help,

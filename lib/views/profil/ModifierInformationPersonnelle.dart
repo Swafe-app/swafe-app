@@ -17,9 +17,6 @@ class _ModifierInformationPersonnelleState
   String _name = "";
   String _lastName = "";
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -36,8 +33,6 @@ class _ModifierInformationPersonnelleState
         setState(() {
           _name = userData['name'];
           _lastName = userData['lastName'];
-          _nameController.text = _name;
-          _lastNameController.text = _lastName;
         });
       }
     }
@@ -45,54 +40,24 @@ class _ModifierInformationPersonnelleState
 
   Future<void> _updateUserData() async {
     if (_currentUser != null) {
-      final userDoc = _firestore.collection('users').doc(_currentUser!.uid);
-      final docSnapshot = await userDoc.get();
-
-      if (docSnapshot.exists) {
-        try {
-          await userDoc.update({
-            'name': _nameController.text,
-            'lastName': _lastNameController.text,
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Vos informations ont été mises à jour.'),
-            ),
-          );
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Erreur lors de la mise à jour des informations.'),
-            ),
-          );
-        }
-      } else {
-        try {
-          await userDoc.set({
-            'name': _nameController.text,
-            'lastName': _lastNameController.text,
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Nouveau document utilisateur créé.'),
-            ),
-          );
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Erreur lors de la création du document.'),
-            ),
-          );
-        }
+      try {
+        await _firestore.collection('users').doc(_currentUser!.uid).update({
+          'name': _name,
+          'lastName': _lastName,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Vos informations ont été mises à jour.'),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur lors de la mise à jour des informations.'),
+          ),
+        );
       }
     }
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _lastNameController.dispose();
-    super.dispose();
   }
 
   @override
@@ -108,21 +73,23 @@ class _ModifierInformationPersonnelleState
           children: [
             TextField(
               decoration: InputDecoration(labelText: 'Nom'),
-              controller: _nameController,
               onChanged: (value) {
                 setState(() {
                   _name = value;
                 });
               },
+              // Set the initial value from Firestore
+              controller: TextEditingController(text: _name),
             ),
             TextField(
               decoration: InputDecoration(labelText: 'Prénom'),
-              controller: _lastNameController,
               onChanged: (value) {
                 setState(() {
                   _lastName = value;
                 });
               },
+              // Set the initial value from Firestore
+              controller: TextEditingController(text: _lastName),
             ),
             ElevatedButton(
               onPressed: _updateUserData,
