@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:swafe/firebase_auth_implementation%20/firebase_auth_services.dart';
+import 'package:swafe/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:swafe/views/home.dart';
 import 'package:swafe/views/register_view/register.dart';
 
