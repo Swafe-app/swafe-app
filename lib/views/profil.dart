@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swafe/views/profil/ModifierInformationPersonnelle.dart';
-import 'package:swafe/views/profil/coordonnees.dart';
+import 'package:swafe/views/profil/ModifierMotdepasse.dart';
+import 'package:swafe/views/profil/ReauthenticationPage.dart';
 import 'package:swafe/views/welcome_view/welcome_view.dart';
 
 class ProfilContent extends StatelessWidget {
@@ -61,8 +62,8 @@ class ProfilContent extends StatelessWidget {
               // Navigation vers la page de modification d'informations personnelles
               [
                 ModifierInformationPersonnelle(),
-                ModifierCoordonnees(),
-                null,
+                ReauthenticationPage(),
+                ModifierMotDePasseView(),
                 null
               ],
               FontWeight.normal, // Définir le poids de police à normal
@@ -113,32 +114,6 @@ class ProfilContent extends StatelessWidget {
             // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"
             SizedBox(height: 12),
             // Bouton "Supprimer le compte"
-            Container(
-              height: 48, // Hauteur personnalisée
-              margin: EdgeInsets.symmetric(vertical: 6),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color(0xFF714DD8), // Bordure rouge
-                ),
-                borderRadius: BorderRadius.circular(8), // Arrondi de 8 pixels
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Action à effectuer lors du clic sur "Supprimer le compte"
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.transparent, // Fond transparent
-                  elevation: 0, // Supprimer l'ombre
-                  side: BorderSide.none, // Supprimer la bordure
-                ),
-                child: Text(
-                  'Supprimer le compte',
-                  style: TextStyle(
-                    color: Color(0xFF714DD8), // Texte en rouge
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

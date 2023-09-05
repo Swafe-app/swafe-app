@@ -43,10 +43,15 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
   Future<void> _updateUserData() async {
     if (_currentUser != null) {
       try {
+        // Mettre à jour l'e-mail dans Firebase Authentication
+        await _currentUser!.updateEmail(_email);
+
+        // Mettre à jour les données dans Firestore
         await _firestore.collection('users').doc(_currentUser!.uid).update({
           'telephone': _telephone,
           'email': _email,
         });
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Vos informations ont été mises à jour.'),
@@ -55,7 +60,8 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur lors de la mise à jour des informations.'),
+            content:
+                Text('Erreur lors de la mise à jour des informations : $e'),
           ),
         );
       }
