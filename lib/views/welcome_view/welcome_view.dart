@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart'; // Assurez-vous que le chemin vers votre fichier colors.dart est correct.
+import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/views/login_view/login_view.dart';
 import 'package:swafe/views/register_view/register.dart';
 
@@ -43,13 +45,16 @@ class WelcomeView extends StatelessWidget {
           children: [
             Container(
               margin: const EdgeInsets.only(top: 172),
-              child: const Text(
+              child: Text(
                 "Il n’a jamais été aussi simple d’aller d'un point A à un point B en toute sécurité",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: typographyList
+                    .firstWhere((info) => info.name == 'Title XXLarge Medium')
+                    .style
+                    .copyWith(
+                      color:
+                          MyColors.defaultWhite, // Utilisez la couleur warn40
+                      // Autres propriétés de style comme fontSize, fontWeight, etc. si nécessaire
+                    ),
                 textAlign: TextAlign.left,
               ),
             ),
