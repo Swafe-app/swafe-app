@@ -4,6 +4,7 @@ import 'package:swafe/views/profil/ModifierInformationPersonnelle.dart';
 import 'package:swafe/views/profil/ModifierMotdepasse.dart';
 import 'package:swafe/views/profil/ReauthenticationPage.dart';
 import 'package:swafe/views/welcome_view/welcome_view.dart';
+import 'package:swafe/ds/spacing.dart';
 
 class ProfilContent extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -64,7 +65,7 @@ class ProfilContent extends StatelessWidget {
                 ModifierInformationPersonnelle(),
                 ReauthenticationPage(),
                 ModifierMotDePasseView(),
-                null
+                null,
               ],
               FontWeight.normal, // Définir le poids de police à normal
             ),
@@ -98,7 +99,9 @@ class ProfilContent extends StatelessWidget {
               FontWeight.normal, // Définir le poids de police à normal
             ),
             // Ajoutez une marge inférieure entre le bouton "Supprimer le compte" et le bouton "Se déconnecter"
-            SizedBox(height: 24),
+            SizedBox(
+                height:
+                    Spacing.extraLarge), // Utilisation de l'espacement "small"
             // Bouton "Se déconnecter"
             SizedBox(
               height: 48, // Hauteur personnalisée
@@ -112,7 +115,9 @@ class ProfilContent extends StatelessWidget {
               ),
             ),
             // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"
-            SizedBox(height: 12),
+            SizedBox(
+                height:
+                    Spacing.extraLarge), // Utilisation de l'espacement "medium"
             // Bouton "Supprimer le compte"
           ],
         ),
