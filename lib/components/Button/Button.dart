@@ -118,6 +118,7 @@ class _CustomButtonState extends State<CustomButton> {
                   widget.label,
                   style: TextStyle(
                     fontSize: 14,
+                    fontFamily: "SF Pro Display",
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w500,
                     height: 20 / 14,
