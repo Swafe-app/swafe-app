@@ -45,6 +45,7 @@ dependencies:
   url_launcher: ^6.1.13
   url_launcher_ios: ^6.1.5
   cloud_firestore: ^4.9.1
+  google_fonts: ^5.1.0
 
 dev_dependencies:
   flutter_test:
