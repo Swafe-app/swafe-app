@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swafe/views/profil/coordonnees.dart';
+import 'package:swafe/DS/custom_appbar_page.dart'; // Importez CustomAppBar
 
 class ReauthenticationPage extends StatefulWidget {
   @override
@@ -15,8 +16,9 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Réauthentification'),
+      appBar: CustomAppBar(
+        // Utilisez CustomAppBar ici
+        title: 'Réauthentification',
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

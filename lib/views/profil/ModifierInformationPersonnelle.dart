@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:swafe/DS/custom_appbar_page.dart'; // Importez CustomAppBar
 
 class ModifierInformationPersonnelle extends StatefulWidget {
   @override
@@ -63,8 +64,9 @@ class _ModifierInformationPersonnelleState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Modifier vos informations'),
+      appBar: CustomAppBar(
+        // Utilisez CustomAppBar ici
+        title: 'Modifier vos informations',
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
