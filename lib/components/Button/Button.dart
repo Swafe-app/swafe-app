@@ -63,15 +63,17 @@ class CustomButton extends StatefulWidget {
   final bool isDisabled;
   final bool isLoading;
   final VoidCallback? onPressed;
+  final IconData? icon;
 
   const CustomButton({
-    super.key,
+    Key? key,
     required this.label,
     this.type = ButtonType.filled,
     this.isDisabled = false,
     this.isLoading = false,
     this.onPressed,
-  });
+    this.icon,
+  }) : super(key: key);
 
   @override
   _CustomButtonState createState() => _CustomButtonState();
@@ -89,8 +91,8 @@ class _CustomButtonState extends State<CustomButton> {
       style: ButtonStyle(
         shadowColor: MaterialStateProperty.all(Colors.transparent),
         backgroundColor: MaterialStateProperty.all(styleData.backgroundColor),
-        padding: MaterialStateProperty.all(
-            const EdgeInsets.symmetric(vertical: 14, horizontal: 24)),
+        padding: MaterialStateProperty.all(EdgeInsets.symmetric(
+            vertical: 14, horizontal: widget.icon == null ? 24 : 16)),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
           side: BorderSide(color: styleData.borderColor, width: 2),
@@ -106,17 +108,24 @@ class _CustomButtonState extends State<CustomButton> {
                     Color.fromRGBO(84, 55, 168, 1)),
               ),
             )
-          : Text(
-              widget.label,
-              style: TextStyle(
-                // fontFamily: 'SF Pro Display',
-                fontSize: 14,
-                fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.w500,
-                height: 20 / 14,
-                letterSpacing: 0.056,
-                color: styleData.textColor,
-              ),
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.icon != null)
+                  Icon(widget.icon, color: styleData.textColor, size: 16),
+                if (widget.icon != null) const SizedBox(width: 8),
+                Text(
+                  widget.label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                    height: 20 / 14,
+                    letterSpacing: 0.056,
+                    color: styleData.textColor,
+                  ),
+                ),
+              ],
             ),
     );
   }
