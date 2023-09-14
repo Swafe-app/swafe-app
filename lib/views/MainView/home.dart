@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:swafe/views/MainView/MainViewContent/home/homecontent.dart';
 import 'repertoire.dart';
 import 'profil.dart';
-import 'homecontent.dart';
 
 class HomeView extends StatelessWidget {
   final String welcomeMessage;

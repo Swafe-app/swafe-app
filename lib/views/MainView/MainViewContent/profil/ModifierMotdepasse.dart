@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:swafe/DS/custom_appbar_page.dart'; // Importez CustomAppBar
+import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
 
 void main() {
   runApp(MaterialApp(

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:swafe/ds/typographies.dart';
+import 'package:swafe/DS/spacing.dart'; // Importez la classe Spacing
 
 class RepertoireContent extends StatefulWidget {
   const RepertoireContent({Key? key}) : super(key: key);
@@ -110,7 +113,6 @@ class _RepertoireContentState extends State<RepertoireContent> {
         ),
       ],
     ),
-    // Ajoutez plus de catégories et de données de cartes ici
   ];
 
   List<RepertoireCategory> _filteredData = [];
@@ -152,40 +154,38 @@ class _RepertoireContentState extends State<RepertoireContent> {
       appBar: AppBar(
         title: Text(
           'Répertoire',
-          style: TextStyle(
-            color: Color(0xFF002B5D),
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          ),
+          style: typographyList
+              .firstWhere((info) => info.name == 'Title Large Medium')
+              .style
+              .copyWith(
+                color: MyColors.primary10,
+              ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: MyColors.defaultWhite,
         elevation: 0,
       ),
-      backgroundColor:
-          Color(0xFFEDEDED), // Fond de couleur blanche pour le Scaffold
+      backgroundColor: MyColors.neutral80,
       body: Column(
         children: [
           Container(
-            color: Colors.white,
-            padding: EdgeInsets.all(16.0),
+            color: MyColors.defaultWhite,
+            padding: EdgeInsets.all(Spacing.small),
             child: TextField(
               onChanged: _filterData,
               decoration: InputDecoration(
                 hintText: "Rechercher",
                 prefixIcon: Icon(
                   Icons.search,
-                  color: Color(0xFF002B5D),
+                  color: MyColors.primary10,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Color(
-                        0xFF002B5D), // Bordure bleue lorsque le champ est en focus
+                    color: MyColors.primary10,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Color(
-                        0xFF71787E), // Bordure grise lorsque le champ n'est pas en focus
+                    color: MyColors.neutral40,
                   ),
                 ),
               ),
@@ -200,24 +200,29 @@ class _RepertoireContentState extends State<RepertoireContent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(
-                        top: 16.0,
-                        left: 16.0,
-                        right: 16.0,
+                      padding: EdgeInsets.only(
+                        top: Spacing.small,
+                        left: Spacing.standard,
+                        right: Spacing.standard,
                       ),
                       child: Text(
                         category.name,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF002B5D), // Couleur de texte bleu
-                        ),
+                        style: typographyList
+                            .firstWhere(
+                                (info) => info.name == 'Title Small Medium')
+                            .style
+                            .copyWith(
+                              color: MyColors.primary10,
+                            ),
                       ),
                     ),
                     for (RepertoireCardData card in category.cards)
                       RepertoireCard(
                         cardData: card,
                         onCardTapped: _callNumber,
+                        margin: EdgeInsets.symmetric(
+                            horizontal: Spacing.standard,
+                            vertical: Spacing.small),
                       ),
                   ],
                 );
@@ -248,26 +253,30 @@ class RepertoireCardData {
 class RepertoireCard extends StatelessWidget {
   final RepertoireCardData cardData;
   final Function(String) onCardTapped;
+  final EdgeInsetsGeometry? margin;
 
-  RepertoireCard({required this.cardData, required this.onCardTapped});
+  RepertoireCard(
+      {required this.cardData, required this.onCardTapped, this.margin});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: margin,
       child: ListTile(
-        contentPadding: EdgeInsets.all(16),
+        contentPadding: EdgeInsets.all(Spacing.small),
         title: Text(
           cardData.name,
-          style: TextStyle(
-            color: Color(0xFF002B5D), // Couleur de texte bleu
-          ),
+          style: typographyList
+              .firstWhere((info) => info.name == 'Body Large Medium')
+              .style
+              .copyWith(
+                color: MyColors.primary10,
+              ),
         ),
-        subtitle:
-            Text(cardData.description), // Afficher la description sous le nom
+        subtitle: Text(cardData.description),
         trailing: IconButton(
           icon: Icon(Icons.phone),
-          color: Color(0xFF714DD8), // Couleur de l'icône personnalisée
+          color: MyColors.secondary40,
           onPressed: () {
             onCardTapped(cardData.phoneNumber);
           },

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:swafe/views/profil/ModifierInformationPersonnelle.dart';
-import 'package:swafe/views/profil/ModifierMotdepasse.dart';
-import 'package:swafe/views/profil/ReauthenticationPage.dart';
-import 'package:swafe/views/welcome_view/welcome_view.dart';
+import 'package:swafe/DS/colors.dart';
+import 'package:swafe/views/MainView/MainViewContent/profil/ModifierInformationPersonnelle.dart';
+import 'package:swafe/views/MainView/MainViewContent/profil/ModifierMotdepasse.dart';
+import 'package:swafe/views/MainView/MainViewContent/profil/ReauthenticationPage.dart';
+import 'package:swafe/views/LoginRegister/welcome_view.dart';
 import 'package:swafe/ds/spacing.dart';
+import 'package:swafe/ds/typographies.dart';
 
 class ProfilContent extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -28,17 +30,17 @@ class ProfilContent extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Profil',
-          style: TextStyle(
-            color: Color(0xFF002B5D),
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          ),
+          style: typographyList
+              .firstWhere((info) => info.name == 'Title Large Medium')
+              .style
+              .copyWith(
+                color: MyColors.primary10,
+              ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: MyColors.defaultWhite,
         elevation: 0,
       ),
-      backgroundColor: Color.fromARGB(
-          255, 255, 255, 255), // Fond de couleur comme dans la page Répertoire
+      backgroundColor: MyColors.defaultWhite,
       body: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: 16), // Ajustement des marges gauche et droite
@@ -108,7 +110,7 @@ class ProfilContent extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => _signOut(context),
                 style: ElevatedButton.styleFrom(
-                  primary: Color(0xFF714DD8), // Couleur 714DD8
+                  primary: MyColors.secondary40, // Couleur 714DD8
                   elevation: 0, // Supprimer l'ombre
                 ),
                 child: Text('Se déconnecter'),
@@ -141,11 +143,12 @@ class ProfilContent extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             categoryName,
-            style: TextStyle(
-              fontSize: 14.0,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF002B5D), // Couleur de texte bleu
-            ),
+            style: typographyList
+                .firstWhere((info) => info.name == 'Title Small Medium')
+                .style
+                .copyWith(
+                  color: MyColors.primary10, // Couleur de texte bleu
+                ),
           ),
         ),
         ...List.generate(items.length, (index) {
@@ -153,7 +156,7 @@ class ProfilContent extends StatelessWidget {
             margin: EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
               border: Border.all(
-                color: Color(0xFFB8BBBE),
+                color: MyColors.neutral70,
               ),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -161,19 +164,20 @@ class ProfilContent extends StatelessWidget {
               contentPadding: EdgeInsets.only(left: 12, right: 12),
               leading: Icon(
                 icons[index],
-                color: Color(0xFF002B5D),
+                color: MyColors.primary10,
               ),
               title: Text(
                 items[index],
-                style: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w300,
-                  color: Color(0xFF002B5D),
-                ),
+                style: typographyList
+                    .firstWhere((info) => info.name == 'Body Large Medium')
+                    .style
+                    .copyWith(
+                      color: MyColors.primary10,
+                    ),
               ),
               trailing: Icon(
                 Icons.keyboard_arrow_right,
-                color: Color(0xFF714DD8),
+                color: MyColors.secondary40,
               ),
               onTap: () {
                 // Vérifiez s'il y a une page de navigation associée
