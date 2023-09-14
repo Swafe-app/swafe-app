@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swafe/bloc/app_bloc.dart';
-import 'package:swafe/views/home.dart';
-import 'package:swafe/views/login_view/login_view.dart';
-import 'package:swafe/views/register_view/register.dart';
-import 'package:swafe/views/welcome_view/welcome_view.dart';
-import 'package:firebase_core/firebase_core.dart'; // Importez Firebase Core
+import 'package:swafe/views/LoginRegister/login_view.dart';
+import 'package:swafe/views/LoginRegister/register.dart';
+import 'package:swafe/views/LoginRegister/welcome_view.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:swafe/views/MainView/home.dart'; // Importez Firebase Core
 
 Future<void> main() async {
   // Initialisez Firebase

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
-import 'package:swafe/DS/custom_appbar_page.dart';
+import 'package:swafe/components/appbar/custom_appbar_page.dart';
 
 class ModifierCoordonnees extends StatefulWidget {
   @override
