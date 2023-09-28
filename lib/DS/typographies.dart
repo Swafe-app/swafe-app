@@ -11,7 +11,7 @@ class TypographyInfo {
 List<TypographyInfo> typographyList = [
   TypographyInfo(
       'Title XXLarge Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 36,
         letterSpacing: 0.0,
@@ -19,7 +19,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Title XLarge Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 24,
         letterSpacing: 0.0,
@@ -27,7 +27,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Title Large Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 20,
         letterSpacing: 0.0,
@@ -35,7 +35,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Title Medium Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 18,
         letterSpacing: 0.0,
@@ -43,7 +43,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Title Small Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 16,
         letterSpacing: 0.0,
@@ -51,7 +51,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Title XSmall Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 14,
         letterSpacing: 0.15,
@@ -59,7 +59,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle large Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 14,
         letterSpacing: 0.4,
@@ -67,7 +67,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle large Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 14,
         letterSpacing: 0.4,
@@ -76,7 +76,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle large Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 14,
         letterSpacing: 0.4,
@@ -84,7 +84,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle medium Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 12,
         letterSpacing: 0.4,
@@ -92,7 +92,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle medium Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 12,
         letterSpacing: 0.4,
@@ -101,7 +101,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle medium Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 12,
         letterSpacing: 0.4,
@@ -109,7 +109,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle small Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 10,
         letterSpacing: 0.4,
@@ -117,7 +117,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle small Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 10,
         letterSpacing: 0.4,
@@ -126,7 +126,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Subtitle small Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 10,
         letterSpacing: 0.4,
@@ -134,7 +134,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Large Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 14,
         letterSpacing: 0.0,
@@ -142,7 +142,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Large Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 14,
         letterSpacing: 0.0,
@@ -151,7 +151,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Large Regular + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 14,
         letterSpacing: 0.0,
@@ -160,7 +160,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Large Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 14,
         letterSpacing: 0.0,
@@ -168,7 +168,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Medium Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 12,
         letterSpacing: 0.0,
@@ -176,7 +176,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Medium Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 12,
         letterSpacing: 0.0,
@@ -185,7 +185,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Medium Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 12,
         letterSpacing: 0.0,
@@ -193,7 +193,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Medium Regular + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 12,
         letterSpacing: 0.0,
@@ -202,7 +202,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Small Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 10,
         letterSpacing: 0.0,
@@ -210,7 +210,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Small Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 10,
         letterSpacing: 0.0,
@@ -219,7 +219,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Label Small Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 10,
         letterSpacing: 0.0,
@@ -227,7 +227,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body XLarge Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 16,
         letterSpacing: 0.4,
@@ -235,7 +235,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body XLarge Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 16,
         letterSpacing: 0.4,
@@ -243,7 +243,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Large Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 14,
         letterSpacing: 0.4,
@@ -251,7 +251,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Large Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 14,
         letterSpacing: 0.4,
@@ -260,7 +260,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Large Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 14,
         letterSpacing: 0.4,
@@ -268,7 +268,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Medium Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 12,
         letterSpacing: 0.4,
@@ -276,7 +276,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Medium Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 12,
         letterSpacing: 0.4,
@@ -285,7 +285,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Medium Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 12,
         letterSpacing: 0.4,
@@ -293,7 +293,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Small Medium',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 10,
         letterSpacing: 0.4,
@@ -301,7 +301,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Small Medium + underline',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
         fontSize: 10,
         letterSpacing: 0.4,
@@ -310,7 +310,7 @@ List<TypographyInfo> typographyList = [
       )),
   TypographyInfo(
       'Body Small Regular',
-      GoogleFonts.overpass(
+      GoogleFonts.manrope(
         fontWeight: FontWeight.w400,
         fontSize: 10,
         letterSpacing: 0.4,
