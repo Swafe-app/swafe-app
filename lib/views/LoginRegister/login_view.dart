@@ -1,24 +1,26 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/firebase_auth_implementation/firebase_auth_services.dart';
-import 'package:swafe/views/MainView/home.dart';
 import 'package:swafe/views/LoginRegister/register.dart';
+import 'package:swafe/views/MainView/home.dart';
 
 class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
   @override
-  _LoginViewState createState() => _LoginViewState();
+  LoginViewState createState() => LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class LoginViewState extends State<LoginView> {
   bool isKeyboardVisible = false;
   bool isEmailValid = true;
   String email = '';
   String password = '';
-  FirebaseAuthService _authService = FirebaseAuthService();
+  FirebaseAuthService authService = FirebaseAuthService();
 
   @override
   void initState() {
@@ -39,15 +41,14 @@ class _LoginViewState extends State<LoginView> {
         }
       },
       child: Container(
-        padding: EdgeInsets.all(Spacing
-            .standard), // Utilisation de Spacing.standard pour la marge globale
+        padding: const EdgeInsets.all(Spacing.standard),
+        // Utilisation de Spacing.standard pour la marge globale
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: EdgeInsets.only(
-                  top: Spacing
-                      .standard), // Utilisation de Spacing.tripleExtraLarge pour la marge supérieure
+              padding: const EdgeInsets.only(top: Spacing.standard),
+              // Utilisation de Spacing.tripleExtraLarge pour la marge supérieure
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -63,7 +64,7 @@ class _LoginViewState extends State<LoginView> {
                       isEmailValid = EmailValidator.validate(email);
                     });
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(Spacing
@@ -72,9 +73,8 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
             ),
-            SizedBox(
-                height: Spacing
-                    .extraLarge), // Utilisation de Spacing.small pour l'espacement vertical
+            const SizedBox(height: Spacing.extraLarge),
+            // Utilisation de Spacing.small pour l'espacement vertical
             Container(
               decoration: BoxDecoration(
                 border: Border.all(
@@ -89,7 +89,7 @@ class _LoginViewState extends State<LoginView> {
                     password = value;
                   });
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Mot de passe',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(Spacing.medium),
@@ -97,12 +97,11 @@ class _LoginViewState extends State<LoginView> {
                 obscureText: true,
               ),
             ),
-            SizedBox(height: Spacing.small),
+            const SizedBox(height: Spacing.small),
             if (!isEmailValid)
-              Padding(
-                padding: EdgeInsets.only(
-                    left: Spacing
-                        .small), // Utilisation de Spacing.medium pour le padding
+              const Padding(
+                padding: EdgeInsets.only(left: Spacing.small),
+                // Utilisation de Spacing.medium pour le padding
                 child: Text(
                   "Veuillez saisir une adresse e-mail valide",
                   style: TextStyle(
@@ -111,13 +110,13 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
               ),
-            SizedBox(height: Spacing.none),
+            const SizedBox(height: Spacing.none),
             TextButton(
               onPressed: () {},
               style: TextButton.styleFrom(
                 alignment: Alignment.centerLeft,
               ),
-              child: Align(
+              child: const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Mot de passe oublié ?",
@@ -127,16 +126,15 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
             ),
-            SizedBox(
-                height: Spacing
-                    .standard), // Utilisation de Spacing.standard pour l'espacement vertical
+            const SizedBox(height: Spacing.standard),
+            // Utilisation de Spacing.standard pour l'espacement vertical
             Column(
               children: [
                 ElevatedButton(
                   onPressed: isEmailValid
                       ? () async {
                           User? user =
-                              await _authService.signInWithEmailAndPassword(
+                              await authService.signInWithEmailAndPassword(
                             email,
                             password,
                           );
@@ -167,22 +165,22 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       vertical: Spacing
                           .medium, // Utilisation de Spacing.medium pour le rembourrage vertical
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Text('Continuer'),
                     ),
                   ),
                 ),
-                SizedBox(height: Spacing.small),
+                const SizedBox(height: Spacing.small),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => RegisterView(),
+                        builder: (context) => const RegisterView(),
                       ),
                     );
                   },
@@ -196,10 +194,10 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       vertical: Spacing.medium,
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "Pas encore membre ? Rejoignez-nous !",
                         style: TextStyle(
@@ -209,9 +207,8 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
                 ),
-                SizedBox(
-                    height: Spacing
-                        .huge), // Utilisation de Spacing.huge pour l'espacement vertical
+                const SizedBox(height: Spacing.huge),
+                // Utilisation de Spacing.huge pour l'espacement vertical
               ],
             ),
           ],
@@ -219,10 +216,4 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: LoginView(),
-  ));
 }

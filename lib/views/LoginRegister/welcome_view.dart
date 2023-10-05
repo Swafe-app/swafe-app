@@ -1,61 +1,55 @@
-import 'package:flutter/material.dart'; // Importation du package Flutter pour créer des interfaces utilisateur.
-import 'package:swafe/DS/colors.dart'; // Importation de couleurs personnalisées.
+import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
-import 'package:swafe/ds/typographies.dart'; // Importation de styles de texte personnalisés.
-import 'package:swafe/views/LoginRegister/login_view.dart'; // Importation de la vue de connexion.
-import 'package:swafe/views/LoginRegister/register.dart'; // Importation de la vue d'inscription.
-
-// Fonction pour afficher la feuille de bas de connexion
-void _showLoginBottomSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (BuildContext context) {
-      return GestureDetector(
-        onTap: () {
-          FocusScope.of(context)
-              .unfocus(); // Fermer le clavier lorsque l'utilisateur clique en dehors de la feuille.
-        },
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom +
-                  Spacing
-                      .standard, // Utilisation de la constante Spacing.standard pour l'espacement.
-            ),
-            child: LoginView(), // Afficher la vue de connexion.
-          ),
-        ),
-      );
-    },
-  );
-}
-
-// Fonction pour naviguer vers la page d'inscription
-void _showRegisterPage(BuildContext context) {
-  Navigator.of(context)
-      .push(MaterialPageRoute(builder: (context) => RegisterView()));
-}
+import 'package:swafe/ds/typographies.dart';
+import 'package:swafe/views/LoginRegister/login_view.dart';
+import 'package:swafe/views/LoginRegister/register.dart';
 
 // Classe de la vue de bienvenue
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});
+
+  // Fonction pour afficher la feuille de bas de connexion
+  void showLoginBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context)
+                .unfocus(); // Fermer le clavier lorsque l'utilisateur clique en dehors de la feuille.
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom +
+                      Spacing.standard),
+              child: const LoginView(), // Afficher la vue de connexion.
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Fonction pour naviguer vers la page d'inscription
+  void showRegisterPage(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const RegisterView()));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black, // Couleur de fond de l'écran.
       body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: Spacing
-                .standard), // Utilisation de la constante Spacing.standard pour l'espacement horizontal.
+        padding: const EdgeInsets.symmetric(horizontal: Spacing.standard),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              margin: EdgeInsets.only(
-                  top: Spacing
-                      .XXHuge), // Utilisation de la constante Spacing.large pour la marge supérieure.
+              margin: const EdgeInsets.only(top: Spacing.xxHuge),
               child: Text(
                 "Il n’a jamais été aussi simple d’aller d'un point A à un point B en toute sécurité",
                 style: typographyList
@@ -67,12 +61,13 @@ class WelcomeView extends StatelessWidget {
                 textAlign: TextAlign.left,
               ),
             ),
-            Spacer(), // Espace flexible pour occuper l'espace entre le texte et les boutons.
+            const Spacer(),
+            // Espace flexible pour occuper l'espace entre le texte et les boutons.
             Column(
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    _showLoginBottomSheet(
+                    showLoginBottomSheet(
                         context); // Afficher la feuille de bas de connexion.
                   },
                   style: ElevatedButton.styleFrom(
@@ -85,9 +80,9 @@ class WelcomeView extends StatelessWidget {
                   ),
                   child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                        vertical: Spacing
-                            .standard), // Utilisation de la constante Spacing.standard pour l'espacement vertical.
+                    padding:
+                        const EdgeInsets.symmetric(vertical: Spacing.standard),
+                    // Utilisation de la constante Spacing.standard pour l'espacement vertical.
                     child: const Center(
                       child: Text(
                         "Tu as déjà un compte ? Se connecter",
@@ -98,12 +93,11 @@ class WelcomeView extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                    height: Spacing
-                        .medium), // Utilisation de la constante Spacing.medium pour l'espacement vertical.
+                const SizedBox(height: Spacing.medium),
+                // Utilisation de la constante Spacing.medium pour l'espacement vertical.
                 ElevatedButton(
                   onPressed: () {
-                    _showRegisterPage(
+                    showRegisterPage(
                         context); // Naviguer vers la page d'inscription.
                   },
                   style: ElevatedButton.styleFrom(
@@ -116,9 +110,9 @@ class WelcomeView extends StatelessWidget {
                   ),
                   child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                        vertical: Spacing
-                            .standard), // Utilisation de la constante Spacing.standard pour l'espacement vertical.
+                    padding:
+                        const EdgeInsets.symmetric(vertical: Spacing.standard),
+                    // Utilisation de la constante Spacing.standard pour l'espacement vertical.
                     child: const Center(
                       child: Text(
                         "S’inscrire",
@@ -131,19 +125,10 @@ class WelcomeView extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
-                height: Spacing
-                    .huge), // Utilisation de la constante Spacing.huge pour l'espacement vertical depuis le bas.
+            const SizedBox(height: Spacing.huge),
           ],
         ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home:
-        WelcomeView(), // Afficher la vue de bienvenue en tant qu'écran d'accueil.
-  ));
 }

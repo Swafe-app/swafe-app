@@ -10,7 +10,7 @@ class MapConfig {
   static final layers = <flutter.TileLayer>[
     flutter.TileLayer(
       urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      subdomains: ['a', 'b', 'c'],
+      subdomains: const ['a', 'b', 'c'],
     ),
     // Vous pouvez ajouter d'autres couches de carte ou marqueurs ici
   ];

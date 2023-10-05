@@ -3,20 +3,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: ModifierMotDePasseView(),
   ));
 }
 
 class ModifierMotDePasseView extends StatefulWidget {
+  const ModifierMotDePasseView({super.key});
+
   @override
   _ModifierMotDePasseViewState createState() => _ModifierMotDePasseViewState();
 }
 
 class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
-  TextEditingController _currentPasswordController = TextEditingController();
-  TextEditingController _newPasswordController = TextEditingController();
-  TextEditingController _confirmNewPasswordController = TextEditingController();
+  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController = TextEditingController();
 
   String currentPasswordErrorMessage = '';
   String newPasswordErrorMessage = '';
@@ -74,7 +76,7 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
 
       // Mot de passe mis à jour avec succès
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Mot de passe mis à jour avec succès.'),
         ),
       );
@@ -82,7 +84,7 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
       if (e.code == 'wrong-password') {
         // Le mot de passe actuel est incorrect
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Le mot de passe actuel est incorrect.'),
           ),
         );
@@ -95,12 +97,12 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
     updateErrorMessages();
 
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         // Utilisez CustomAppBar ici
         title: 'Modifier le mot de passe',
       ),
       body: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -115,7 +117,7 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                   decoration: InputDecoration(
                     labelText: 'Mot de passe actuel',
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.grey,
                         width: 1.0,
                       ),
@@ -124,7 +126,7 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                   ),
                   obscureText: true,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _newPasswordController,
                   onChanged: (value) {
@@ -133,7 +135,7 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                   decoration: InputDecoration(
                     labelText: 'Nouveau mot de passe',
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.grey,
                         width: 1.0,
                       ),
@@ -142,7 +144,7 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                   ),
                   obscureText: true,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextField(
                   controller: _confirmNewPasswordController,
                   onChanged: (value) {
@@ -151,7 +153,7 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                   decoration: InputDecoration(
                     labelText: 'Confirmation du nouveau mot de passe',
                     border: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.grey,
                         width: 1.0,
                       ),
@@ -160,22 +162,22 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                   ),
                   obscureText: true,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 if (currentPasswordErrorMessage.isNotEmpty)
                   Text(currentPasswordErrorMessage,
-                      style: TextStyle(color: Colors.red)),
+                      style: const TextStyle(color: Colors.red)),
                 if (newPasswordErrorMessage.isNotEmpty)
                   Text(newPasswordErrorMessage,
-                      style: TextStyle(color: Colors.red)),
+                      style: const TextStyle(color: Colors.red)),
                 if (confirmNewPasswordErrorMessage.isNotEmpty)
                   Text(
                     confirmNewPasswordErrorMessage,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                   ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Align(
               alignment: Alignment.bottomCenter,
               child: Column(
@@ -189,24 +191,23 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                           updatePassword();
                         }
                       },
-                      child: Text('Modifier le mot de passe'),
                       style: ElevatedButton.styleFrom(
-                        primary: isButtonEnabled()
+                        foregroundColor: Colors.white, backgroundColor: isButtonEnabled()
                             ? const Color(0xFF714DD8)
                             : Colors.grey,
-                        onPrimary: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 15),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         elevation: 0,
                       ),
+                      child: const Text('Modifier le mot de passe'),
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 80),
+            const SizedBox(height: 80),
           ],
         ),
       ),
