@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart'; // Importation du package Flutter pour créer des interfaces utilisateur.
 import 'package:swafe/DS/colors.dart'; // Importation de couleurs personnalisées.
 import 'package:swafe/DS/spacing.dart';
@@ -43,9 +44,9 @@ class WelcomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black, // Couleur de fond de l'écran.
-      body: Padding(
+    return Container(
+      // Couleur de fond de l'écran.
+      child: Padding(
         padding: EdgeInsets.symmetric(horizontal: Spacing.doubleExtraLarge),
         // Utilisation de la constante Spacing.standard pour l'espacement horizontal.
         child: Column(
@@ -69,34 +70,27 @@ class WelcomeView extends StatelessWidget {
             // Espace flexible pour occuper l'espace entre le texte et les boutons.
             Column(
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _showLoginBottomSheet(
-                        context); // Afficher la feuille de bas de connexion.
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    backgroundColor: const Color.fromARGB(255, 0, 0,
-                        0), // Couleur de fond du bouton de connexion.
-                  ),
-                  child: Container(
+                Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: Spacing.standard),
                     // Utilisation de la constante Spacing.standard pour l'espacement vertical.
                     child: Center(
-                      child: Text(
-                        "Tu as déjà un compte ? Se connecter",
-                        style: typographyList
-                            .firstWhere((element) =>
-                                element.name == "Title Small Medium")
-                            .style,
+                      child: Text.rich(
+                        TextSpan(
+                          text: "Tu as déjà un compte ? Se connecter",
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              _showLoginBottomSheet(
+                                  context); // Afficher la feuille de bas de connexion.
+                            },
+                          style:
+                            typographyList
+                                .firstWhere((element) =>
+                                    element.name == "Title Small Medium")
+                                .style,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
+                    )),
                 ElevatedButton(
                   onPressed: () {
                     _showRegisterPage(
@@ -118,8 +112,8 @@ class WelcomeView extends StatelessWidget {
                       child: Text(
                         "S’inscrire",
                         style: typographyList
-                            .firstWhere(
-                                (info) => info.name == 'Title Small Medium Bold')
+                            .firstWhere((info) =>
+                                info.name == 'Title Small Medium')
                             .style
                             .copyWith(
                               color: Colors.black,
@@ -145,3 +139,4 @@ void main() {
         WelcomeView(), // Afficher la vue de bienvenue en tant qu'écran d'accueil.
   ));
 }
+
