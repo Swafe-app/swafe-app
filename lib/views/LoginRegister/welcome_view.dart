@@ -48,7 +48,7 @@ class WelcomeView extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: Spacing
-                .standard), // Utilisation de la constante Spacing.standard pour l'espacement horizontal.
+                .doubleExtraLarge), // Utilisation de la constante Spacing.standard pour l'espacement horizontal.
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -98,9 +98,6 @@ class WelcomeView extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                    height: Spacing
-                        .medium), // Utilisation de la constante Spacing.medium pour l'espacement vertical.
                 ElevatedButton(
                   onPressed: () {
                     _showRegisterPage(
