@@ -50,6 +50,14 @@ List<TypographyInfo> typographyList = [
         height: 24 / 16,
       )),
   TypographyInfo(
+      'Title Small Medium Bold',
+      GoogleFonts.manrope(
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
+        letterSpacing: 0.0,
+        height: 24 / 16,
+      )),
+  TypographyInfo(
       'Title XSmall Medium',
       GoogleFonts.manrope(
         fontWeight: FontWeight.w500,
