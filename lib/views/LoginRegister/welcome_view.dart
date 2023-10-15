@@ -79,20 +79,35 @@ class WelcomeView extends StatelessWidget {
                           padding: EdgeInsets.symmetric(vertical: Spacing.standard),
                           // Utilisation de la constante Spacing.standard pour l'espacement vertical.
                           child: Center(
-                            child: Text.rich(
-                              TextSpan(
-                                text: "Tu as déjà un compte ? Se connecter",
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    _showLoginBottomSheet(
-                                        context); // Afficher la feuille de bas de connexion.
-                                  },
-                                style:
-                                typographyList
-                                    .firstWhere((element) =>
-                                element.name == "Title Small Medium")
-                                    .style,
-                              ),
+                            child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "Tu as déjà un compte ? ",
+                                      style: typographyList
+                                          .firstWhere((element) =>
+                                      element.name == "Body XLarge Regular")
+                                          .style,
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          _showLoginBottomSheet(
+                                              context); // Afficher la feuille de bas de connexion.
+                                        },
+                                    ),
+                                    TextSpan(
+                                      text: "Se connecter",
+                                      style: typographyList
+                                          .firstWhere((element) =>
+                                      element.name == "Body XLarge Medium")
+                                          .style,
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          _showLoginBottomSheet(
+                                              context); // Afficher la feuille de bas de connexion.
+                                        },
+                                    )
+                                  ],
+                                )
                             ),
                           )),
                       ElevatedButton(
