@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
 
 void main() => runApp(MaterialApp(
@@ -24,7 +25,7 @@ class HomeContent extends StatefulWidget {
 }
 
 class HomeContentState extends State<HomeContent> {
-  final databaseReference = FirebaseDatabase.instance.ref();
+  final dbService = FirebaseDatabaseService();
   final MapController mapController = MapController();
 
   List<Map<String, dynamic>> firebaseData = [];
@@ -42,29 +43,15 @@ class HomeContentState extends State<HomeContent> {
   );
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    _initializeFirebase();
-  }
-
-  void _initializeFirebase() async {
-    try {
-      await Firebase.initializeApp();
-      setState(() {
-        isFirebaseInitialized = true;
-      });
-      _getDataFromFirebase();
-      await _requestLocationPermission();
-    } catch (error) {
-      if (kDebugMode) {
-        print("Erreur d'initialisation Firebase : $error");
-      }
-    }
+    _getDataFromFirebase();
+    await _requestLocationPermission();
   }
 
   void _getDataFromFirebase() {
     try {
-      databaseReference.child('signalements').onValue.listen((event) {
+      dbService.databaseReference.child('signalements').onValue.listen((event) {
         if (event.snapshot.value != null) {
           Map<dynamic, dynamic> data =
               event.snapshot.value as Map<dynamic, dynamic>;
