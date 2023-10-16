@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swafe/DS/colors.dart';
@@ -11,16 +12,20 @@ import 'package:swafe/ds/typographies.dart';
 class ProfilContent extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  ProfilContent({super.key});
+
   Future<void> _signOut(BuildContext context) async {
     try {
       await _auth.signOut();
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => WelcomeView()),
+        MaterialPageRoute(builder: (context) => const WelcomeView()),
         (Route<dynamic> route) => false,
       );
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
   }
 
@@ -42,7 +47,7 @@ class ProfilContent extends StatelessWidget {
       ),
       backgroundColor: MyColors.defaultWhite,
       body: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
             horizontal: 16), // Ajustement des marges gauche et droite
         child: ListView(
           children: [
@@ -64,9 +69,9 @@ class ProfilContent extends StatelessWidget {
               ],
               // Navigation vers la page de modification d'informations personnelles
               [
-                ModifierInformationPersonnelle(),
-                ReauthenticationPage(),
-                ModifierMotDePasseView(),
+                const ModifierInformationPersonnelle(),
+                const ReauthenticationPage(),
+                const ModifierMotDePasseView(),
                 null,
               ],
               FontWeight.normal, // Définir le poids de police à normal
@@ -101,7 +106,7 @@ class ProfilContent extends StatelessWidget {
               FontWeight.normal, // Définir le poids de police à normal
             ),
             // Ajoutez une marge inférieure entre le bouton "Supprimer le compte" et le bouton "Se déconnecter"
-            SizedBox(
+            const SizedBox(
                 height:
                     Spacing.extraLarge), // Utilisation de l'espacement "small"
             // Bouton "Se déconnecter"
@@ -110,14 +115,14 @@ class ProfilContent extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => _signOut(context),
                 style: ElevatedButton.styleFrom(
-                  primary: MyColors.secondary40, // Couleur 714DD8
+                  backgroundColor: MyColors.secondary40, // Couleur 714DD8
                   elevation: 0, // Supprimer l'ombre
                 ),
-                child: Text('Se déconnecter'),
+                child: const Text('Se déconnecter'),
               ),
             ),
             // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"
-            SizedBox(
+            const SizedBox(
                 height:
                     Spacing.extraLarge), // Utilisation de l'espacement "medium"
             // Bouton "Supprimer le compte"
@@ -153,7 +158,7 @@ class ProfilContent extends StatelessWidget {
         ),
         ...List.generate(items.length, (index) {
           return Container(
-            margin: EdgeInsets.symmetric(vertical: 6),
+            margin: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
               border: Border.all(
                 color: MyColors.neutral70,
@@ -161,7 +166,7 @@ class ProfilContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: ListTile(
-              contentPadding: EdgeInsets.only(left: 12, right: 12),
+              contentPadding: const EdgeInsets.only(left: 12, right: 12),
               leading: Icon(
                 icons[index],
                 color: MyColors.primary10,
@@ -175,7 +180,7 @@ class ProfilContent extends StatelessWidget {
                       color: MyColors.primary10,
                     ),
               ),
-              trailing: Icon(
+              trailing: const Icon(
                 Icons.keyboard_arrow_right,
                 color: MyColors.secondary40,
               ),

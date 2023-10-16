@@ -76,10 +76,10 @@ class CustomButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CustomButtonState createState() => _CustomButtonState();
+  CustomButtonState createState() => CustomButtonState();
 }
 
-class _CustomButtonState extends State<CustomButton> {
+class CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     ButtonStyleData styleData =

@@ -6,11 +6,11 @@ import 'profil.dart';
 class HomeView extends StatelessWidget {
   final String welcomeMessage;
 
-  HomeView({required this.welcomeMessage});
+  const HomeView({super.key, required this.welcomeMessage});
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBarExample();
+    return const BottomNavigationBarExample();
   }
 }
 
@@ -54,15 +54,15 @@ class _BottomNavigationBarExampleState
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFF714DD8),
+        selectedItemColor: const Color(0xFF714DD8),
         onTap: _onItemTapped,
       ),
     );
   }
 
   final List<Widget> _widgetOptions = <Widget>[
-    HomeContent(),
-    RepertoireContent(),
+    const HomeContent(),
+    const RepertoireContent(),
     ProfilContent(),
   ];
 }

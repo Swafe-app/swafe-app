@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,7 +13,7 @@ class RepertoireContent extends StatefulWidget {
 }
 
 class _RepertoireContentState extends State<RepertoireContent> {
-  List<RepertoireCategory> _repertoireData = [
+  final List<RepertoireCategory> _repertoireData = [
     RepertoireCategory(
       "Catégorie Numéros d'Urgence",
       [
@@ -103,7 +104,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
         ),
         RepertoireCardData(
           "Assistance aux sans domicile fixe (SDF) - 115",
-          "Si vous êtes victime ou temoin d’une situation qui présente un risque pour votre sécurité.",
+          "Si vous êtes victime ou témoin d’une situation qui présente un risque pour votre sécurité.",
           "115",
         ),
         RepertoireCardData(
@@ -139,12 +140,16 @@ class _RepertoireContentState extends State<RepertoireContent> {
   }
 
   void _callNumber(String phoneNumber) async {
-    String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
+    String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
     String url = "tel:$cleanedPhoneNumber";
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      print("Impossible de lancer l'appel vers $cleanedPhoneNumber");
+      if (kDebugMode) {
+        if (kDebugMode) {
+          print("Impossible de lancer l'appel vers $cleanedPhoneNumber");
+        }
+      }
     }
   }
 
@@ -169,10 +174,10 @@ class _RepertoireContentState extends State<RepertoireContent> {
         children: [
           Container(
             color: MyColors.defaultWhite,
-            padding: EdgeInsets.all(Spacing.small),
+            padding: const EdgeInsets.all(Spacing.small),
             child: TextField(
               onChanged: _filterData,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Rechercher",
                 prefixIcon: Icon(
                   Icons.search,
@@ -200,7 +205,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                         top: Spacing.small,
                         left: Spacing.standard,
                         right: Spacing.standard,
@@ -220,7 +225,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
                       RepertoireCard(
                         cardData: card,
                         onCardTapped: _callNumber,
-                        margin: EdgeInsets.symmetric(
+                        margin: const EdgeInsets.symmetric(
                             horizontal: Spacing.standard,
                             vertical: Spacing.small),
                       ),
@@ -255,15 +260,15 @@ class RepertoireCard extends StatelessWidget {
   final Function(String) onCardTapped;
   final EdgeInsetsGeometry? margin;
 
-  RepertoireCard(
-      {required this.cardData, required this.onCardTapped, this.margin});
+  const RepertoireCard(
+      {super.key, required this.cardData, required this.onCardTapped, this.margin});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: margin,
       child: ListTile(
-        contentPadding: EdgeInsets.all(Spacing.small),
+        contentPadding: const EdgeInsets.all(Spacing.small),
         title: Text(
           cardData.name,
           style: typographyList
@@ -275,7 +280,7 @@ class RepertoireCard extends StatelessWidget {
         ),
         subtitle: Text(cardData.description),
         trailing: IconButton(
-          icon: Icon(Icons.phone),
+          icon: const Icon(Icons.phone),
           color: MyColors.secondary40,
           onPressed: () {
             onCardTapped(cardData.phoneNumber);

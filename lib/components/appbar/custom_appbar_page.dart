@@ -8,25 +8,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double backButtonSize;
   final double backButtonMargin;
 
-  CustomAppBar({
+  const CustomAppBar({
+    super.key,
     this.title,
     this.backButtonSize = 24.0,
     this.backButtonMargin = Spacing.small, // Utilisation de l'espacement small
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(130.0); // Hauteur constante
+  Size get preferredSize => const Size.fromHeight(130.0); // Hauteur constante
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
           horizontal: Spacing.standard), // Utilisation de l'espacement standard
       child: AppBar(
-        automaticallyImplyLeading:
-            false, // Désactive le bouton de retour par défaut
-        backgroundColor:
-            MyColors.defaultWhite, // Utilisation de la couleur defaultWhite
+        automaticallyImplyLeading: false,
+        // Désactive le bouton de retour par défaut
+        backgroundColor: MyColors.defaultWhite,
+        // Utilisation de la couleur defaultWhite
         elevation: 0,
         centerTitle: true,
         leading: Container(
@@ -57,7 +58,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              margin: EdgeInsets.only(
+              margin: const EdgeInsets.only(
                   bottom:
                       Spacing.standard), // Utilisation de l'espacement standard
               child: Text(

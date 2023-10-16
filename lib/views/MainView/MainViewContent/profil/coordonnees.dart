@@ -6,6 +6,8 @@ import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart';
 
 class ModifierCoordonnees extends StatefulWidget {
+  const ModifierCoordonnees({super.key});
+
   @override
   _ModifierCoordonneesState createState() => _ModifierCoordonneesState();
 }
@@ -54,7 +56,7 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Vos informations ont été mises à jour.'),
           ),
         );
@@ -72,19 +74,19 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Modifier vos informations',
       ),
       body: Container(
         color: MyColors.defaultWhite, // Définir la couleur de fond en blanc
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Spacing.large),
+          padding: const EdgeInsets.symmetric(horizontal: Spacing.large),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TabBar(
                 controller: _tabController,
-                tabs: [
+                tabs: const [
                   Tab(text: 'Email'),
                   Tab(text: 'Téléphone'),
                 ],
@@ -102,7 +104,7 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextField(
-                          decoration: InputDecoration(labelText: 'Email'),
+                          decoration: const InputDecoration(labelText: 'Email'),
                           onChanged: (value) {
                             setState(() {
                               _email = value;
@@ -115,7 +117,7 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                         ),
                         ElevatedButton(
                           onPressed: _updateUserData,
-                          child: Text('Envoyer'),
+                          child: const Text('Envoyer'),
                         ),
                       ],
                     ),
@@ -124,7 +126,7 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextField(
-                          decoration: InputDecoration(labelText: 'Téléphone'),
+                          decoration: const InputDecoration(labelText: 'Téléphone'),
                           onChanged: (value) {
                             setState(() {
                               _telephone = value;
@@ -134,7 +136,7 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                         ),
                         ElevatedButton(
                           onPressed: _updateUserData,
-                          child: Text('Envoyer'),
+                          child: const Text('Envoyer'),
                         ),
                       ],
                     ),
