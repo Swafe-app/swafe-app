@@ -43,10 +43,10 @@ class HomeContentState extends State<HomeContent> {
   );
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     _getDataFromFirebase();
-    await _requestLocationPermission();
+    _requestLocationPermission();
   }
 
   void _getDataFromFirebase() {
