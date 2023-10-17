@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -8,6 +9,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 
 class HomeContent extends StatefulWidget {
+  const HomeContent({super.key});
+
   @override
   _HomeContentState createState() => _HomeContentState();
 }
@@ -20,13 +23,11 @@ class _HomeContentState extends State<HomeContent> {
   Marker userLocationMarker = Marker(
     width: 80.0,
     height: 80.0,
-    point: LatLng(0.0, 0.0),
-    builder: (ctx) => Container(
-      child: Icon(
-        Icons.location_on,
-        color: Colors.blue,
-        size: 50.0,
-      ),
+    point: const LatLng(0.0, 0.0),
+    builder: (ctx) => const Icon(
+      Icons.location_on,
+      color: Colors.blue,
+      size: 50.0,
     ),
   );
 
@@ -45,7 +46,9 @@ class _HomeContentState extends State<HomeContent> {
       _getDataFromFirebase();
       _checkLocationPermission();
     } catch (error) {
-      print("Erreur d'initialisation Firebase : $error");
+      if (kDebugMode) {
+        print("Erreur d'initialisation Firebase : $error");
+      }
     }
   }
 
@@ -53,7 +56,9 @@ class _HomeContentState extends State<HomeContent> {
     try {
       databaseReference.child('signalements').onValue.listen((event) {
         if (event.snapshot.value != null) {
-          print("Données Firebase récupérées : ${event.snapshot.value}");
+          if (kDebugMode) {
+            print("Données Firebase récupérées : ${event.snapshot.value}");
+          }
           Map<dynamic, dynamic> data =
               event.snapshot.value as Map<dynamic, dynamic>;
 
@@ -68,12 +73,16 @@ class _HomeContentState extends State<HomeContent> {
           // Appel à setState pour mettre à jour l'interface utilisateur
           setState(() {});
         } else {
-          print("Aucune donnée Firebase disponible.");
+          if (kDebugMode) {
+            print("Aucune donnée Firebase disponible.");
+          }
         }
       });
     } catch (error) {
-      print(
+      if (kDebugMode) {
+        print(
           "Erreur lors de la récupération des données depuis Firebase : $error");
+      }
     }
   }
 
@@ -83,12 +92,10 @@ class _HomeContentState extends State<HomeContent> {
         width: 80.0,
         height: 80.0,
         point: LatLng(position.latitude, position.longitude),
-        builder: (ctx) => Container(
-          child: Icon(
-            Icons.location_on,
-            color: Colors.blue,
-            size: 50.0,
-          ),
+        builder: (ctx) => const Icon(
+          Icons.location_on,
+          color: Colors.blue,
+          size: 50.0,
         ),
       );
     });
@@ -112,7 +119,9 @@ class _HomeContentState extends State<HomeContent> {
         permission == LocationPermission.whileInUse) {
       _getUserLocation();
     } else {
-      print("L'utilisateur a refusé l'autorisation de localisation.");
+      if (kDebugMode) {
+        print("L'utilisateur a refusé l'autorisation de localisation.");
+      }
     }
   }
 
@@ -124,7 +133,9 @@ class _HomeContentState extends State<HomeContent> {
 
       updateLocationMarker(position);
     } catch (e) {
-      print("Erreur lors de l'obtention de la position : $e");
+      if (kDebugMode) {
+        print("Erreur lors de l'obtention de la position : $e");
+      }
     }
   }
 
@@ -133,8 +144,8 @@ class _HomeContentState extends State<HomeContent> {
     return Column(
       children: <Widget>[
         isFirebaseInitialized
-            ? Text('Firebase est initialisé avec succès.')
-            : Text('Firebase n\'est pas encore initialisé.'),
+            ? const Text('Firebase est initialisé avec succès.')
+            : const Text('Firebase n\'est pas encore initialisé.'),
         Expanded(
           child: FlutterMap(
             options: MapOptions(
@@ -145,7 +156,7 @@ class _HomeContentState extends State<HomeContent> {
               TileLayer(
                 urlTemplate:
                     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: ['a', 'b', 'c'], // Ajoutez les sous-domaines
+                subdomains: const ['a', 'b', 'c'], // Ajoutez les sous-domaines
               ),
               MarkerLayer(
                 markers: _buildMarkers(),
@@ -157,7 +168,7 @@ class _HomeContentState extends State<HomeContent> {
           onPressed: () {
             _showBottomSheet(context);
           },
-          child: Text('Ouvrir le Bottom Sheet'),
+          child: const Text('Ouvrir le Bottom Sheet'),
         ),
       ],
     );
@@ -167,7 +178,7 @@ class _HomeContentState extends State<HomeContent> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return BottomSheetContent();
+        return const BottomSheetContent();
       },
     );
   }
@@ -184,12 +195,10 @@ class _HomeContentState extends State<HomeContent> {
           width: 80.0,
           height: 80.0,
           point: LatLng(latitude, longitude),
-          builder: (ctx) => Container(
-            child: Icon(
-              Icons.pin_drop,
-              color: Colors.red,
-              size: 50.0,
-            ),
+          builder: (ctx) => const Icon(
+            Icons.pin_drop,
+            color: Colors.red,
+            size: 50.0,
           ),
         ),
       );
@@ -218,7 +227,7 @@ class _HomeContentState extends State<HomeContent> {
 
       return LatLng(avgLatitude, avgLongitude);
     } else {
-      return LatLng(51.509364, -0.128928);
+      return const LatLng(51.509364, -0.128928);
     }
   }
 }
@@ -227,15 +236,17 @@ void launchUrl(Uri uri) async {
   if (await canLaunch(uri.toString())) {
     await launch(uri.toString());
   } else {
-    print('Could not launch $uri');
+    if (kDebugMode) {
+      print('Could not launch $uri');
+    }
   }
 }
 
 void main() => runApp(MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Flutter Map Example'),
+          title: const Text('Flutter Map Example'),
         ),
-        body: HomeContent(),
+        body: const HomeContent(),
       ),
     ));

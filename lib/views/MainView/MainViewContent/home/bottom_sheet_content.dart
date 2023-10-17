@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -6,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 
 class BottomSheetContent extends StatefulWidget {
+  const BottomSheetContent({super.key});
+
   @override
   _BottomSheetContentState createState() => _BottomSheetContentState();
 }
@@ -15,8 +18,8 @@ class _BottomSheetContentState extends State<BottomSheetContent>
   late TabController _tabController;
   bool _isSelectionMade = false;
 
-  List<String> _selectedDangerItems = [];
-  List<String> _selectedAnomaliesItems = [];
+  final List<String> _selectedDangerItems = [];
+  final List<String> _selectedAnomaliesItems = [];
 
   double markerLatitude = 51.509364; // London latitude
   double markerLongitude = -0.128928; // London longitude
@@ -38,41 +41,40 @@ class _BottomSheetContentState extends State<BottomSheetContent>
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     var markers = <Marker>[
       Marker(
         width: 80.0,
         height: 80.0,
         point: latlong.LatLng(markerLatitude, markerLongitude),
-        builder: (ctx) => Container(
-          child: Icon(
-            Icons.pin_drop,
-            color: Colors.red,
-            size: 50.0,
-          ),
+        builder: (ctx) => const Icon(
+          Icons.pin_drop,
+          color: Colors.red,
+          size: 50.0,
         ),
       ),
     ];
 
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
+          const Text(
             'Spécifier la situation rencontrée',
             style: TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
+          const Text(
             'Votre signalement sera partagé avec toute la communauté. Les signalements sont anonymes.',
             style: TextStyle(fontSize: 16.0),
           ),
           TabBar(
             controller: _tabController,
-            tabs: [
+            tabs: const [
               Tab(text: 'Danger'),
               Tab(text: 'Anomalies'),
             ],
@@ -110,7 +112,7 @@ class _BottomSheetContentState extends State<BottomSheetContent>
                 TileLayer(
                   urlTemplate:
                       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  subdomains: ['a', 'b', 'c'],
+                  subdomains: const ['a', 'b', 'c'],
                 ),
                 MarkerLayer(
                   markers: markers,
@@ -124,16 +126,16 @@ class _BottomSheetContentState extends State<BottomSheetContent>
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Annuler'),
+                child: const Text('Annuler'),
               ),
-              SizedBox(width: 16.0),
+              const SizedBox(width: 16.0),
               ElevatedButton(
                 onPressed: _isSelectionMade
                     ? () {
                         _sendDataToFirebase();
                       }
                     : null,
-                child: Text('Valider'),
+                child: const Text('Valider'),
               ),
             ],
           ),
@@ -182,9 +184,13 @@ class _BottomSheetContentState extends State<BottomSheetContent>
 
       try {
         await databaseReference.child('signalements').push().set(selectedData);
-        print("Données envoyées à Firebase avec succès.");
+        if (kDebugMode) {
+          print("Données envoyées à Firebase avec succès.");
+        }
       } catch (error) {
-        print("Erreur lors de l'envoi des données à Firebase : $error");
+        if (kDebugMode) {
+          print("Erreur lors de l'envoi des données à Firebase : $error");
+        }
       }
     }
   }
@@ -200,7 +206,9 @@ class _BottomSheetContentState extends State<BottomSheetContent>
         markerLongitude = position.longitude;
       });
     } catch (e) {
-      print("Error getting location: $e");
+      if (kDebugMode) {
+        print("Error getting location: $e");
+      }
     }
   }
 }

@@ -45,10 +45,6 @@ void _showRegisterPage(BuildContext context) {
       .push(MaterialPageRoute(builder: (context) => const RegisterView()));
 }
 
-// Classe de la vue de bienvenue
-class WelcomeView extends StatelessWidget {
-  const WelcomeView({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,7 +151,8 @@ class WelcomeView extends StatelessWidget {
                 ],
               ),
             ),
-            ]
+          ],
+        ),
       ),
     );
   }
