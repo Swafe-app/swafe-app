@@ -2,9 +2,16 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart'; // Importation du package Flutter pour créer des interfaces utilisateur.
 import 'package:swafe/DS/colors.dart'; // Importation de couleurs personnalisées.
 import 'package:swafe/DS/spacing.dart';
-import 'package:swafe/DS/typographies.dart'; // Importation de styles de texte personnalisés.
+import 'package:swafe/ds/typographies.dart'; // Importation de styles de texte personnalisés.
 import 'package:swafe/views/LoginRegister/login_view.dart'; // Importation de la vue de connexion.
 import 'package:swafe/views/LoginRegister/register.dart'; // Importation de la vue d'inscription.
+
+void main() {
+  runApp(const MaterialApp(
+    home:
+    WelcomeView(), // Afficher la vue de bienvenue en tant qu'écran d'accueil.
+  ));
+}
 
 // Fonction pour afficher la feuille de bas de connexion
 void _showLoginBottomSheet(BuildContext context) {
@@ -35,7 +42,7 @@ void _showLoginBottomSheet(BuildContext context) {
 // Fonction pour naviguer vers la page d'inscription
 void _showRegisterPage(BuildContext context) {
   Navigator.of(context)
-      .push(MaterialPageRoute(builder: (context) => RegisterView()));
+      .push(MaterialPageRoute(builder: (context) => const RegisterView()));
 }
 
 // Classe de la vue de bienvenue
@@ -51,13 +58,13 @@ class WelcomeView extends StatelessWidget {
             Image.asset('assets/images/gradient.png',
             fit: BoxFit.cover,),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: Spacing.doubleExtraLarge),
+              padding: const EdgeInsets.symmetric(horizontal: Spacing.doubleExtraLarge),
               // Utilisation de la constante Spacing.standard pour l'espacement horizontal.
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: Spacing.XXHuge),
+                    margin: const EdgeInsets.only(top: Spacing.xxHuge),
                     // Utilisation de la constante Spacing.large pour la marge supérieure.
                     child: Text(
                       "Il n’a jamais été aussi simple d’aller d'un point A à un point B en toute sécurité",
@@ -70,13 +77,13 @@ class WelcomeView extends StatelessWidget {
                       textAlign: TextAlign.left,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   // Espace flexible pour occuper l'espace entre le texte et les boutons.
                   Column(
                     children: [
                       Container(
                           width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: Spacing.standard),
+                          padding: const EdgeInsets.symmetric(vertical: Spacing.standard),
                           // Utilisation de la constante Spacing.standard pour l'espacement vertical.
                           child: Center(
                             child: RichText(
@@ -125,7 +132,7 @@ class WelcomeView extends StatelessWidget {
                         ),
                         child: Container(
                           width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: Spacing.standard),
+                          padding: const EdgeInsets.symmetric(vertical: Spacing.standard),
                           // Utilisation de la constante Spacing.standard pour l'espacement vertical.
                           child: Center(
                             child: Text(
@@ -143,7 +150,7 @@ class WelcomeView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: Spacing.huge),
+                  const SizedBox(height: Spacing.huge),
                   // Utilisation de la constante Spacing.huge pour l'espacement vertical depuis le bas.
                 ],
               ),
@@ -152,11 +159,4 @@ class WelcomeView extends StatelessWidget {
       ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home:
-        WelcomeView(), // Afficher la vue de bienvenue en tant qu'écran d'accueil.
-  ));
 }

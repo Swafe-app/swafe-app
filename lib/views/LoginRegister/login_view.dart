@@ -8,6 +8,12 @@ import 'package:swafe/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:swafe/views/MainView/home.dart';
 import 'package:swafe/views/LoginRegister/register.dart';
 
+void main() {
+  runApp(const MaterialApp(
+    home: LoginView(),
+  ));
+}
+
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -17,8 +23,8 @@ class LoginView extends StatefulWidget {
 
 class LoginViewState extends State<LoginView> {
   bool isKeyboardVisible = false;
-  bool visiblePassword = false;
   bool isEmailValid = true;
+  bool visiblePassword = false;
   String email = '';
   String password = '';
   final FirebaseAuthService _authService = FirebaseAuthService();
@@ -86,13 +92,13 @@ class LoginViewState extends State<LoginView> {
                 suffixIcon: IconButton(
                   onPressed: () =>
                       setState(() => visiblePassword = !visiblePassword),
-                  icon: Icon(visiblePassword
+                  icon: Icon(!visiblePassword
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined),
                   color: Colors.black,
                 ),
               ),
-              obscureText: visiblePassword,
+              obscureText: !visiblePassword,
             ),
             const SizedBox(height: Spacing.small),
             if (!isEmailValid)
@@ -221,3 +227,4 @@ class LoginViewState extends State<LoginView> {
     );
   }
 }
+
