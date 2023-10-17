@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/DS/typographies.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:swafe/views/MainView/home.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart';
@@ -235,22 +237,18 @@ class _RegisterViewState extends State<RegisterView> {
                     SizedBox(height: Spacing.standard),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: CustomButton(
+                        label: "Continuer",
+                        type: ButtonType.filled,
+                        fillColor: MyColors
+                            .secondary40, // Set to the desired fill color
+                        strokeColor: null, // Set to the desired stroke color
+                        textColor: MyColors
+                            .defaultWhite, // Set to the desired text color
                         onPressed: signUp,
-                        child: Text('Continuer'),
-                        style: ElevatedButton.styleFrom(
-                          primary: isButtonEnabled()
-                              ? const Color(0xFF714DD8)
-                              : Colors.grey,
-                          onPrimary: Colors.white,
-                          padding:
-                              EdgeInsets.symmetric(vertical: Spacing.standard),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(Spacing.standard),
-                          ),
-                          elevation: 0,
-                        ),
+                        isLoading: false,
+                        isDisabled: false,
+                        icon: null,
                       ),
                     ),
                   ],

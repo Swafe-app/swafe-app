@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart'; // Importation du package Flutter pour créer des interfaces utilisateur.
 import 'package:swafe/DS/colors.dart'; // Importation de couleurs personnalisées.
 import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/ds/typographies.dart'; // Importation de styles de texte personnalisés.
 import 'package:swafe/views/LoginRegister/login_view.dart'; // Importation de la vue de connexion.
 import 'package:swafe/views/LoginRegister/register.dart'; // Importation de la vue d'inscription.
@@ -70,64 +71,37 @@ class WelcomeView extends StatelessWidget {
             Spacer(), // Espace flexible pour occuper l'espace entre le texte et les boutons.
             Column(
               children: [
-                ElevatedButton(
+                CustomButton(
+                  label: "Tu as déjà un compte ? Se connecter",
+                  type: ButtonType.text,
+                  fillColor: null, // Set to the desired fill color
+                  strokeColor: null, // Set to the desired stroke color
+                  textColor:
+                      MyColors.defaultWhite, // Set to the desired text color
                   onPressed: () {
-                    _showLoginBottomSheet(
-                        context); // Afficher la feuille de bas de connexion.
+                    _showLoginBottomSheet(context);
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    backgroundColor: const Color.fromARGB(255, 0, 0,
-                        0), // Couleur de fond du bouton de connexion.
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                        vertical: Spacing
-                            .standard), // Utilisation de la constante Spacing.standard pour l'espacement vertical.
-                    child: const Center(
-                      child: Text(
-                        "Tu as déjà un compte ? Se connecter",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
+                  isLoading: false,
+                  isDisabled: false,
+                  icon: null,
                 ),
                 SizedBox(
                     height: Spacing
                         .medium), // Utilisation de la constante Spacing.medium pour l'espacement vertical.
-                ElevatedButton(
+                CustomButton(
+                  label: "S’inscrire",
+                  type: ButtonType.filled,
+                  fillColor:
+                      MyColors.defaultWhite, // Set to the desired fill color
+                  strokeColor: null, // Set to the desired stroke color
+                  textColor:
+                      MyColors.primary10, // Set to the desired text color
                   onPressed: () {
-                    _showRegisterPage(
-                        context); // Naviguer vers la page d'inscription.
+                    _showRegisterPage(context);
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor: Colors
-                        .white, // Couleur de fond du bouton d'inscription.
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                        vertical: Spacing
-                            .standard), // Utilisation de la constante Spacing.standard pour l'espacement vertical.
-                    child: const Center(
-                      child: Text(
-                        "S’inscrire",
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
+                  isLoading: false,
+                  isDisabled: false,
+                  icon: null, // Set to the desired icon
                 ),
               ],
             ),
