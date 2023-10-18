@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart';
-import 'package:swafe/firebase_auth_implementation/firebase_auth_services.dart';
+import 'package:swafe/firebase/firebase_auth_services.dart';
 import 'package:swafe/views/MainView/home.dart';
 
 class RegisterView extends StatefulWidget {

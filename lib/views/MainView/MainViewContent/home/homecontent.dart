@@ -1,11 +1,10 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
+import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
 
 void main() => runApp(MaterialApp(
@@ -28,8 +27,8 @@ class HomeContentState extends State<HomeContent> {
   final dbService = FirebaseDatabaseService();
   final MapController mapController = MapController();
 
-  List<Map<String, dynamic>> firebaseData = [];
-  bool isFirebaseInitialized = false;
+  Map<String, SignalementModel> signalementMap = {};
+  List<Marker> markersList = [];
 
   Marker userLocationMarker = Marker(
     width: 80.0,
@@ -53,19 +52,25 @@ class HomeContentState extends State<HomeContent> {
     try {
       dbService.databaseReference.child('signalements').onValue.listen((event) {
         if (event.snapshot.value != null) {
-          Map<dynamic, dynamic> data =
+          Map<dynamic, dynamic> rawData =
               event.snapshot.value as Map<dynamic, dynamic>;
+          Map<String, SignalementModel> data = {};
 
-          // Mise à jour de la liste firebaseData
-          firebaseData.clear();
-          data.forEach((key, value) {
-            if (value is Map<String, dynamic>) {
-              firebaseData.add(value);
-            }
+          rawData.forEach((key, value) {
+            data[key] = SignalementModel(
+              latitude: value['coordinates']['latitude'] as double,
+              longitude: value['coordinates']['longitude'] as double,
+              selectedDangerItems:
+                  List<String>.from(value['selectedDangerItems']),
+              userId: value['userId'] as String,
+            );
           });
 
-          // Appel à setState pour mettre à jour l'interface utilisateur
-          setState(() {});
+          // Mise à jour de la liste signalementMap
+          signalementMap = data;
+
+          // Appel à _buildMarkers pour mettre à jour l'interface utilisateur
+          _buildMarkers();
         } else {
           if (kDebugMode) {
             print("Aucune donnée Firebase disponible.");
@@ -155,7 +160,7 @@ class HomeContentState extends State<HomeContent> {
                 subdomains: const ['a', 'b', 'c'],
               ),
               MarkerLayer(
-                markers: _buildMarkers(),
+                markers: markersList,
               ),
             ],
           ),
@@ -179,30 +184,29 @@ class HomeContentState extends State<HomeContent> {
     );
   }
 
-  List<Marker> _buildMarkers() {
-    List<Marker> markers = [];
+  void _buildMarkers() {
+    setState(() {
+      List<Marker> markers = [];
 
-    for (var data in firebaseData) {
-      double latitude = data['coordinates']['latitude'];
-      double longitude = data['coordinates']['longitude'];
-
-      markers.add(
-        Marker(
-          width: 80.0,
-          height: 80.0,
-          point: LatLng(latitude, longitude),
-          builder: (ctx) => const Icon(
-            Icons.pin_drop,
-            color: Colors.red,
-            size: 50.0,
+      signalementMap.forEach((key, value) {
+        markers.add(
+          Marker(
+            width: 80.0,
+            height: 80.0,
+            point: LatLng(value.latitude, value.longitude),
+            builder: (ctx) => const Icon(
+              Icons.pin_drop,
+              color: Colors.red,
+              size: 50.0,
+            ),
           ),
-        ),
-      );
-    }
+        );
+      });
 
-    markers.add(userLocationMarker);
+      markers.add(userLocationMarker);
 
-    return markers;
+      markersList = markers;
+    });
   }
 
   void _calculateCenter() {
@@ -210,20 +214,17 @@ class HomeContentState extends State<HomeContent> {
       if (userLocationMarker.point.latitude != 0.0 &&
           userLocationMarker.point.longitude != 0.0) {
         mapController.move(userLocationMarker.point, 13);
-      } else if (firebaseData.isNotEmpty) {
+      } else if (signalementMap.isNotEmpty) {
         double sumLatitude = 0;
         double sumLongitude = 0;
 
-        for (var data in firebaseData) {
-          double latitude = data['coordinates']['latitude'];
-          double longitude = data['coordinates']['longitude'];
+        signalementMap.forEach((key, value) {
+          sumLatitude += value.latitude;
+          sumLongitude += value.longitude;
+        });
 
-          sumLatitude += latitude;
-          sumLongitude += longitude;
-        }
-
-        double avgLatitude = sumLatitude / firebaseData.length;
-        double avgLongitude = sumLongitude / firebaseData.length;
+        double avgLatitude = sumLatitude / signalementMap.length;
+        double avgLongitude = sumLongitude / signalementMap.length;
 
         mapController.move(LatLng(avgLatitude, avgLongitude), 13);
       } else {
