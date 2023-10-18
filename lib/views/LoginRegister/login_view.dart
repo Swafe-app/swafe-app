@@ -8,6 +8,12 @@ import 'package:swafe/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:swafe/views/LoginRegister/register.dart';
 import 'package:swafe/views/MainView/home.dart';
 
+void main() {
+  runApp(const MaterialApp(
+    home: LoginView(),
+  ));
+}
+
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -18,9 +24,10 @@ class LoginView extends StatefulWidget {
 class LoginViewState extends State<LoginView> {
   bool isKeyboardVisible = false;
   bool isEmailValid = true;
+  bool visiblePassword = false;
   String email = '';
   String password = '';
-  FirebaseAuthService authService = FirebaseAuthService();
+  final FirebaseAuthService _authService = FirebaseAuthService();
 
   @override
   void initState() {
@@ -41,8 +48,8 @@ class LoginViewState extends State<LoginView> {
         }
       },
       child: Container(
-        padding: const EdgeInsets.all(Spacing.standard),
-        // Utilisation de Spacing.standard pour la marge globale
+        padding: const EdgeInsets.all(Spacing
+            .standard), // Utilisation de Spacing.standard pour la marge globale
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -50,52 +57,48 @@ class LoginViewState extends State<LoginView> {
               padding: const EdgeInsets.only(top: Spacing.standard),
               // Utilisation de Spacing.tripleExtraLarge pour la marge supérieure
               child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: MyColors.neutral40,
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+                decoration: const BoxDecoration(),
                 child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    contentPadding: EdgeInsets.all(Spacing
+                        .medium), // Utilisation de Spacing.medium pour le rembourrage
+                  ),
                   onChanged: (value) {
                     setState(() {
                       email = value;
                       isEmailValid = EmailValidator.validate(email);
                     });
                   },
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(Spacing
-                        .medium), // Utilisation de Spacing.medium pour le rembourrage
-                  ),
+                  keyboardType: TextInputType.emailAddress,
                 ),
               ),
             ),
             const SizedBox(height: Spacing.extraLarge),
             // Utilisation de Spacing.small pour l'espacement vertical
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: MyColors.neutral40,
-                  width: 1.0,
+            TextField(
+              onChanged: (value) {
+                setState(() {
+                  password = value;
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Mot de passe',
+                border: const OutlineInputBorder(),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                contentPadding: const EdgeInsets.all(Spacing.medium),
+                suffixIcon: IconButton(
+                  onPressed: () =>
+                      setState(() => visiblePassword = !visiblePassword),
+                  icon: Icon(!visiblePassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined),
+                  color: Colors.black,
                 ),
-                borderRadius: BorderRadius.circular(8.0),
               ),
-              child: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    password = value;
-                  });
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Mot de passe',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(Spacing.medium),
-                ),
-                obscureText: true,
-              ),
+              obscureText: !visiblePassword,
             ),
             const SizedBox(height: Spacing.small),
             if (!isEmailValid)
@@ -197,12 +200,19 @@ class LoginViewState extends State<LoginView> {
                     padding: const EdgeInsets.symmetric(
                       vertical: Spacing.medium,
                     ),
-                    child: const Center(
-                      child: Text(
-                        "Pas encore membre ? Rejoignez-nous !",
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
+                    child: Center(
+                      child: RichText(
+                        text: const TextSpan(children: [
+                          TextSpan(
+                              text: "Pas encore membre ? ",
+                              style: TextStyle(color: Colors.black)),
+                          TextSpan(
+                            text: "Rejoignez-nous !",
+                            style: TextStyle(
+                              color: MyColors.secondary40,
+                            ),
+                          ),
+                        ]),
                       ),
                     ),
                   ),
