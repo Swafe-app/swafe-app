@@ -137,7 +137,7 @@ class LoginViewState extends State<LoginView> {
                   onPressed: isEmailValid
                       ? () async {
                           User? user =
-                              await authService.signInWithEmailAndPassword(
+                              await _authService.signInWithEmailAndPassword(
                             email,
                             password,
                           );

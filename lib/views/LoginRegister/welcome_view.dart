@@ -13,6 +13,8 @@ void main() {
   ));
 }
 
+class WelcomeView extends StatelessWidget {
+  const WelcomeView({super.key});
 // Fonction pour afficher la feuille de bas de connexion
 void _showLoginBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -153,7 +155,6 @@ void _showRegisterPage(BuildContext context) {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
