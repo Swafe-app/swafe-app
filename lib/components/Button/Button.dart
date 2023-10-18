@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 
 enum ButtonType { filled, outlined, text }
 
+const secondary40 = Color.fromRGBO(113, 77, 216, 1);
+const neutral100 = Color.fromRGBO(255, 255, 255, 1);
+const neutral80 = Color.fromRGBO(237, 237, 237, 1);
+const neutral60 = Color.fromRGBO(138, 147, 154, 1);
+
 class ButtonStyleData {
   final Color textColor;
   final Color backgroundColor;
@@ -23,6 +28,30 @@ ButtonStyleData getButtonStyle(
 
   // Logique pour déterminer les couleurs en fonction du type, de l'état de désactivation et de l'état de chargement
   // ...
+  if (type == ButtonType.filled) {
+    textColor = neutral100;
+    backgroundColor = secondary40;
+    borderColor = Colors.transparent;
+    if (isDisabled || isLoading) {
+      textColor = neutral60;
+      backgroundColor = neutral80;
+    }
+  } else if (type == ButtonType.outlined) {
+    textColor = secondary40;
+    backgroundColor = Colors.transparent;
+    borderColor = secondary40;
+    if (isDisabled || isLoading) {
+      textColor = neutral60;
+      borderColor = neutral80;
+    }
+  } else if (type == ButtonType.text) {
+    textColor = secondary40;
+    backgroundColor = Colors.transparent;
+    borderColor = Colors.transparent;
+    if (isDisabled || isLoading) {
+      textColor = neutral60;
+    }
+  }
 
   return ButtonStyleData(
     textColor: textColor,
