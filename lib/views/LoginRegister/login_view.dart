@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
-import 'package:swafe/firebase_auth_implementation/firebase_auth_services.dart';
+import 'package:swafe/firebase/firebase_auth_services.dart';
 import 'package:swafe/views/LoginRegister/register.dart';
 import 'package:swafe/views/MainView/home.dart';
 
