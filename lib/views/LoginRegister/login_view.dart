@@ -117,13 +117,10 @@ class _LoginViewState extends State<LoginView> {
             CustomButton(
               label: "Mot de passe oublié ?",
               type: ButtonType.text,
-              fillColor: null, // Set to the desired fill color
-              strokeColor: null, // Set to the desired stroke color
               textColor: MyColors.secondary40, // Set to the desired text color
               onPressed: () {},
               isLoading: false,
               isDisabled: false,
-              icon: null,
             ),
             SizedBox(
                 height: Spacing
@@ -135,7 +132,6 @@ class _LoginViewState extends State<LoginView> {
                   type: ButtonType.filled,
                   fillColor:
                       MyColors.secondary40, // Set to the desired fill color
-                  strokeColor: null, // Set to the desired stroke color
                   textColor:
                       MyColors.defaultWhite, // Set to the desired text color
                   onPressed: isEmailValid
@@ -162,15 +158,12 @@ class _LoginViewState extends State<LoginView> {
                       : null,
                   isLoading: false,
                   isDisabled: false,
-                  icon: null,
                 ),
                 SizedBox(height: Spacing.small),
 
                 CustomButton(
                   label: "Pas encore membre ? Rejoignez-nous !",
                   type: ButtonType.text,
-                  fillColor: null, // Set to the desired fill color
-                  strokeColor: null, // Set to the desired stroke color
                   textColor:
                       MyColors.primary10, // Set to the desired text color
                   onPressed: () {
@@ -183,7 +176,6 @@ class _LoginViewState extends State<LoginView> {
                   },
                   isLoading: false,
                   isDisabled: false,
-                  icon: null,
                 ),
 
                 SizedBox(

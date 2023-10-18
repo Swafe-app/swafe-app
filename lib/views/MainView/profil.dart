@@ -113,13 +113,11 @@ class ProfilContent extends StatelessWidget {
                 type: ButtonType.filled,
                 fillColor:
                     MyColors.secondary40, // Set to the desired fill color
-                strokeColor: null, // Set to the desired stroke color
                 textColor:
                     MyColors.defaultWhite, // Set to the desired text color
                 onPressed: () => _signOut(context),
                 isLoading: false,
                 isDisabled: false,
-                icon: null,
               ),
             ),
             // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"

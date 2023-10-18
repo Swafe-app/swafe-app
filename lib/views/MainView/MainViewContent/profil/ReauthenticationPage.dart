@@ -39,7 +39,6 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
               label: "Valider",
               type: ButtonType.filled,
               fillColor: MyColors.secondary40, // Set to the desired fill color
-              strokeColor: null, // Set to the desired stroke color
               textColor: MyColors.defaultWhite, // Set to the desired text color
               onPressed: () async {
                 final password = _passwordController.text.trim();
@@ -63,7 +62,6 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
               },
               isLoading: false,
               isDisabled: false,
-              icon: null,
             ),
             if (_error.isNotEmpty)
               Padding(

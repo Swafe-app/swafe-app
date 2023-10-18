@@ -74,8 +74,6 @@ class WelcomeView extends StatelessWidget {
                 CustomButton(
                   label: "Tu as déjà un compte ? Se connecter",
                   type: ButtonType.text,
-                  fillColor: null, // Set to the desired fill color
-                  strokeColor: null, // Set to the desired stroke color
                   textColor:
                       MyColors.defaultWhite, // Set to the desired text color
                   onPressed: () {
@@ -83,7 +81,6 @@ class WelcomeView extends StatelessWidget {
                   },
                   isLoading: false,
                   isDisabled: false,
-                  icon: null,
                 ),
                 SizedBox(
                     height: Spacing
@@ -93,7 +90,6 @@ class WelcomeView extends StatelessWidget {
                   type: ButtonType.filled,
                   fillColor:
                       MyColors.defaultWhite, // Set to the desired fill color
-                  strokeColor: null, // Set to the desired stroke color
                   textColor:
                       MyColors.primary10, // Set to the desired text color
                   onPressed: () {
@@ -101,7 +97,6 @@ class WelcomeView extends StatelessWidget {
                   },
                   isLoading: false,
                   isDisabled: false,
-                  icon: null, // Set to the desired icon
                 ),
               ],
             ),

@@ -189,7 +189,6 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                       type: ButtonType.filled,
                       fillColor:
                           MyColors.secondary40, // Set to the desired fill color
-                      strokeColor: null, // Set to the desired stroke color
                       textColor: MyColors
                           .defaultWhite, // Set to the desired text color
                       onPressed: () {
@@ -200,7 +199,6 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                       },
                       isLoading: false,
                       isDisabled: false,
-                      icon: null,
                     ),
                   ),
                 ],
