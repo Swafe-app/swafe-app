@@ -60,24 +60,26 @@ class WelcomeView extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: Spacing.doubleExtraLarge),
+                horizontal: Spacing.tripleExtraLarge),
             // Utilisation de la constante Spacing.standard pour l'espacement horizontal.
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  margin: const EdgeInsets.only(top: Spacing.xxHuge),
-                  // Utilisation de la constante Spacing.large pour la marge supérieure.
-                  child: Text(
-                    "Il n’a jamais été aussi simple d’aller d'un point A à un point B en toute sécurité",
-                    style: typographyList
-                        .firstWhere(
-                            (info) => info.name == 'Title XLarge Medium')
-                        .style
-                        .copyWith(
-                          color: MyColors.defaultWhite,
-                        ),
-                    textAlign: TextAlign.left,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 295),
+                  child: Container(
+                    margin: const EdgeInsets.only(top: Spacing.xxHuge),
+                    // Utilisation de la constante Spacing.large pour la marge supérieure.
+                    child: Text(
+                      "Il n’a jamais été aussi simple d’aller d'un point A à un point B en toute sécurité",
+                      style: typographyList
+                          .firstWhere(
+                              (info) => info.name == 'Title XLarge Medium')
+                          .style
+                          .copyWith(
+                            color: MyColors.defaultWhite,
+                          ),
+                      textAlign: TextAlign.left,
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -90,35 +92,25 @@ class WelcomeView extends StatelessWidget {
                     child: Column(
                       children: [
                         CustomButton(
-                            label: "Tu as déjà un compte ? Se connecter",
-                            type: ButtonType.text,
-                            fillColor: null,
-                            // Set to the desired fill color
-                            strokeColor: null,
-                            // Set to the desired stroke color
-                            textColor: MyColors.defaultWhite,
-                            // Set to the desired text color
-                            onPressed: () {
-                              _showLoginBottomSheet(
-                                  context); // Afficher la feuille de bas de connexion.
-                            },
-                            isLoading: false,
-                            isDisabled: false),
+                          label: "Tu as déjà un compte ? Se connecter",
+                          type: ButtonType.text,
+                          textColor: MyColors.defaultWhite,
+                          mainAxisSize: MainAxisSize.max,
+                          onPressed: () {
+                            _showLoginBottomSheet(
+                                context); // Afficher la feuille de bas de connexion.
+                          },
+                        ),
+                        const SizedBox(height: Spacing.small),
                         CustomButton(
                           label: "S'inscrire",
                           fillColor: MyColors.defaultWhite,
-                          // Set to the desired fill color
-                          strokeColor: null,
-                          // Set to the desired stroke color
                           textColor: MyColors.primary10,
-                          // Set to the desired text color
+                          mainAxisSize: MainAxisSize.max,
                           onPressed: () {
                             _showRegisterPage(
                                 context); // Naviguer vers la page d'inscription.
                           },
-                          isLoading: false,
-                          isDisabled: false,
-                          icon: null, // Set to the desired icon
                         )
                       ],
                     )),

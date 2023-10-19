@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
@@ -14,13 +14,15 @@ class ModifierMotDePasseView extends StatefulWidget {
   const ModifierMotDePasseView({super.key});
 
   @override
-  _ModifierMotDePasseViewState createState() => _ModifierMotDePasseViewState();
+  ModifierMotDePasseViewState createState() => ModifierMotDePasseViewState();
 }
 
-class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
-  final TextEditingController _currentPasswordController = TextEditingController();
+class ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmNewPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController =
+      TextEditingController();
 
   String currentPasswordErrorMessage = '';
   String newPasswordErrorMessage = '';
@@ -188,21 +190,14 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                     width: double.infinity,
                     child: CustomButton(
                       label: "Modifier le mot de passe",
-                      type: ButtonType.filled,
-                      fillColor:
-                          MyColors.secondary40, // Set to the desired fill color
-                      strokeColor: null, // Set to the desired stroke color
-                      textColor: MyColors
-                          .defaultWhite, // Set to the desired text color
+                      fillColor: MyColors.secondary40,
+                      textColor: MyColors.defaultWhite,
                       onPressed: () {
                         // Logique pour modifier le mot de passe
                         if (isButtonEnabled()) {
                           updatePassword();
                         }
                       },
-                      isLoading: false,
-                      isDisabled: false,
-                      icon: null,
                     ),
                   ),
                 ],

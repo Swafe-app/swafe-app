@@ -115,16 +115,10 @@ class LoginViewState extends State<LoginView> {
                 ),
               ),
             const SizedBox(height: Spacing.none),
-            CustomButton(
+            const CustomButton(
               label: "Mot de passe oublié ?",
               type: ButtonType.text,
-              fillColor: null, // Set to the desired fill color
-              strokeColor: null, // Set to the desired stroke color
-              textColor: MyColors.secondary40, // Set to the desired text color
-              onPressed: () {},
-              isLoading: false,
-              isDisabled: false,
-              icon: null,
+              textColor: MyColors.secondary40,
             ),
             const SizedBox(height: Spacing.standard),
             // Utilisation de Spacing.standard pour l'espacement vertical
@@ -132,12 +126,8 @@ class LoginViewState extends State<LoginView> {
               children: [
                 CustomButton(
                   label: "Continuer",
-                  type: ButtonType.filled,
-                  fillColor:
-                      MyColors.secondary40, // Set to the desired fill color
-                  strokeColor: null, // Set to the desired stroke color
-                  textColor:
-                      MyColors.defaultWhite, // Set to the desired text color
+                  fillColor: MyColors.secondary40,
+                  textColor: MyColors.defaultWhite,
                   onPressed: isEmailValid
                       ? () async {
                           User? user =
@@ -160,18 +150,17 @@ class LoginViewState extends State<LoginView> {
                           }
                         }
                       : null,
-                  isLoading: false,
-                  isDisabled: false,
-                  icon: null,
                 ),
                 const SizedBox(height: Spacing.small),
                 CustomButton(
                   label: "Pas encore membre ? Rejoignez-nous !",
                   type: ButtonType.text,
-                  fillColor: null, // Set to the desired fill color
-                  strokeColor: null, // Set to the desired stroke color
-                  textColor:
-                      MyColors.primary10, // Set to the desired text color
+                  fillColor: null,
+                  // Set to the desired fill color
+                  strokeColor: null,
+                  // Set to the desired stroke color
+                  textColor: MyColors.primary10,
+                  // Set to the desired text color
                   onPressed: () {
                     Navigator.push(
                       context,

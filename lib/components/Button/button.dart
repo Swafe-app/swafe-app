@@ -63,6 +63,7 @@ class CustomButton extends StatefulWidget {
   final Color? fillColor;
   final Color? strokeColor;
   final Color? textColor;
+  final MainAxisSize mainAxisSize;
 
   const CustomButton({
     Key? key,
@@ -75,6 +76,7 @@ class CustomButton extends StatefulWidget {
     this.fillColor,
     this.strokeColor,
     this.textColor,
+    this.mainAxisSize = MainAxisSize.max,
   }) : super(key: key);
 
   @override
@@ -117,7 +119,8 @@ class CustomButtonState extends State<CustomButton> {
               ),
             )
           : Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: widget.mainAxisSize,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (widget.icon != null)
                   Icon(widget.icon, color: textColor, size: 16),

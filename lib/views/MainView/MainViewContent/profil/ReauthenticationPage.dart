@@ -1,10 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/coordonnees.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
+import 'package:swafe/views/MainView/MainViewContent/profil/coordonnees.dart';
 
 class ReauthenticationPage extends StatefulWidget {
   const ReauthenticationPage({super.key});
@@ -40,9 +40,7 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
             const SizedBox(height: 16.0),
             CustomButton(
               label: "Valider",
-              type: ButtonType.filled,
-              fillColor: MyColors.secondary40, // Set to the desired fill color
-              strokeColor: null, // Set to the desired stroke color
+              fillColor: MyColors.secondary40,
               textColor: MyColors.defaultWhite, // Set to the desired text color
               onPressed: () async {
                 final password = _passwordController.text.trim();
@@ -64,8 +62,6 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
                   });
                 }
               },
-              isLoading: false,
-              isDisabled: false
             ),
             if (_error.isNotEmpty)
               Padding(

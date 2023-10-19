@@ -101,14 +101,9 @@ class _ModifierInformationPersonnelleState
             const SizedBox(height: Spacing.medium),
             CustomButton(
               label: "Envoyer",
-              type: ButtonType.filled,
-              fillColor: MyColors.secondary40, // Set to the desired fill color
-              strokeColor: null, // Set to the desired stroke color
-              textColor: MyColors.defaultWhite, // Set to the desired text color
+              fillColor: MyColors.secondary40,
+              textColor: MyColors.defaultWhite,
               onPressed: _updateUserData,
-              isLoading: false,
-              isDisabled: false,
-              icon: null,
             ),
           ],
         ),

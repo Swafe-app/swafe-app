@@ -235,16 +235,11 @@ class RegisterViewState extends State<RegisterView> {
                     width: double.infinity,
                     child: CustomButton(
                       label: "Continuer",
-                      type: ButtonType.filled,
                       fillColor: MyColors
-                          .secondary40, // Set to the desired fill color
-                      strokeColor: null, // Set to the desired stroke color
+                          .secondary40,
                       textColor: MyColors
-                          .defaultWhite, // Set to the desired text color
+                          .defaultWhite,
                       onPressed: signUp,
-                      isLoading: false,
-                      isDisabled: false,
-                      icon: null,
                     ),
                   ),
                 ],
