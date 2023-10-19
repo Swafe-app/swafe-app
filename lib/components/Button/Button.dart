@@ -1,5 +1,5 @@
-import 'package:swafe/DS/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart';
 
 enum ButtonType { filled, outlined, text }
 
@@ -26,8 +26,7 @@ ButtonStyleData getButtonStyle(
   Color backgroundColor = Colors.transparent;
   Color borderColor = Colors.transparent;
 
-  // Logique pour déterminer les couleurs en fonction du type, de l'état de désactivation et de l'état de chargement
-  // ...
+  // Logique pour déterminer les couleurs en fonction du type, de l'état 'isDisabled' et de l'état 'isLoading'
   if (type == ButtonType.filled) {
     textColor = neutral100;
     backgroundColor = secondary40;
