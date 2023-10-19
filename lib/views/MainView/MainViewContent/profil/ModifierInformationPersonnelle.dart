@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:swafe/DS/colors.dart';
+import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
 
 class ModifierInformationPersonnelle extends StatefulWidget {
@@ -95,9 +98,12 @@ class _ModifierInformationPersonnelleState
               // Set the initial value from Firestore
               controller: TextEditingController(text: _lastName),
             ),
-            ElevatedButton(
+            const SizedBox(height: Spacing.medium),
+            CustomButton(
+              label: "Envoyer",
+              fillColor: MyColors.secondary40,
+              textColor: MyColors.defaultWhite,
               onPressed: _updateUserData,
-              child: const Text('Envoyer'),
             ),
           ],
         ),

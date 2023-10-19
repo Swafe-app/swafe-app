@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/firebase/firebase_auth_services.dart';
 import 'package:swafe/views/LoginRegister/register.dart';
 import 'package:swafe/views/MainView/home.dart';
@@ -114,26 +115,19 @@ class LoginViewState extends State<LoginView> {
                 ),
               ),
             const SizedBox(height: Spacing.none),
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                alignment: Alignment.centerLeft,
-              ),
-              child: const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Mot de passe oublié ?",
-                  style: TextStyle(
-                    color: MyColors.secondary40,
-                  ),
-                ),
-              ),
+            const CustomButton(
+              label: "Mot de passe oublié ?",
+              type: ButtonType.text,
+              textColor: MyColors.secondary40,
             ),
             const SizedBox(height: Spacing.standard),
             // Utilisation de Spacing.standard pour l'espacement vertical
             Column(
               children: [
-                ElevatedButton(
+                CustomButton(
+                  label: "Continuer",
+                  fillColor: MyColors.secondary40,
+                  textColor: MyColors.defaultWhite,
                   onPressed: isEmailValid
                       ? () async {
                           User? user =
@@ -156,29 +150,17 @@ class LoginViewState extends State<LoginView> {
                           }
                         }
                       : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    elevation: 0,
-                    backgroundColor: isEmailValid
-                        ? MyColors.secondary40
-                        : MyColors.neutral70,
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Spacing
-                          .medium, // Utilisation de Spacing.medium pour le rembourrage vertical
-                    ),
-                    child: const Center(
-                      child: Text('Continuer'),
-                    ),
-                  ),
                 ),
                 const SizedBox(height: Spacing.small),
-                ElevatedButton(
+                CustomButton(
+                  label: "Pas encore membre ? Rejoignez-nous !",
+                  type: ButtonType.text,
+                  fillColor: null,
+                  // Set to the desired fill color
+                  strokeColor: null,
+                  // Set to the desired stroke color
+                  textColor: MyColors.primary10,
+                  // Set to the desired text color
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -187,35 +169,9 @@ class LoginViewState extends State<LoginView> {
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    elevation: 0,
-                    backgroundColor: Colors.transparent,
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Spacing.medium,
-                    ),
-                    child: Center(
-                      child: RichText(
-                        text: const TextSpan(children: [
-                          TextSpan(
-                              text: "Pas encore membre ? ",
-                              style: TextStyle(color: Colors.black)),
-                          TextSpan(
-                            text: "Rejoignez-nous !",
-                            style: TextStyle(
-                              color: MyColors.secondary40,
-                            ),
-                          ),
-                        ]),
-                      ),
-                    ),
-                  ),
+                  isLoading: false,
+                  isDisabled: false,
+                  icon: null,
                 ),
                 const SizedBox(height: Spacing.huge),
                 // Utilisation de Spacing.huge pour l'espacement vertical

@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/DS/typographies.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart';
 import 'package:swafe/firebase/firebase_auth_services.dart';
 import 'package:swafe/views/MainView/home.dart';
@@ -231,21 +233,13 @@ class RegisterViewState extends State<RegisterView> {
                   const SizedBox(height: Spacing.standard),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: CustomButton(
+                      label: "Continuer",
+                      fillColor: MyColors
+                          .secondary40,
+                      textColor: MyColors
+                          .defaultWhite,
                       onPressed: signUp,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: isButtonEnabled()
-                            ? const Color(0xFF714DD8)
-                            : Colors.grey,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: Spacing.standard),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(Spacing.standard),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text('Continuer'),
                     ),
                   ),
                 ],

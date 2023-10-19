@@ -1,13 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swafe/DS/colors.dart';
+import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/ds/spacing.dart';
+import 'package:swafe/ds/typographies.dart';
+import 'package:swafe/views/LoginRegister/welcome_view.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierInformationPersonnelle.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierMotdepasse.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ReauthenticationPage.dart';
-import 'package:swafe/views/LoginRegister/welcome_view.dart';
-import 'package:swafe/ds/spacing.dart';
-import 'package:swafe/ds/typographies.dart';
 
 class ProfilContent extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -106,25 +107,22 @@ class ProfilContent extends StatelessWidget {
               FontWeight.normal, // Définir le poids de police à normal
             ),
             // Ajoutez une marge inférieure entre le bouton "Supprimer le compte" et le bouton "Se déconnecter"
-            const SizedBox(
-                height:
-                    Spacing.extraLarge), // Utilisation de l'espacement "small"
+            const SizedBox(height: Spacing.extraLarge),
+            // Utilisation de l'espacement "small"
             // Bouton "Se déconnecter"
             SizedBox(
               height: 48, // Hauteur personnalisée
-              child: ElevatedButton(
+              child: CustomButton(
+                label: "Se déconnecter",
+                fillColor: MyColors.secondary40,
+                textColor:
+                    MyColors.defaultWhite, // Set to the desired text color
                 onPressed: () => _signOut(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: MyColors.secondary40, // Couleur 714DD8
-                  elevation: 0, // Supprimer l'ombre
-                ),
-                child: const Text('Se déconnecter'),
               ),
             ),
             // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"
-            const SizedBox(
-                height:
-                    Spacing.extraLarge), // Utilisation de l'espacement "medium"
+            const SizedBox(height: Spacing.extraLarge),
+            // Utilisation de l'espacement "medium"
             // Bouton "Supprimer le compte"
           ],
         ),

@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
 
 void main() {
@@ -12,13 +14,15 @@ class ModifierMotDePasseView extends StatefulWidget {
   const ModifierMotDePasseView({super.key});
 
   @override
-  _ModifierMotDePasseViewState createState() => _ModifierMotDePasseViewState();
+  ModifierMotDePasseViewState createState() => ModifierMotDePasseViewState();
 }
 
-class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
-  final TextEditingController _currentPasswordController = TextEditingController();
+class ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmNewPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController =
+      TextEditingController();
 
   String currentPasswordErrorMessage = '';
   String newPasswordErrorMessage = '';
@@ -184,24 +188,16 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: CustomButton(
+                      label: "Modifier le mot de passe",
+                      fillColor: MyColors.secondary40,
+                      textColor: MyColors.defaultWhite,
                       onPressed: () {
                         // Logique pour modifier le mot de passe
                         if (isButtonEnabled()) {
                           updatePassword();
                         }
                       },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: isButtonEnabled()
-                            ? const Color(0xFF714DD8)
-                            : Colors.grey,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text('Modifier le mot de passe'),
                     ),
                   ),
                 ],
