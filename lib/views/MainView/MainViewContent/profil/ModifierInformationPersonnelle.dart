@@ -7,6 +7,8 @@ import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
 
 class ModifierInformationPersonnelle extends StatefulWidget {
+  const ModifierInformationPersonnelle({super.key});
+
   @override
   _ModifierInformationPersonnelleState createState() =>
       _ModifierInformationPersonnelleState();
@@ -50,13 +52,13 @@ class _ModifierInformationPersonnelleState
           'lastName': _lastName,
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Vos informations ont été mises à jour.'),
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Erreur lors de la mise à jour des informations.'),
           ),
         );
@@ -67,7 +69,7 @@ class _ModifierInformationPersonnelleState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         // Utilisez CustomAppBar ici
         title: 'Modifier vos informations',
       ),
@@ -77,7 +79,7 @@ class _ModifierInformationPersonnelleState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
-              decoration: InputDecoration(labelText: 'Nom'),
+              decoration: const InputDecoration(labelText: 'Nom'),
               onChanged: (value) {
                 setState(() {
                   _name = value;
@@ -87,7 +89,7 @@ class _ModifierInformationPersonnelleState
               controller: TextEditingController(text: _name),
             ),
             TextField(
-              decoration: InputDecoration(labelText: 'Prénom'),
+              decoration: const InputDecoration(labelText: 'Prénom'),
               onChanged: (value) {
                 setState(() {
                   _lastName = value;
@@ -96,15 +98,12 @@ class _ModifierInformationPersonnelleState
               // Set the initial value from Firestore
               controller: TextEditingController(text: _lastName),
             ),
-            SizedBox(height: Spacing.medium),
+            const SizedBox(height: Spacing.medium),
             CustomButton(
               label: "Envoyer",
-              type: ButtonType.filled,
-              fillColor: MyColors.secondary40, // Set to the desired fill color
-              textColor: MyColors.defaultWhite, // Set to the desired text color
+              fillColor: MyColors.secondary40,
+              textColor: MyColors.defaultWhite,
               onPressed: _updateUserData,
-              isLoading: false,
-              isDisabled: false,
             ),
           ],
         ),

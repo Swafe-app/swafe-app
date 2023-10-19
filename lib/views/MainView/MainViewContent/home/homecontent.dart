@@ -1,118 +1,130 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:swafe/firebase/firebase_database_service.dart';
+import 'package:swafe/firebase/model/signalement.dart';
+import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
+
+void main() => runApp(MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter Map Example'),
+        ),
+        body: const HomeContent(),
+      ),
+    ));
 
 class HomeContent extends StatefulWidget {
+  const HomeContent({Key? key}) : super(key: key);
+
   @override
-  _HomeContentState createState() => _HomeContentState();
+  HomeContentState createState() => HomeContentState();
 }
 
-class _HomeContentState extends State<HomeContent> {
-  final databaseReference = FirebaseDatabase.instance.reference();
-  List<Map<String, dynamic>> firebaseData = [];
-  bool isFirebaseInitialized = false;
+class HomeContentState extends State<HomeContent> {
+  final dbService = FirebaseDatabaseService();
+  final MapController mapController = MapController();
+
+  Map<String, SignalementModel> signalementMap = {};
+  List<Marker> markersList = [];
 
   Marker userLocationMarker = Marker(
     width: 80.0,
     height: 80.0,
-    point: LatLng(0.0, 0.0),
-    builder: (ctx) => Container(
-      child: Icon(
-        Icons.location_on,
-        color: Colors.blue,
-        size: 50.0,
-      ),
+    point: const LatLng(0.0, 0.0),
+    builder: (ctx) => const Icon(
+      Icons.location_on,
+      color: Colors.blue,
+      size: 50.0,
     ),
   );
 
   @override
   void initState() {
     super.initState();
-    _initializeFirebase();
-  }
-
-  void _initializeFirebase() async {
-    try {
-      await Firebase.initializeApp();
-      setState(() {
-        isFirebaseInitialized = true;
-      });
-      _getDataFromFirebase();
-      _checkLocationPermission();
-    } catch (error) {
-      print("Erreur d'initialisation Firebase : $error");
-    }
+    _getDataFromFirebase();
+    _requestLocationPermission();
   }
 
   void _getDataFromFirebase() {
     try {
-      databaseReference.child('signalements').onValue.listen((event) {
+      dbService.databaseReference.child('signalements').onValue.listen((event) {
         if (event.snapshot.value != null) {
-          print("Données Firebase récupérées : ${event.snapshot.value}");
-          Map<dynamic, dynamic> data =
+          Map<dynamic, dynamic> rawData =
               event.snapshot.value as Map<dynamic, dynamic>;
+          Map<String, SignalementModel> data = {};
 
-          // Mise à jour de la liste firebaseData
-          firebaseData.clear();
-          data.forEach((key, value) {
-            if (value is Map<String, dynamic>) {
-              firebaseData.add(value);
-            }
+          rawData.forEach((key, value) {
+            data[key] = SignalementModel(
+              latitude: value['coordinates']['latitude'] as double,
+              longitude: value['coordinates']['longitude'] as double,
+              selectedDangerItems:
+                  List<String>.from(value['selectedDangerItems']),
+              userId: value['userId'] as String,
+            );
           });
 
-          // Appel à setState pour mettre à jour l'interface utilisateur
-          setState(() {});
+          // Mise à jour de la liste signalementMap
+          signalementMap = data;
+
+          // Appel à _buildMarkers pour mettre à jour l'interface utilisateur
+          _buildMarkers();
         } else {
-          print("Aucune donnée Firebase disponible.");
+          if (kDebugMode) {
+            print("Aucune donnée Firebase disponible.");
+          }
         }
       });
     } catch (error) {
-      print(
-          "Erreur lors de la récupération des données depuis Firebase : $error");
+      if (kDebugMode) {
+        print(
+            "Erreur lors de la récupération des données depuis Firebase : $error");
+      }
     }
   }
 
   void updateLocationMarker(Position position) {
+    if (userLocationMarker.point.latitude == position.latitude &&
+        userLocationMarker.point.longitude == position.longitude) return;
+
     setState(() {
       userLocationMarker = Marker(
         width: 80.0,
         height: 80.0,
         point: LatLng(position.latitude, position.longitude),
-        builder: (ctx) => Container(
-          child: Icon(
-            Icons.location_on,
-            color: Colors.blue,
-            size: 50.0,
-          ),
+        builder: (ctx) => const Icon(
+          Icons.location_on,
+          color: Colors.blue,
+          size: 50.0,
         ),
       );
     });
-  }
 
-  void _checkLocationPermission() async {
-    final LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.always ||
-        permission == LocationPermission.whileInUse) {
-      _getUserLocation();
-    } else if (permission == LocationPermission.denied) {
-      await _requestLocationPermission();
-    }
+    _calculateCenter();
   }
 
   Future<void> _requestLocationPermission() async {
-    final LocationPermission permission = await Geolocator.requestPermission();
+    // Check if user authorize location permission access
+    final LocationPermission checkPermission =
+        await Geolocator.checkPermission();
 
-    if (permission == LocationPermission.always ||
-        permission == LocationPermission.whileInUse) {
+    if (checkPermission == LocationPermission.always ||
+        checkPermission == LocationPermission.whileInUse) {
+      return _getUserLocation();
+    }
+
+    final LocationPermission requestPermission =
+        await Geolocator.requestPermission();
+
+    if (requestPermission == LocationPermission.always ||
+        requestPermission == LocationPermission.whileInUse) {
       _getUserLocation();
     } else {
-      print("L'utilisateur a refusé l'autorisation de localisation.");
+      if (kDebugMode) {
+        print("L'utilisateur a refusé l'autorisation de localisation.");
+      }
     }
   }
 
@@ -124,7 +136,9 @@ class _HomeContentState extends State<HomeContent> {
 
       updateLocationMarker(position);
     } catch (e) {
-      print("Erreur lors de l'obtention de la position : $e");
+      if (kDebugMode) {
+        print("Erreur lors de l'obtention de la position : $e");
+      }
     }
   }
 
@@ -132,23 +146,21 @@ class _HomeContentState extends State<HomeContent> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        isFirebaseInitialized
-            ? Text('Firebase est initialisé avec succès.')
-            : Text('Firebase n\'est pas encore initialisé.'),
         Expanded(
           child: FlutterMap(
+            mapController: mapController,
             options: MapOptions(
-              center: _calculateCenter(),
+              center: const LatLng(48.866667, 2.333333),
               zoom: 9.2,
             ),
             children: [
               TileLayer(
                 urlTemplate:
                     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: ['a', 'b', 'c'], // Ajoutez les sous-domaines
+                subdomains: const ['a', 'b', 'c'],
               ),
               MarkerLayer(
-                markers: _buildMarkers(),
+                markers: markersList,
               ),
             ],
           ),
@@ -157,7 +169,7 @@ class _HomeContentState extends State<HomeContent> {
           onPressed: () {
             _showBottomSheet(context);
           },
-          child: Text('Ouvrir le Bottom Sheet'),
+          child: const Text('Ouvrir le Bottom Sheet'),
         ),
       ],
     );
@@ -167,75 +179,57 @@ class _HomeContentState extends State<HomeContent> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return BottomSheetContent();
+        return const BottomSheetContent();
       },
     );
   }
 
-  List<Marker> _buildMarkers() {
-    List<Marker> markers = [];
+  void _buildMarkers() {
+    setState(() {
+      List<Marker> markers = [];
 
-    for (var data in firebaseData) {
-      double latitude = data['coordinates']['latitude'];
-      double longitude = data['coordinates']['longitude'];
-
-      markers.add(
-        Marker(
-          width: 80.0,
-          height: 80.0,
-          point: LatLng(latitude, longitude),
-          builder: (ctx) => Container(
-            child: Icon(
+      signalementMap.forEach((key, value) {
+        markers.add(
+          Marker(
+            width: 80.0,
+            height: 80.0,
+            point: LatLng(value.latitude, value.longitude),
+            builder: (ctx) => const Icon(
               Icons.pin_drop,
               color: Colors.red,
               size: 50.0,
             ),
           ),
-        ),
-      );
-    }
+        );
+      });
 
-    markers.add(userLocationMarker);
+      markers.add(userLocationMarker);
 
-    return markers;
+      markersList = markers;
+    });
   }
 
-  LatLng _calculateCenter() {
-    if (firebaseData.isNotEmpty) {
-      double sumLatitude = 0;
-      double sumLongitude = 0;
+  void _calculateCenter() {
+    setState(() {
+      if (userLocationMarker.point.latitude != 0.0 &&
+          userLocationMarker.point.longitude != 0.0) {
+        mapController.move(userLocationMarker.point, 13);
+      } else if (signalementMap.isNotEmpty) {
+        double sumLatitude = 0;
+        double sumLongitude = 0;
 
-      for (var data in firebaseData) {
-        double latitude = data['coordinates']['latitude'];
-        double longitude = data['coordinates']['longitude'];
+        signalementMap.forEach((key, value) {
+          sumLatitude += value.latitude;
+          sumLongitude += value.longitude;
+        });
 
-        sumLatitude += latitude;
-        sumLongitude += longitude;
+        double avgLatitude = sumLatitude / signalementMap.length;
+        double avgLongitude = sumLongitude / signalementMap.length;
+
+        mapController.move(LatLng(avgLatitude, avgLongitude), 13);
+      } else {
+        mapController.move(const LatLng(48.866667, 2.333333), 13);
       }
-
-      double avgLatitude = sumLatitude / firebaseData.length;
-      double avgLongitude = sumLongitude / firebaseData.length;
-
-      return LatLng(avgLatitude, avgLongitude);
-    } else {
-      return LatLng(51.509364, -0.128928);
-    }
+    });
   }
 }
-
-void launchUrl(Uri uri) async {
-  if (await canLaunch(uri.toString())) {
-    await launch(uri.toString());
-  } else {
-    print('Could not launch $uri');
-  }
-}
-
-void main() => runApp(MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Flutter Map Example'),
-        ),
-        body: HomeContent(),
-      ),
-    ));

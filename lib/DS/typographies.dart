@@ -20,6 +20,7 @@ List<TypographyInfo> typographyList = [
   TypographyInfo(
       'Title XLarge Medium',
       GoogleFonts.manrope(
+        decoration: TextDecoration.none,
         fontWeight: FontWeight.w500,
         fontSize: 24,
         letterSpacing: 0.0,
@@ -44,6 +45,8 @@ List<TypographyInfo> typographyList = [
   TypographyInfo(
       'Title Small Medium',
       GoogleFonts.manrope(
+        decoration: TextDecoration.none,
+        color: Colors.white,
         fontWeight: FontWeight.w500,
         fontSize: 16,
         letterSpacing: 0.0,

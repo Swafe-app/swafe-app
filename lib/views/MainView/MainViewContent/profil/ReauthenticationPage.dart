@@ -1,11 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/coordonnees.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
+import 'package:swafe/views/MainView/MainViewContent/profil/coordonnees.dart';
 
 class ReauthenticationPage extends StatefulWidget {
+  const ReauthenticationPage({super.key});
+
   @override
   _ReauthenticationPageState createState() => _ReauthenticationPageState();
 }
@@ -18,7 +21,7 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         // Utilisez CustomAppBar ici
         title: 'Réauthentification',
       ),
@@ -30,15 +33,14 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Mot de passe',
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             CustomButton(
               label: "Valider",
-              type: ButtonType.filled,
-              fillColor: MyColors.secondary40, // Set to the desired fill color
+              fillColor: MyColors.secondary40,
               textColor: MyColors.defaultWhite, // Set to the desired text color
               onPressed: () async {
                 final password = _passwordController.text.trim();
@@ -50,7 +52,7 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
                   // Réauthentification réussie, naviguer vers coordonnees.dart
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => ModifierCoordonnees(),
+                      builder: (context) => const ModifierCoordonnees(),
                     ),
                   );
                 } else {
@@ -60,15 +62,13 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
                   });
                 }
               },
-              isLoading: false,
-              isDisabled: false,
             ),
             if (_error.isNotEmpty)
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
                   _error,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.red,
                   ),
                 ),
@@ -98,7 +98,9 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
       }
     } catch (e) {
       // Gérez les erreurs ici, par exemple, si le mot de passe est incorrect
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
 
     return false; // Réauthentification échouée

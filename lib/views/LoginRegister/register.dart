@@ -1,32 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:email_validator/email_validator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/firebase_auth_implementation/firebase_auth_services.dart';
-import 'package:swafe/views/MainView/home.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart';
-
-void main() {
-  runApp(MaterialApp(
-    home: RegisterView(),
-  ));
-}
+import 'package:swafe/firebase/firebase_auth_services.dart';
+import 'package:swafe/views/MainView/home.dart';
 
 class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
+
   @override
-  _RegisterViewState createState() => _RegisterViewState();
+  RegisterViewState createState() => RegisterViewState();
 }
 
-class _RegisterViewState extends State<RegisterView> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+class RegisterViewState extends State<RegisterView> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
-  FirebaseAuthService _authService = FirebaseAuthService();
+  final FirebaseAuthService _authService = FirebaseAuthService();
 
   bool hasUppercase = false;
   bool hasNumber = false;
@@ -38,14 +35,14 @@ class _RegisterViewState extends State<RegisterView> {
   String confirmPasswordErrorMessage = '';
 
   bool arePasswordsMatching() {
-    return _passwordController.text == _confirmPasswordController.text;
+    return passwordController.text == confirmPasswordController.text;
   }
 
   bool isButtonEnabled() {
-    return _emailController.text.isNotEmpty &&
-        EmailValidator.validate(_emailController.text) &&
-        _passwordController.text.isNotEmpty &&
-        _confirmPasswordController.text.isNotEmpty &&
+    return emailController.text.isNotEmpty &&
+        EmailValidator.validate(emailController.text) &&
+        passwordController.text.isNotEmpty &&
+        confirmPasswordController.text.isNotEmpty &&
         hasUppercase &&
         hasNumber &&
         hasSpecialCharacter &&
@@ -55,15 +52,15 @@ class _RegisterViewState extends State<RegisterView> {
 
   void updateErrorMessages() {
     setState(() {
-      if (_emailController.text.isEmpty) {
+      if (emailController.text.isEmpty) {
         emailErrorMessage = '';
-      } else if (!EmailValidator.validate(_emailController.text)) {
+      } else if (!EmailValidator.validate(emailController.text)) {
         emailErrorMessage = 'Veuillez saisir une adresse e-mail valide';
       } else {
         emailErrorMessage = '';
       }
 
-      if (_passwordController.text.isEmpty) {
+      if (passwordController.text.isEmpty) {
         passwordErrorMessage = '';
       } else if (!hasUppercase ||
           !hasNumber ||
@@ -74,7 +71,7 @@ class _RegisterViewState extends State<RegisterView> {
         passwordErrorMessage = '';
       }
 
-      if (_confirmPasswordController.text.isEmpty) {
+      if (confirmPasswordController.text.isEmpty) {
         confirmPasswordErrorMessage = '';
       } else if (!arePasswordsMatching()) {
         confirmPasswordErrorMessage = 'Les mots de passe ne correspondent pas';
@@ -87,8 +84,8 @@ class _RegisterViewState extends State<RegisterView> {
   Future<void> signUp() async {
     if (isButtonEnabled()) {
       User? user = await _authService.signUpWithEmailAndPassword(
-        _emailController.text,
-        _passwordController.text,
+        emailController.text,
+        passwordController.text,
       );
 
       if (user != null) {
@@ -115,146 +112,141 @@ class _RegisterViewState extends State<RegisterView> {
     updateErrorMessages();
 
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Inscription',
       ),
       body: MyContainer(
-        child: Container(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: _emailController,
-                    onChanged: (value) {
-                      setState(() {});
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(Spacing.small),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: emailController,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
                       ),
+                      borderRadius: BorderRadius.circular(Spacing.small),
                     ),
                   ),
-                  SizedBox(height: Spacing.standard),
-                  TextField(
-                    controller: _passwordController,
-                    onChanged: (value) {
-                      setState(() {
-                        hasUppercase = value.contains(RegExp(r'[A-Z]'));
-                        hasNumber = value.contains(RegExp(r'[0-9]'));
-                        hasSpecialCharacter =
-                            value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-                        hasMinLength = value.length >= 8;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Mot de passe',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(Spacing.small),
+                ),
+                const SizedBox(height: Spacing.standard),
+                TextField(
+                  controller: passwordController,
+                  onChanged: (value) {
+                    setState(() {
+                      hasUppercase = value.contains(RegExp(r'[A-Z]'));
+                      hasNumber = value.contains(RegExp(r'[0-9]'));
+                      hasSpecialCharacter =
+                          value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+                      hasMinLength = value.length >= 8;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Mot de passe',
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
                       ),
+                      borderRadius: BorderRadius.circular(Spacing.small),
                     ),
-                    obscureText: true,
                   ),
-                  SizedBox(height: Spacing.standard),
-                  Text(
-                    "Doit contenir au moins :",
-                    style: typographyList
-                        .firstWhere(
-                            (element) => element.name == 'Body Large Regular')
-                        .style, // Utilisation du style typographique
-                  ),
-                  SizedBox(height: Spacing.extraSmall),
-                  ValidationText(hasUppercase, "1 majuscule"),
-                  ValidationText(hasNumber, "1 chiffre"),
-                  ValidationText(hasSpecialCharacter, "1 caractère spécial"),
-                  ValidationText(hasMinLength, "8 caractères"),
-                  SizedBox(height: Spacing.standard),
-                  TextField(
-                    controller: _confirmPasswordController,
-                    onChanged: (value) {
-                      setState(() {});
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Confirmation du mot de passe',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(Spacing.small),
+                  obscureText: true,
+                ),
+                const SizedBox(height: Spacing.standard),
+                Text(
+                  "Doit contenir au moins :",
+                  style: typographyList
+                      .firstWhere(
+                          (element) => element.name == 'Body Large Regular')
+                      .style, // Utilisation du style typographique
+                ),
+                const SizedBox(height: Spacing.extraSmall),
+                ValidationText(hasUppercase, "1 majuscule"),
+                ValidationText(hasNumber, "1 chiffre"),
+                ValidationText(hasSpecialCharacter, "1 caractère spécial"),
+                ValidationText(hasMinLength, "8 caractères"),
+                const SizedBox(height: Spacing.standard),
+                TextField(
+                  controller: confirmPasswordController,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Confirmation du mot de passe',
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
                       ),
+                      borderRadius: BorderRadius.circular(Spacing.small),
                     ),
-                    obscureText: true,
                   ),
-                  SizedBox(height: Spacing.standard),
-                  if (emailErrorMessage.isNotEmpty)
-                    Text(emailErrorMessage,
-                        style: typographyList
-                            .firstWhere((element) =>
-                                element.name == 'Subtitle small Regular')
-                            .style), // Utilisation du style typographique
-                  if (passwordErrorMessage.isNotEmpty)
-                    Text(passwordErrorMessage,
-                        style: typographyList
-                            .firstWhere((element) =>
-                                element.name == 'Subtitle small Regular')
-                            .style), // Utilisation du style typographique
-                  if (confirmPasswordErrorMessage.isNotEmpty)
-                    Text(
-                      confirmPasswordErrorMessage,
+                  obscureText: true,
+                ),
+                const SizedBox(height: Spacing.standard),
+                if (emailErrorMessage.isNotEmpty)
+                  Text(emailErrorMessage,
                       style: typographyList
                           .firstWhere((element) =>
                               element.name == 'Subtitle small Regular')
-                          .style, // Utilisation du style typographique
-                    ),
-                  SizedBox(height: Spacing.medium),
-                ],
-              ),
-              Spacer(),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  children: [
-                    Text(
-                      "En cliquant sur “continuer”, vous acceptez les conditions générales d’utilisation",
-                      textAlign: TextAlign.center,
+                          .style), // Utilisation du style typographique
+                if (passwordErrorMessage.isNotEmpty)
+                  Text(passwordErrorMessage,
                       style: typographyList
                           .firstWhere((element) =>
-                              element.name == 'Subtitle large Regular')
-                          .style, // Utilisation du style typographique
+                              element.name == 'Subtitle small Regular')
+                          .style), // Utilisation du style typographique
+                if (confirmPasswordErrorMessage.isNotEmpty)
+                  Text(
+                    confirmPasswordErrorMessage,
+                    style: typographyList
+                        .firstWhere((element) =>
+                            element.name == 'Subtitle small Regular')
+                        .style, // Utilisation du style typographique
+                  ),
+                const SizedBox(height: Spacing.medium),
+              ],
+            ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                children: [
+                  Text(
+                    "En cliquant sur “continuer”, vous acceptez les conditions générales d’utilisation",
+                    textAlign: TextAlign.center,
+                    style: typographyList
+                        .firstWhere((element) =>
+                            element.name == 'Subtitle large Regular')
+                        .style, // Utilisation du style typographique
+                  ),
+                  const SizedBox(height: Spacing.standard),
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomButton(
+                      label: "Continuer",
+                      fillColor: MyColors
+                          .secondary40,
+                      textColor: MyColors
+                          .defaultWhite,
+                      onPressed: signUp,
                     ),
-                    SizedBox(height: Spacing.standard),
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomButton(
-                        label: "Continuer",
-                        type: ButtonType.filled,
-                        fillColor: MyColors
-                            .secondary40, // Set to the desired fill color
-                        textColor: MyColors
-                            .defaultWhite, // Set to the desired text color
-                        onPressed: signUp,
-                        isLoading: false,
-                        isDisabled: false,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              SizedBox(height: Spacing.extraHuge),
-            ],
-          ),
+            ),
+            const SizedBox(height: Spacing.extraHuge),
+          ],
         ),
       ),
     );
@@ -265,7 +257,7 @@ class ValidationText extends StatelessWidget {
   final bool isValid;
   final String label;
 
-  ValidationText(this.isValid, this.label);
+  const ValidationText(this.isValid, this.label, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -274,17 +266,17 @@ class ValidationText extends StatelessWidget {
       child: Row(
         children: [
           isValid
-              ? Icon(
+              ? const Icon(
                   Icons.check_circle,
                   color: Colors.green,
                   size: Spacing.standard,
                 )
-              : Icon(
+              : const Icon(
                   Icons.cancel,
                   color: Colors.red,
                   size: Spacing.standard,
                 ),
-          SizedBox(width: Spacing.extraSmall),
+          const SizedBox(width: Spacing.extraSmall),
           Text(label,
               style: typographyList
                   .firstWhere(
@@ -299,14 +291,14 @@ class ValidationText extends StatelessWidget {
 class MyContainer extends StatelessWidget {
   final Widget child;
 
-  MyContainer({required this.child});
+  const MyContainer({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: Spacing.standard,
           left: Spacing.standard,
           right: Spacing.standard,

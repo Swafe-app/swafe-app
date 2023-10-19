@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart';
 
 class ModifierCoordonnees extends StatefulWidget {
+  const ModifierCoordonnees({super.key});
+
   @override
   _ModifierCoordonneesState createState() => _ModifierCoordonneesState();
 }
@@ -55,7 +57,7 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Vos informations ont été mises à jour.'),
           ),
         );
@@ -73,19 +75,19 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Modifier vos informations',
       ),
       body: Container(
         color: MyColors.defaultWhite, // Définir la couleur de fond en blanc
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Spacing.large),
+          padding: const EdgeInsets.symmetric(horizontal: Spacing.large),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TabBar(
                 controller: _tabController,
-                tabs: [
+                tabs: const [
                   Tab(text: 'Email'),
                   Tab(text: 'Téléphone'),
                 ],
@@ -103,7 +105,7 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextField(
-                          decoration: InputDecoration(labelText: 'Email'),
+                          decoration: const InputDecoration(labelText: 'Email'),
                           onChanged: (value) {
                             setState(() {
                               _email = value;
@@ -117,14 +119,9 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                         SizedBox(height: 16.0),
                         CustomButton(
                           label: "Envoyer",
-                          type: ButtonType.filled,
-                          fillColor: MyColors
-                              .secondary40, // Set to the desired fill color
-                          textColor: MyColors
-                              .defaultWhite, // Set to the desired text color
+                          fillColor: MyColors.secondary40,
+                          textColor: MyColors.defaultWhite,
                           onPressed: _updateUserData,
-                          isLoading: false,
-                          isDisabled: false,
                         ),
                       ],
                     ),
@@ -133,7 +130,8 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextField(
-                          decoration: InputDecoration(labelText: 'Téléphone'),
+                          decoration:
+                              const InputDecoration(labelText: 'Téléphone'),
                           onChanged: (value) {
                             setState(() {
                               _telephone = value;
@@ -141,17 +139,13 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                           },
                           controller: TextEditingController(text: _telephone),
                         ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
                         CustomButton(
                           label: "Envoyer",
-                          type: ButtonType.filled,
-                          fillColor: MyColors
-                              .secondary40, // Set to the desired fill color
+                          fillColor: MyColors.secondary40,
                           textColor: MyColors
                               .defaultWhite, // Set to the desired text color
                           onPressed: _updateUserData,
-                          isLoading: false,
-                          isDisabled: false,
                         ),
                       ],
                     ),

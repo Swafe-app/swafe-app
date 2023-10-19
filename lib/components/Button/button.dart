@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
+import 'package:flutter/material.dart';
 
 enum ButtonType { filled, outlined, text }
 
@@ -28,27 +28,27 @@ ButtonStyleData getButtonStyle(
 
   // Logique pour déterminer les couleurs en fonction du type, de l'état 'isDisabled' et de l'état 'isLoading'
   if (type == ButtonType.filled) {
-    textColor = neutral100;
-    backgroundColor = secondary40;
+    textColor = MyColors.neutral100;
+    backgroundColor = MyColors.secondary40;
     borderColor = Colors.transparent;
     if (isDisabled || isLoading) {
-      textColor = neutral60;
-      backgroundColor = neutral80;
+      textColor = MyColors.neutral60;
+      backgroundColor = MyColors.neutral80;
     }
   } else if (type == ButtonType.outlined) {
-    textColor = secondary40;
+    textColor = MyColors.secondary40;
     backgroundColor = Colors.transparent;
-    borderColor = secondary40;
+    borderColor = MyColors.secondary40;
     if (isDisabled || isLoading) {
-      textColor = neutral60;
-      borderColor = neutral80;
+      textColor = MyColors.neutral60;
+      borderColor = MyColors.neutral80;
     }
   } else if (type == ButtonType.text) {
-    textColor = secondary40;
+    textColor = MyColors.secondary40;
     backgroundColor = Colors.transparent;
     borderColor = Colors.transparent;
     if (isDisabled || isLoading) {
-      textColor = neutral60;
+      textColor = MyColors.neutral60;
     }
   }
 
@@ -69,6 +69,7 @@ class CustomButton extends StatefulWidget {
   final Color? fillColor;
   final Color? strokeColor;
   final Color? textColor;
+  final MainAxisSize mainAxisSize;
 
   const CustomButton({
     Key? key,
@@ -81,24 +82,25 @@ class CustomButton extends StatefulWidget {
     this.fillColor,
     this.strokeColor,
     this.textColor,
+    this.mainAxisSize = MainAxisSize.max,
   }) : super(key: key);
 
   @override
-  _CustomButtonState createState() => _CustomButtonState();
+  CustomButtonState createState() => CustomButtonState();
 }
 
-class _CustomButtonState extends State<CustomButton> {
+class CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     ButtonStyleData styleData =
         getButtonStyle(widget.type, widget.isDisabled, widget.isLoading);
 
     Color fillColor =
-        widget.fillColor ?? styleData.backgroundColor ?? MyColors.secondary40;
+        widget.fillColor ?? styleData.backgroundColor;
     Color strokeColor =
-        widget.strokeColor ?? styleData.borderColor ?? Colors.transparent;
+        widget.strokeColor ?? styleData.borderColor;
     Color textColor =
-        widget.textColor ?? styleData.textColor ?? MyColors.defaultWhite;
+        widget.textColor ?? styleData.textColor;
 
     return ElevatedButton(
       onPressed:
@@ -123,7 +125,8 @@ class _CustomButtonState extends State<CustomButton> {
               ),
             )
           : Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: widget.mainAxisSize,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (widget.icon != null)
                   Icon(widget.icon, color: textColor, size: 16),

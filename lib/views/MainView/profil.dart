@@ -1,27 +1,32 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/ds/spacing.dart';
+import 'package:swafe/ds/typographies.dart';
+import 'package:swafe/views/LoginRegister/welcome_view.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierInformationPersonnelle.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierMotdepasse.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ReauthenticationPage.dart';
-import 'package:swafe/views/LoginRegister/welcome_view.dart';
-import 'package:swafe/ds/spacing.dart';
-import 'package:swafe/ds/typographies.dart';
 
 class ProfilContent extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  ProfilContent({super.key});
 
   Future<void> _signOut(BuildContext context) async {
     try {
       await _auth.signOut();
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => WelcomeView()),
+        MaterialPageRoute(builder: (context) => const WelcomeView()),
         (Route<dynamic> route) => false,
       );
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
   }
 
@@ -43,7 +48,7 @@ class ProfilContent extends StatelessWidget {
       ),
       backgroundColor: MyColors.defaultWhite,
       body: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
             horizontal: 16), // Ajustement des marges gauche et droite
         child: ListView(
           children: [
@@ -65,9 +70,9 @@ class ProfilContent extends StatelessWidget {
               ],
               // Navigation vers la page de modification d'informations personnelles
               [
-                ModifierInformationPersonnelle(),
-                ReauthenticationPage(),
-                ModifierMotDePasseView(),
+                const ModifierInformationPersonnelle(),
+                const ReauthenticationPage(),
+                const ModifierMotDePasseView(),
                 null,
               ],
               FontWeight.normal, // Définir le poids de police à normal
@@ -102,28 +107,22 @@ class ProfilContent extends StatelessWidget {
               FontWeight.normal, // Définir le poids de police à normal
             ),
             // Ajoutez une marge inférieure entre le bouton "Supprimer le compte" et le bouton "Se déconnecter"
-            SizedBox(
-                height:
-                    Spacing.extraLarge), // Utilisation de l'espacement "small"
+            const SizedBox(height: Spacing.extraLarge),
+            // Utilisation de l'espacement "small"
             // Bouton "Se déconnecter"
             SizedBox(
               height: 48, // Hauteur personnalisée
               child: CustomButton(
                 label: "Se déconnecter",
-                type: ButtonType.filled,
-                fillColor:
-                    MyColors.secondary40, // Set to the desired fill color
+                fillColor: MyColors.secondary40,
                 textColor:
                     MyColors.defaultWhite, // Set to the desired text color
                 onPressed: () => _signOut(context),
-                isLoading: false,
-                isDisabled: false,
               ),
             ),
             // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"
-            SizedBox(
-                height:
-                    Spacing.extraLarge), // Utilisation de l'espacement "medium"
+            const SizedBox(height: Spacing.extraLarge),
+            // Utilisation de l'espacement "medium"
             // Bouton "Supprimer le compte"
           ],
         ),
@@ -157,7 +156,7 @@ class ProfilContent extends StatelessWidget {
         ),
         ...List.generate(items.length, (index) {
           return Container(
-            margin: EdgeInsets.symmetric(vertical: 6),
+            margin: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
               border: Border.all(
                 color: MyColors.neutral70,
@@ -165,7 +164,7 @@ class ProfilContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: ListTile(
-              contentPadding: EdgeInsets.only(left: 12, right: 12),
+              contentPadding: const EdgeInsets.only(left: 12, right: 12),
               leading: Icon(
                 icons[index],
                 color: MyColors.primary10,
@@ -179,7 +178,7 @@ class ProfilContent extends StatelessWidget {
                       color: MyColors.primary10,
                     ),
               ),
-              trailing: Icon(
+              trailing: const Icon(
                 Icons.keyboard_arrow_right,
                 color: MyColors.secondary40,
               ),
