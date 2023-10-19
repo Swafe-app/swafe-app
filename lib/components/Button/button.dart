@@ -1,11 +1,7 @@
+import 'package:swafe/DS/colors.dart';
 import 'package:flutter/material.dart';
 
 enum ButtonType { filled, outlined, text }
-
-const secondary40 = Color.fromRGBO(113, 77, 216, 1);
-const neutral100 = Color.fromRGBO(255, 255, 255, 1);
-const neutral80 = Color.fromRGBO(237, 237, 237, 1);
-const neutral60 = Color.fromRGBO(138, 147, 154, 1);
 
 class ButtonStyleData {
   final Color textColor;
@@ -26,27 +22,27 @@ ButtonStyleData getButtonStyle(
   Color borderColor = Colors.transparent;
 
   if (type == ButtonType.filled) {
-    textColor = neutral100;
-    backgroundColor = secondary40;
+    textColor = MyColors.neutral100;
+    backgroundColor = MyColors.secondary40;
     borderColor = Colors.transparent;
     if (isDisabled || isLoading) {
-      textColor = neutral60;
-      backgroundColor = neutral80;
+      textColor = MyColors.neutral60;
+      backgroundColor = MyColors.neutral80;
     }
   } else if (type == ButtonType.outlined) {
-    textColor = secondary40;
+    textColor = MyColors.secondary40;
     backgroundColor = Colors.transparent;
-    borderColor = secondary40;
+    borderColor = MyColors.secondary40;
     if (isDisabled || isLoading) {
-      textColor = neutral60;
-      borderColor = neutral80;
+      textColor = MyColors.neutral60;
+      borderColor = MyColors.neutral80;
     }
   } else if (type == ButtonType.text) {
-    textColor = secondary40;
+    textColor = MyColors.secondary40;
     backgroundColor = Colors.transparent;
     borderColor = Colors.transparent;
     if (isDisabled || isLoading) {
-      textColor = neutral60;
+      textColor = MyColors.neutral60;
     }
   }
 
@@ -64,6 +60,9 @@ class CustomButton extends StatefulWidget {
   final bool isLoading;
   final VoidCallback? onPressed;
   final IconData? icon;
+  final Color? fillColor;
+  final Color? strokeColor;
+  final Color? textColor;
 
   const CustomButton({
     Key? key,
@@ -73,6 +72,9 @@ class CustomButton extends StatefulWidget {
     this.isLoading = false,
     this.onPressed,
     this.icon,
+    this.fillColor,
+    this.strokeColor,
+    this.textColor,
   }) : super(key: key);
 
   @override
@@ -85,17 +87,24 @@ class CustomButtonState extends State<CustomButton> {
     ButtonStyleData styleData =
         getButtonStyle(widget.type, widget.isDisabled, widget.isLoading);
 
+    Color fillColor =
+        widget.fillColor ?? styleData.backgroundColor;
+    Color strokeColor =
+        widget.strokeColor ?? styleData.borderColor;
+    Color textColor =
+        widget.textColor ?? styleData.textColor;
+
     return ElevatedButton(
       onPressed:
           widget.isDisabled || widget.isLoading ? null : widget.onPressed,
       style: ButtonStyle(
         shadowColor: MaterialStateProperty.all(Colors.transparent),
-        backgroundColor: MaterialStateProperty.all(styleData.backgroundColor),
+        backgroundColor: MaterialStateProperty.all(fillColor),
         padding: MaterialStateProperty.all(EdgeInsets.symmetric(
             vertical: 14, horizontal: widget.icon == null ? 24 : 16)),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
-          side: BorderSide(color: styleData.borderColor, width: 2),
+          side: BorderSide(color: strokeColor, width: 2),
         )),
       ),
       child: widget.isLoading
@@ -104,15 +113,14 @@ class CustomButtonState extends State<CustomButton> {
               height: 16,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                    Color.fromRGBO(84, 55, 168, 1)),
+                valueColor: AlwaysStoppedAnimation<Color>(MyColors.secondary40),
               ),
             )
           : Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (widget.icon != null)
-                  Icon(widget.icon, color: styleData.textColor, size: 16),
+                  Icon(widget.icon, color: textColor, size: 16),
                 if (widget.icon != null) const SizedBox(width: 8),
                 Text(
                   widget.label,
@@ -123,7 +131,7 @@ class CustomButtonState extends State<CustomButton> {
                     fontWeight: FontWeight.w500,
                     height: 20 / 14,
                     letterSpacing: 0.056,
-                    color: styleData.textColor,
+                    color: textColor,
                   ),
                 ),
               ],

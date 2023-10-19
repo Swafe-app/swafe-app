@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swafe/DS/colors.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierInformationPersonnelle.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierMotdepasse.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ReauthenticationPage.dart';
@@ -112,13 +113,18 @@ class ProfilContent extends StatelessWidget {
             // Bouton "Se déconnecter"
             SizedBox(
               height: 48, // Hauteur personnalisée
-              child: ElevatedButton(
+              child: CustomButton(
+                label: "Se déconnecter",
+                type: ButtonType.filled,
+                fillColor:
+                    MyColors.secondary40, // Set to the desired fill color
+                strokeColor: null, // Set to the desired stroke color
+                textColor:
+                    MyColors.defaultWhite, // Set to the desired text color
                 onPressed: () => _signOut(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: MyColors.secondary40, // Couleur 714DD8
-                  elevation: 0, // Supprimer l'ombre
-                ),
-                child: const Text('Se déconnecter'),
+                isLoading: false,
+                isDisabled: false,
+                icon: null,
               ),
             ),
             // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"

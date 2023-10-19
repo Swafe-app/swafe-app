@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart';
 
 class ModifierCoordonnees extends StatefulWidget {
@@ -115,9 +116,18 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                                   ? _email
                                   : _currentUser?.email),
                         ),
-                        ElevatedButton(
+                        SizedBox(height: 16.0),
+                        CustomButton(
+                          label: "Envoyer",
+                          type: ButtonType.filled,
+                          fillColor: MyColors
+                              .secondary40, // Set to the desired fill color
+                          strokeColor: null, // Set to the desired stroke color
+                          textColor: MyColors
+                              .defaultWhite, // Set to the desired text color
                           onPressed: _updateUserData,
-                          child: const Text('Envoyer'),
+                          isLoading: false,
+                          isDisabled: false
                         ),
                       ],
                     ),
@@ -134,9 +144,18 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                           },
                           controller: TextEditingController(text: _telephone),
                         ),
-                        ElevatedButton(
+                        SizedBox(height: 16.0),
+                        CustomButton(
+                          label: "Envoyer",
+                          type: ButtonType.filled,
+                          fillColor: MyColors
+                              .secondary40, // Set to the desired fill color
+                          strokeColor: null, // Set to the desired stroke color
+                          textColor: MyColors
+                              .defaultWhite, // Set to the desired text color
                           onPressed: _updateUserData,
-                          child: const Text('Envoyer'),
+                          isLoading: false,
+                          isDisabled: false
                         ),
                       ],
                     ),

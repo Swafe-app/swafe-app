@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:swafe/DS/colors.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
 
 void main() {
@@ -184,24 +186,23 @@ class _ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: CustomButton(
+                      label: "Modifier le mot de passe",
+                      type: ButtonType.filled,
+                      fillColor:
+                          MyColors.secondary40, // Set to the desired fill color
+                      strokeColor: null, // Set to the desired stroke color
+                      textColor: MyColors
+                          .defaultWhite, // Set to the desired text color
                       onPressed: () {
                         // Logique pour modifier le mot de passe
                         if (isButtonEnabled()) {
                           updatePassword();
                         }
                       },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: isButtonEnabled()
-                            ? const Color(0xFF714DD8)
-                            : Colors.grey,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text('Modifier le mot de passe'),
+                      isLoading: false,
+                      isDisabled: false,
+                      icon: null,
                     ),
                   ),
                 ],
