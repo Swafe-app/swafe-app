@@ -3,11 +3,6 @@ import 'package:flutter/material.dart';
 
 enum ButtonType { filled, outlined, text }
 
-const secondary40 = Color.fromRGBO(113, 77, 216, 1);
-const neutral100 = Color.fromRGBO(255, 255, 255, 1);
-const neutral80 = Color.fromRGBO(237, 237, 237, 1);
-const neutral60 = Color.fromRGBO(138, 147, 154, 1);
-
 class ButtonStyleData {
   final Color textColor;
   final Color backgroundColor;
