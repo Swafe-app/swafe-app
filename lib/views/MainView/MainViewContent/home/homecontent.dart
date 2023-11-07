@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:swafe/DS/ReportingType.dart';
+import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
@@ -189,22 +193,13 @@ class HomeContentState extends State<HomeContent> {
       List<Marker> markers = [];
 
       signalementMap.forEach((key, value) {
+        log(value.selectedDangerItems.first);
         markers.add(
-          Marker(
-            width: 80.0,
-            height: 80.0,
-            point: LatLng(value.latitude, value.longitude),
-            builder: (ctx) => const Icon(
-              Icons.pin_drop,
-              color: Colors.red,
-              size: 50.0,
-            ),
-          ),
+          CustomMarker(reportingType: convertStringToReportingType(value.selectedDangerItems.first), point: LatLng(value.latitude, value.longitude))
         );
       });
 
       markers.add(userLocationMarker);
-
       markersList = markers;
     });
   }
@@ -217,15 +212,12 @@ class HomeContentState extends State<HomeContent> {
       } else if (signalementMap.isNotEmpty) {
         double sumLatitude = 0;
         double sumLongitude = 0;
-
         signalementMap.forEach((key, value) {
           sumLatitude += value.latitude;
           sumLongitude += value.longitude;
         });
-
         double avgLatitude = sumLatitude / signalementMap.length;
         double avgLongitude = sumLongitude / signalementMap.length;
-
         mapController.move(LatLng(avgLatitude, avgLongitude), 13);
       } else {
         mapController.move(const LatLng(48.866667, 2.333333), 13);
