@@ -4,9 +4,7 @@ import 'repertoire.dart';
 import 'profil.dart';
 
 class HomeView extends StatelessWidget {
-  final String welcomeMessage;
-
-  const HomeView({super.key, required this.welcomeMessage});
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -11,9 +11,7 @@ import 'package:swafe/views/MainView/home.dart';
 Future<void> main() async {
   // Initialisez Firebase
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -28,23 +26,23 @@ class MyApp extends StatelessWidget {
         systemNavigationBarIconBrightness: Brightness.dark));
 
     FirebaseAuth auth = FirebaseAuth.instance;
-    Widget initialPage;
+    String initialRoute;
 
     final currentUser = auth.currentUser;
     if (currentUser != null) {
-      initialPage =
-          HomeView(welcomeMessage: "Bienvenue ${currentUser.email} !");
+      initialRoute = '/home';
     } else {
-      initialPage = const WelcomeView();
+      initialRoute = '/welcome';
     }
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
-      home: initialPage,
+      initialRoute: initialRoute,
       routes: {
-        '/login': (context) => const LoginView(),
         '/register': (context) => const RegisterView(),
+        '/welcome': (context) => const WelcomeView(),
+        '/home': (context) => const HomeView(),
       },
     );
   }

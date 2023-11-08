@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
+import 'package:swafe/DS/typographies.dart';
 
 class CustomTextField extends StatefulWidget {
   final String placeholder;
@@ -36,6 +37,10 @@ class CustomTextFieldState extends State<CustomTextField> {
       obscureText: widget.obscureText,
       decoration: InputDecoration(
         labelText: widget.placeholder,
+        labelStyle: typographyList
+            .firstWhere((info) => info.name == 'Body Large Medium')
+            .style
+            .copyWith(color: MyColors.primary10),
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
           borderSide: BorderSide(
