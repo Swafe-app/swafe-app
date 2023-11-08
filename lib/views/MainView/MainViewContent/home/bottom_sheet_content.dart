@@ -2,18 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart' as latlong;
+import 'package:latlong2/latlong.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 
 class BottomSheetContent extends StatefulWidget {
-  const BottomSheetContent({super.key});
+  const BottomSheetContent({super.key, required this.position});
+
+  final LatLng position;
 
   @override
-  _BottomSheetContentState createState() => _BottomSheetContentState();
+  BottomSheetContentState createState() => BottomSheetContentState();
 }
 
-class _BottomSheetContentState extends State<BottomSheetContent>
+class BottomSheetContentState extends State<BottomSheetContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isSelectionMade = false;
@@ -21,16 +23,17 @@ class _BottomSheetContentState extends State<BottomSheetContent>
   final List<String> _selectedDangerItems = [];
   final List<String> _selectedAnomaliesItems = [];
 
-  double markerLatitude = 51.509364; // London latitude
-  double markerLongitude = -0.128928; // London longitude
+  double markerLatitude = 0; // London latitude
+  double markerLongitude = 0; // London longitude
 
-  final databaseReference = FirebaseDatabase.instance.reference();
+  final databaseReference = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
     super.initState();
+    markerLatitude = widget.position.latitude;
+    markerLongitude = widget.position.longitude;
     _tabController = TabController(length: 2, vsync: this);
-
     // Get the user's current location and set the marker coordinates
     getLocation();
   }
@@ -47,9 +50,9 @@ class _BottomSheetContentState extends State<BottomSheetContent>
       Marker(
         width: 80.0,
         height: 80.0,
-        point: latlong.LatLng(markerLatitude, markerLongitude),
+        point: LatLng(markerLatitude, markerLongitude),
         builder: (ctx) => const Icon(
-          Icons.pin_drop,
+          Icons.location_on,
           color: Colors.red,
           size: 50.0,
         ),
@@ -69,8 +72,34 @@ class _BottomSheetContentState extends State<BottomSheetContent>
             ),
           ),
           const Text(
-            'Votre signalement sera partagé avec toute la communauté. Les signalements sont anonymes.',
+            'Votre signalement sera partagé avec toute la communauté. Tout les signalements sont anonymes.',
             style: TextStyle(fontSize: 16.0),
+          ),
+          Expanded(
+            child: FlutterMap(
+              options: MapOptions(
+                center: LatLng(markerLatitude, markerLongitude),
+                zoom: 9.2,
+                onPositionChanged: (position, hasGesture) {
+                  if (position.center != null) {
+                    setState(() {
+                      markerLatitude = position.center!.latitude;
+                      markerLongitude = position.center!.longitude;
+                    });
+                  }
+                },
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate:
+                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  subdomains: const ['a', 'b', 'c'],
+                ),
+                MarkerLayer(
+                  markers: markers,
+                ),
+              ],
+            ),
           ),
           TabBar(
             controller: _tabController,
@@ -90,32 +119,6 @@ class _BottomSheetContentState extends State<BottomSheetContent>
                 ListView(
                   children: _buildSelectableItems(
                       _selectedAnomaliesItems, "Anomalies"),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: FlutterMap(
-              options: MapOptions(
-                center: latlong.LatLng(markerLatitude, markerLongitude),
-                zoom: 9.2,
-                onPositionChanged: (position, hasGesture) {
-                  if (position.center != null) {
-                    setState(() {
-                      markerLatitude = position.center!.latitude;
-                      markerLongitude = position.center!.longitude;
-                    });
-                  }
-                },
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  subdomains: const ['a', 'b', 'c'],
-                ),
-                MarkerLayer(
-                  markers: markers,
                 ),
               ],
             ),
@@ -146,7 +149,7 @@ class _BottomSheetContentState extends State<BottomSheetContent>
 
   List<Widget> _buildSelectableItems(
       List<String> selectedItems, String tabName) {
-    final items = ['Item 1', 'Item 2', 'Item 3'];
+    final items = ['Vol', 'Harcèlement', 'Agression Sexuelle','Agression','Insecurité','Attentat'];
     return items.map((item) {
       final isSelected = selectedItems.contains(item);
       return CheckboxListTile(
