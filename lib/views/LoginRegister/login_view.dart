@@ -90,10 +90,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Text(
                   errorMessage,
-                  style: typographyList
-                      .firstWhere((info) => info.name == 'Body Large Medium')
-                      .style
-                      .copyWith(color: MyColors.error40),
+                  style: BodyLargeMedium.copyWith(color: MyColors.error40),
                 ),
               ),
             CustomTextField(
@@ -127,10 +124,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
                 onTap: () {},
                 child: Text(
                   'Mot de passe oublié ?',
-                  style: typographyList
-                      .firstWhere((info) => info.name == 'Body Large Medium')
-                      .style
-                      .copyWith(color: MyColors.secondary40),
+                  style: BodyLargeMedium.copyWith(color: MyColors.secondary40),
                 ),
               ),
             ),
@@ -144,10 +138,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
               onTap: () => Navigator.pushNamed(context, '/register'),
               child: RichText(
                 text: TextSpan(
-                  style: typographyList
-                      .firstWhere((info) => info.name == 'Body Large Medium')
-                      .style
-                      .copyWith(color: MyColors.primary10),
+                  style: BodyLargeMedium,
                   children: const <TextSpan>[
                     TextSpan(text: 'Pas encore membre ? '),
                     TextSpan(
