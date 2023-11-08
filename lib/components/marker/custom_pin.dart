@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:swafe/DS/ReportingType.dart';
+import 'package:swafe/DS/reporting_type.dart';
 
 class CustomMarker extends StatefulWidget {
   final ReportingType reportingType;

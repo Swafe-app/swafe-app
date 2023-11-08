@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:swafe/DS/ReportingType.dart';
+import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
@@ -30,6 +30,7 @@ class HomeContent extends StatefulWidget {
 class HomeContentState extends State<HomeContent> {
   final dbService = FirebaseDatabaseService();
   final MapController mapController = MapController();
+  late Position position;
 
   Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
@@ -134,7 +135,7 @@ class HomeContentState extends State<HomeContent> {
 
   void _getUserLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(
+        position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
 
@@ -183,7 +184,7 @@ class HomeContentState extends State<HomeContent> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return const BottomSheetContent();
+        return BottomSheetContent(position: LatLng(position.latitude, position.longitude));
       },
     );
   }

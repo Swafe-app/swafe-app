@@ -5,6 +5,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:swafe/DS/reporting_type.dart';
+import 'package:swafe/components/typeReport/custom_report.dart';
 
 class BottomSheetContent extends StatefulWidget {
   const BottomSheetContent({super.key, required this.position});
@@ -104,7 +106,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
           TabBar(
             controller: _tabController,
             tabs: const [
-              Tab(text: 'Danger'),
+              Tab(text: 'Danger',),
               Tab(text: 'Anomalies'),
             ],
           ),
@@ -112,11 +114,13 @@ class BottomSheetContentState extends State<BottomSheetContent>
             child: TabBarView(
               controller: _tabController,
               children: [
-                ListView(
+                GridView.count(
+                  crossAxisCount: 3,
                   children:
                       _buildSelectableItems(_selectedDangerItems, "Danger"),
                 ),
-                ListView(
+                GridView.count(
+                  crossAxisCount: 3,
                   children: _buildSelectableItems(
                       _selectedAnomaliesItems, "Anomalies"),
                 ),
@@ -149,25 +153,21 @@ class BottomSheetContentState extends State<BottomSheetContent>
 
   List<Widget> _buildSelectableItems(
       List<String> selectedItems, String tabName) {
-    final items = ['Vol', 'Harcèlement', 'Agression Sexuelle','Agression','Insecurité','Attentat'];
+    final items = [ReportingType.vol, ReportingType.harcelement, ReportingType.agressionSexuelle,ReportingType.agression,ReportingType.insecurite];
     return items.map((item) {
-      final isSelected = selectedItems.contains(item);
-      return CheckboxListTile(
-        title: Text(item),
-        value: isSelected,
-        onChanged: (value) {
-          setState(() {
-            if (value != null) {
-              if (value) {
-                selectedItems.add(item);
+      final isSelected = selectedItems.contains(item.title);
+      return CustomReport(
+        reportingType: item,
+        onPressed:
+          () => setState(() {
+              if (!isSelected) {
+                selectedItems.add(item.title);
               } else {
-                selectedItems.remove(item);
-              }
+                selectedItems.remove(item.title);
               _isSelectionMade = _selectedDangerItems.isNotEmpty ||
                   _selectedAnomaliesItems.isNotEmpty;
             }
-          });
-        },
+          })
       );
     }).toList();
   }
