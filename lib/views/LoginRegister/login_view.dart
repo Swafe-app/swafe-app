@@ -1,181 +1,162 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:swafe/DS/colors.dart';
-import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/firebase/firebase_auth_services.dart';
-import 'package:swafe/views/LoginRegister/register.dart';
-import 'package:swafe/views/MainView/home.dart';
+import 'package:swafe/components/TextField/textfield.dart';
 
-void main() {
-  runApp(const MaterialApp(
-    home: LoginView(),
-  ));
-}
-
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class LoginBottomSheet extends StatefulWidget {
+  const LoginBottomSheet({super.key});
 
   @override
-  LoginViewState createState() => LoginViewState();
+  LoginBottomSheetState createState() => LoginBottomSheetState();
 }
 
-class LoginViewState extends State<LoginView> {
-  bool isKeyboardVisible = false;
-  bool isEmailValid = true;
-  bool visiblePassword = false;
+class LoginBottomSheetState extends State<LoginBottomSheet> {
   String email = '';
   String password = '';
-  final FirebaseAuthService _authService = FirebaseAuthService();
+  bool visiblePassword = false;
+  String errorMessage = '';
+  final _authInstance = FirebaseAuth.instance;
 
-  @override
-  void initState() {
-    super.initState();
-    KeyboardVisibilityController().onChange.listen((bool visible) {
+  String getFirebaseErrorMessage(String errorCode) {
+    switch (errorCode) {
+      case 'user-not-found':
+        return 'Aucun utilisateur trouvé pour cet e-mail.';
+      case 'wrong-password':
+        return 'Mot de passe incorrect.';
+      case 'invalid-email':
+        return 'L\'adresse e-mail n\'est pas valide.';
+      case 'user-disabled':
+        return 'Le compte utilisateur a été désactivé.';
+      case 'too-many-requests':
+        return 'Trop de tentatives de connexion échouées. Veuillez réessayer plus tard.';
+      default:
+        return 'Une erreur est survenue lors de la connexion. Veuillez réessayer plus tard.';
+    }
+  }
+
+  Future<void> signIn() async {
+    try {
+      // Reset errorMessage
       setState(() {
-        isKeyboardVisible = visible;
+        errorMessage = '';
       });
-    });
+
+      final user = await _authInstance.signInWithEmailAndPassword(
+          email: email, password: password);
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print("Firebase Error: $e");
+      }
+      setState(() {
+        errorMessage = getFirebaseErrorMessage(e.code);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error: $e");
+      }
+      setState(() {
+        errorMessage = "Une erreur est survenue lors de la connexion.";
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        if (isKeyboardVisible) {
-          FocusScope.of(context).unfocus();
-        }
-      },
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
-        padding: const EdgeInsets.all(Spacing
-            .standard), // Utilisation de Spacing.standard pour la marge globale
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 60),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: Spacing.standard),
-              // Utilisation de Spacing.tripleExtraLarge pour la marge supérieure
-              child: Container(
-                decoration: const BoxDecoration(),
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding: EdgeInsets.all(Spacing
-                        .medium), // Utilisation de Spacing.medium pour le rembourrage
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      email = value;
-                      isEmailValid = EmailValidator.validate(email);
-                    });
-                  },
-                  keyboardType: TextInputType.emailAddress,
-                ),
+            // Barre visuel pour le BottomSheet
+            Container(
+              width: 160,
+              height: 8,
+              decoration: BoxDecoration(
+                color: MyColors.neutral70,
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
-            const SizedBox(height: Spacing.extraLarge),
-            // Utilisation de Spacing.small pour l'espacement vertical
-            TextField(
+            const SizedBox(height: 20),
+            if (errorMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  errorMessage,
+                  style: typographyList
+                      .firstWhere((info) => info.name == 'Body Large Medium')
+                      .style
+                      .copyWith(color: MyColors.error40),
+                ),
+              ),
+            CustomTextField(
+              placeholder: 'E-mail',
+              onChanged: (value) {
+                setState(() {
+                  email = value;
+                });
+              },
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 24),
+            CustomTextField(
+              placeholder: 'Mot de passe',
               onChanged: (value) {
                 setState(() {
                   password = value;
                 });
               },
-              decoration: InputDecoration(
-                labelText: 'Mot de passe',
-                border: const OutlineInputBorder(),
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                contentPadding: const EdgeInsets.all(Spacing.medium),
-                suffixIcon: IconButton(
-                  onPressed: () =>
-                      setState(() => visiblePassword = !visiblePassword),
-                  icon: Icon(!visiblePassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined),
-                  color: Colors.black,
-                ),
-              ),
               obscureText: !visiblePassword,
+              rightIcon: visiblePassword
+                  ? Icons.visibility_off_outlined
+                  : Icons.visibility_outlined,
+              onRightIconPressed: () =>
+                  setState(() => visiblePassword = !visiblePassword),
             ),
-            const SizedBox(height: Spacing.small),
-            if (!isEmailValid)
-              const Padding(
-                padding: EdgeInsets.only(left: Spacing.small),
-                // Utilisation de Spacing.medium pour le padding
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                onTap: () {},
                 child: Text(
-                  "Veuillez saisir une adresse e-mail valide",
-                  style: TextStyle(
-                    color: MyColors.error40,
-                    fontSize: 12,
-                  ),
+                  'Mot de passe oublié ?',
+                  style: typographyList
+                      .firstWhere((info) => info.name == 'Body Large Medium')
+                      .style
+                      .copyWith(color: MyColors.secondary40),
                 ),
               ),
-            const SizedBox(height: Spacing.none),
-            const CustomButton(
-              label: "Mot de passe oublié ?",
-              type: ButtonType.text,
-              textColor: MyColors.secondary40,
             ),
-            const SizedBox(height: Spacing.standard),
-            // Utilisation de Spacing.standard pour l'espacement vertical
-            Column(
-              children: [
-                CustomButton(
-                  label: "Continuer",
-                  fillColor: MyColors.secondary40,
-                  textColor: MyColors.defaultWhite,
-                  onPressed: isEmailValid
-                      ? () async {
-                          User? user =
-                              await _authService.signInWithEmailAndPassword(
-                            email,
-                            password,
-                          );
-
-                          if (user != null) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomeView(
-                                  welcomeMessage: "Bienvenue ${user.email} !",
-                                ),
-                              ),
-                            );
-                          } else {
-                            // Gérer la connexion échouée
-                          }
-                        }
-                      : null,
+            const SizedBox(height: 60),
+            CustomButton(
+              label: 'Continuer',
+              onPressed: () => signIn(),
+            ),
+            const SizedBox(height: 20),
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, '/register'),
+              child: RichText(
+                text: TextSpan(
+                  style: typographyList
+                      .firstWhere((info) => info.name == 'Body Large Medium')
+                      .style
+                      .copyWith(color: MyColors.primary10),
+                  children: const <TextSpan>[
+                    TextSpan(text: 'Pas encore membre ? '),
+                    TextSpan(
+                      text: 'Rejoignez-nous !',
+                      style: TextStyle(color: MyColors.secondary40),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: Spacing.small),
-                CustomButton(
-                  label: "Pas encore membre ? Rejoignez-nous !",
-                  type: ButtonType.text,
-                  fillColor: null,
-                  // Set to the desired fill color
-                  strokeColor: null,
-                  // Set to the desired stroke color
-                  textColor: MyColors.primary10,
-                  // Set to the desired text color
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterView(),
-                      ),
-                    );
-                  },
-                  isLoading: false,
-                  isDisabled: false,
-                  icon: null,
-                ),
-                const SizedBox(height: Spacing.huge),
-                // Utilisation de Spacing.huge pour l'espacement vertical
-              ],
+              ),
             ),
           ],
         ),

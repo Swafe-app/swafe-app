@@ -3,46 +3,32 @@ import 'package:swafe/DS/colors.dart'; // Importation de couleurs personnalisée
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/ds/typographies.dart'; // Importation de styles de texte personnalisés.
-import 'package:swafe/views/LoginRegister/login_view.dart'; // Importation de la vue de connexion.
+import 'package:swafe/views/LoginRegister/login_view.dart';
 import 'package:swafe/views/LoginRegister/register.dart'; // Importation de la vue d'inscription.
 
 void main() {
   runApp(const MaterialApp(
-    home:
-        WelcomeView(), // Afficher la vue de bienvenue en tant qu'écran d'accueil.
+    home: WelcomeView(),
   ));
 }
 
 class WelcomeView extends StatelessWidget {
   const WelcomeView({super.key});
 
-// Fonction pour afficher la feuille de bas de connexion
+  // Fonction pour afficher la modal de connexion
   void _showLoginBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return GestureDetector(
-          onTap: () {
-            FocusScope.of(context)
-                .unfocus(); // Fermer le clavier lorsque l'utilisateur clique en dehors de la feuille.
-          },
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom +
-                    Spacing
-                        .standard, // Utilisation de la constante Spacing.standard pour l'espacement.
-              ),
-              child: const LoginView(), // Afficher la vue de connexion.
-            ),
-          ),
-        );
-      },
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(12),
+        ),
+      ),
+      builder: (context) => const LoginBottomSheet()
     );
   }
 
-// Fonction pour naviguer vers la page d'inscription
+  // Fonction pour naviguer vers la page d'inscription
   void _showRegisterPage(BuildContext context) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const RegisterView()));
@@ -82,8 +68,8 @@ class WelcomeView extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Espace flexible pour occuper l'espace entre le texte et les boutons
                 const Spacer(),
-                // Espace flexible pour occuper l'espace entre le texte et les boutons.
                 Container(
                     width: double.infinity,
                     padding:
@@ -97,8 +83,7 @@ class WelcomeView extends StatelessWidget {
                           textColor: MyColors.defaultWhite,
                           mainAxisSize: MainAxisSize.max,
                           onPressed: () {
-                            _showLoginBottomSheet(
-                                context); // Afficher la feuille de bas de connexion.
+                            _showLoginBottomSheet(context);
                           },
                         ),
                         const SizedBox(height: Spacing.small),
@@ -108,8 +93,7 @@ class WelcomeView extends StatelessWidget {
                           textColor: MyColors.primary10,
                           mainAxisSize: MainAxisSize.max,
                           onPressed: () {
-                            _showRegisterPage(
-                                context); // Naviguer vers la page d'inscription.
+                            _showRegisterPage(context);
                           },
                         )
                       ],

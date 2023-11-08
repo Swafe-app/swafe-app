@@ -96,9 +96,7 @@ class RegisterViewState extends State<RegisterView> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomeView(
-              welcomeMessage: "Bienvenue ${user.email} !",
-            ),
+            builder: (context) => HomeView(),
           ),
         );
       } else {

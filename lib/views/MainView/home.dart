@@ -5,12 +5,9 @@ import 'package:swafe/DS/typographies.dart';
 
 import 'MainViewContent/home/homecontent.dart';
 import 'profil.dart';
-import 'repertoire.dart';
 
 class HomeView extends StatelessWidget {
-  final String welcomeMessage;
-
-  const HomeView({Key? key, required this.welcomeMessage}) : super(key: key);
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
