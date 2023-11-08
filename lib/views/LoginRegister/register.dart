@@ -163,10 +163,7 @@ class RegisterViewState extends State<RegisterView> {
                 const SizedBox(height: Spacing.standard),
                 Text(
                   "Doit contenir au moins :",
-                  style: typographyList
-                      .firstWhere(
-                          (element) => element.name == 'Body Large Regular')
-                      .style, // Utilisation du style typographique
+                  style: BodyLargeRegular,
                 ),
                 const SizedBox(height: Spacing.extraSmall),
                 ValidationText(hasUppercase, "1 majuscule"),
@@ -193,25 +190,12 @@ class RegisterViewState extends State<RegisterView> {
                 ),
                 const SizedBox(height: Spacing.standard),
                 if (emailErrorMessage.isNotEmpty)
-                  Text(emailErrorMessage,
-                      style: typographyList
-                          .firstWhere((element) =>
-                              element.name == 'Subtitle small Regular')
-                          .style), // Utilisation du style typographique
+                  Text(emailErrorMessage, style: SubtitleSmallRegular),
                 if (passwordErrorMessage.isNotEmpty)
-                  Text(passwordErrorMessage,
-                      style: typographyList
-                          .firstWhere((element) =>
-                              element.name == 'Subtitle small Regular')
-                          .style), // Utilisation du style typographique
+                  Text(passwordErrorMessage, style: SubtitleSmallRegular),
                 if (confirmPasswordErrorMessage.isNotEmpty)
-                  Text(
-                    confirmPasswordErrorMessage,
-                    style: typographyList
-                        .firstWhere((element) =>
-                            element.name == 'Subtitle small Regular')
-                        .style, // Utilisation du style typographique
-                  ),
+                  Text(confirmPasswordErrorMessage,
+                      style: SubtitleSmallRegular),
                 const SizedBox(height: Spacing.medium),
               ],
             ),
@@ -223,20 +207,15 @@ class RegisterViewState extends State<RegisterView> {
                   Text(
                     "En cliquant sur “continuer”, vous acceptez les conditions générales d’utilisation",
                     textAlign: TextAlign.center,
-                    style: typographyList
-                        .firstWhere((element) =>
-                            element.name == 'Subtitle large Regular')
-                        .style, // Utilisation du style typographique
+                    style: SubtitleLargeRegular,
                   ),
                   const SizedBox(height: Spacing.standard),
                   SizedBox(
                     width: double.infinity,
                     child: CustomButton(
                       label: "Continuer",
-                      fillColor: MyColors
-                          .secondary40,
-                      textColor: MyColors
-                          .defaultWhite,
+                      fillColor: MyColors.secondary40,
+                      textColor: MyColors.defaultWhite,
                       onPressed: signUp,
                     ),
                   ),
@@ -275,11 +254,7 @@ class ValidationText extends StatelessWidget {
                   size: Spacing.standard,
                 ),
           const SizedBox(width: Spacing.extraSmall),
-          Text(label,
-              style: typographyList
-                  .firstWhere(
-                      (element) => element.name == 'Subtitle large Regular')
-                  .style), // Utilisation du style typographique
+          Text(label, style: SubtitleLargeRegular),
         ],
       ),
     );

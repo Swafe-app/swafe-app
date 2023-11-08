@@ -37,10 +37,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       obscureText: widget.obscureText,
       decoration: InputDecoration(
         labelText: widget.placeholder,
-        labelStyle: typographyList
-            .firstWhere((info) => info.name == 'Body Large Medium')
-            .style
-            .copyWith(color: MyColors.primary10),
+        labelStyle: BodyLargeMedium,
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
           borderSide: BorderSide(

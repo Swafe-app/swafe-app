@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
+import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/ds/spacing.dart';
-import 'package:swafe/ds/typographies.dart';
 import 'package:swafe/views/LoginRegister/welcome_view.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierInformationPersonnelle.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierMotdepasse.dart';
@@ -36,12 +36,7 @@ class ProfilContent extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Profil',
-          style: typographyList
-              .firstWhere((info) => info.name == 'Title Large Medium')
-              .style
-              .copyWith(
-                color: MyColors.primary10,
-              ),
+          style: TitleLargeMedium,
         ),
         backgroundColor: MyColors.defaultWhite,
         elevation: 0,
@@ -146,12 +141,7 @@ class ProfilContent extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             categoryName,
-            style: typographyList
-                .firstWhere((info) => info.name == 'Title Small Medium')
-                .style
-                .copyWith(
-                  color: MyColors.primary10, // Couleur de texte bleu
-                ),
+            style: TitleSmallMedium,
           ),
         ),
         ...List.generate(items.length, (index) {
@@ -171,12 +161,7 @@ class ProfilContent extends StatelessWidget {
               ),
               title: Text(
                 items[index],
-                style: typographyList
-                    .firstWhere((info) => info.name == 'Body Large Medium')
-                    .style
-                    .copyWith(
-                      color: MyColors.primary10,
-                    ),
+                style: BodyLargeMedium,
               ),
               trailing: const Icon(
                 Icons.keyboard_arrow_right,

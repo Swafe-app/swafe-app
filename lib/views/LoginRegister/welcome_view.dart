@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart'; // Importation du package Flutter pour créer des interfaces utilisateur.
-import 'package:swafe/DS/colors.dart'; // Importation de couleurs personnalisées.
+import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/ds/typographies.dart'; // Importation de styles de texte personnalisés.
 import 'package:swafe/views/LoginRegister/login_view.dart';
-import 'package:swafe/views/LoginRegister/register.dart'; // Importation de la vue d'inscription.
+import 'package:swafe/views/LoginRegister/register.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -57,13 +57,7 @@ class WelcomeView extends StatelessWidget {
                     // Utilisation de la constante Spacing.large pour la marge supérieure.
                     child: Text(
                       "Il n’a jamais été aussi simple d’aller d'un point A à un point B en toute sécurité",
-                      style: typographyList
-                          .firstWhere(
-                              (info) => info.name == 'Title XLarge Medium')
-                          .style
-                          .copyWith(
-                            color: MyColors.defaultWhite,
-                          ),
+                      style: TitleXLargeMedium.copyWith(color: MyColors.defaultWhite),
                       textAlign: TextAlign.left,
                     ),
                   ),

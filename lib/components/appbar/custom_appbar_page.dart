@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:swafe/DS/colors.dart'; // Importez le fichier colors.dart
-import 'package:swafe/DS/spacing.dart'; // Importez le fichier spacing.dart
-import 'package:swafe/DS/typographies.dart'; // Importez le fichier typographies.dart
+import 'package:swafe/DS/colors.dart';
+import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/DS/typographies.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -63,17 +63,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Spacing.standard), // Utilisation de l'espacement standard
               child: Text(
                 title ?? '',
-                style: typographyList
-                    .firstWhere(
-                      (typography) =>
-                          typography.name ==
-                          'Title Large Medium', // Trouvez la typographie XXLarge Medium
-                    )
-                    .style
-                    .copyWith(
-                      color:
-                          MyColors.primary10, // Couleur du texte en primary10
-                    ),
+                style: TitleLargeMedium,
               ),
             ),
           ],
