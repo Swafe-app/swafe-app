@@ -11,6 +11,7 @@ import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/components/appbar/appbar.dart';
 import 'package:swafe/firebase/firebase_auth_services.dart';
 import 'package:swafe/views/MainView/home.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class RegisterViewOld extends StatefulWidget {
   const RegisterViewOld({super.key});
@@ -386,12 +387,10 @@ class RegisterViewState extends State<RegisterView> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 24),
-                CustomTextField(
-                  placeholder: 'N° de téléphone portable',
+                IntlPhoneField(
                   controller: _phoneController,
-                  validator: (value) {
-                    return null;
-                  },
+                  decoration: customTextFieldDecoration,
+                  initialCountryCode: 'FR',
                 ),
                 const SizedBox(height: 24),
                 CustomTextField(

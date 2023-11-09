@@ -47,8 +47,8 @@ IconButtonStyleData getButtonStyle(
       backgroundColor = MyColors.neutral80;
     }
   } else if (type == IconButtonType.square) {
-    iconColor = MyColors.secondary40;
-    backgroundColor = Colors.transparent;
+    iconColor = MyColors.primary10;
+    backgroundColor = MyColors.defaultWhite;
     borderColor = MyColors.secondary40;
     if (isDisabled || isLoading) {
       iconColor = MyColors.neutral60;
@@ -133,7 +133,23 @@ class CustomIconButtonState extends State<CustomIconButton> {
           color: fillColor,
           borderRadius: BorderRadius.circular(
               widget.type == IconButtonType.square ? 8 : 50),
-          border: Border.all(color: strokeColor, width: 2),
+          border: widget.type == IconButtonType.square
+              ? null
+              : Border.all(color: strokeColor, width: 2),
+          boxShadow: widget.type == IconButtonType.square
+              ? const [
+                  BoxShadow(
+                    color: Color.fromRGBO(0, 0, 0, 0.25),
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 2.0,
+                  ),
+                  BoxShadow(
+                    color: Color.fromRGBO(222, 222, 222, 0.25),
+                    offset: Offset(-1.0, -1.0),
+                    blurRadius: 2.0,
+                  ),
+                ]
+              : null,
         ),
         child: Center(
           child: widget.isLoading

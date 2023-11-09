@@ -2,6 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 
+final InputDecoration customTextFieldDecoration = InputDecoration(
+  labelStyle: BodyLargeMedium,
+  enabledBorder: const OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    borderSide: BorderSide(
+      color: MyColors.neutral40,
+    ),
+  ),
+  focusedBorder: const OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    borderSide: BorderSide(
+      color: MyColors.secondary40,
+      width: 2,
+    ),
+  ),
+  errorBorder: const OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    borderSide: BorderSide(
+      color: MyColors.error40,
+      width: 2,
+    ),
+  ),
+  focusedErrorBorder: const OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    borderSide: BorderSide(
+      color: MyColors.error40,
+      width: 2,
+    ),
+  ),
+  disabledBorder: const OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(8)),
+    borderSide: BorderSide(
+      color: MyColors.neutral70,
+    ),
+  ),
+  contentPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+);
+
 class CustomTextField extends StatefulWidget {
   final String placeholder;
   final bool isDisabled;
@@ -41,43 +79,8 @@ class CustomTextFieldState extends State<CustomTextField> {
       onChanged: widget.onChanged,
       keyboardType: widget.keyboardType,
       obscureText: widget.obscureText,
-      decoration: InputDecoration(
+      decoration: customTextFieldDecoration.copyWith(
         labelText: widget.placeholder,
-        labelStyle: BodyLargeMedium,
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(
-            color: MyColors.neutral40,
-          ),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(
-            color: MyColors.secondary40,
-            width: 2,
-          ),
-        ),
-        errorBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(
-            color: MyColors.error40,
-            width: 2,
-          ),
-        ),
-        focusedErrorBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(
-            color: MyColors.error40,
-            width: 2,
-          ),
-        ),
-        disabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(
-            color: MyColors.neutral70,
-          ),
-        ),
-        contentPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
         suffixIcon: widget.rightIcon != null
             ? IconButton(
                 onPressed: widget.onRightIconPressed,
