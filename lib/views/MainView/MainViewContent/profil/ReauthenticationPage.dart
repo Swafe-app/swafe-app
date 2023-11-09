@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
+import 'package:swafe/components/appbar/appbar.dart'; // Importez CustomAppBar
 import 'package:swafe/views/MainView/MainViewContent/profil/coordonnees.dart';
 
 class ReauthenticationPage extends StatefulWidget {
@@ -21,10 +21,6 @@ class _ReauthenticationPageState extends State<ReauthenticationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        // Utilisez CustomAppBar ici
-        title: 'Réauthentification',
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
