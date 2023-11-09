@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/homecontent.dart';
-import 'repertoire.dart';
+
 import 'profil.dart';
+import 'repertoire.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -32,28 +33,31 @@ class _BottomNavigationBarExampleState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.phone),
-            label: 'Répertoire',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF714DD8),
-        onTap: _onItemTapped,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.phone),
+              label: 'Répertoire',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profil',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color(0xFF714DD8),
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

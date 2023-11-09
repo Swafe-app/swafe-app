@@ -6,12 +6,14 @@ class CustomAppBar extends StatelessWidget {
   final String title;
   final bool showIconButton;
   final bool showLogo;
+  final VoidCallback? iconButtonOnPressed;
 
   const CustomAppBar({
     super.key,
     this.title = '',
     this.showIconButton = true,
     this.showLogo = true,
+    this.iconButtonOnPressed,
   });
 
   @override
@@ -24,7 +26,7 @@ class CustomAppBar extends StatelessWidget {
         if (showIconButton)
           CustomIconButton(
             type: IconButtonType.square,
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: iconButtonOnPressed ?? () => Navigator.of(context).pop(),
             icon: Icons.arrow_back_ios_new,
           ),
         if (showLogo)
