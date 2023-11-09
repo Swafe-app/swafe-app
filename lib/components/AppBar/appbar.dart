@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/typographies.dart';
+import 'package:swafe/components/IconButton/icon_button.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String title;
@@ -21,9 +22,10 @@ class CustomAppBar extends StatelessWidget {
           : MainAxisAlignment.spaceBetween,
       children: [
         if (showIconButton)
-          IconButton(
+          CustomIconButton(
+            type: IconButtonType.square,
             onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back_ios_new),
+            icon: Icons.arrow_back_ios_new,
           ),
         if (showLogo)
           Image.asset('assets/images/Swafe_Logo.png',
