@@ -11,13 +11,22 @@ class WelcomeView extends StatelessWidget {
   // Fonction pour afficher la modal de connexion
   void _showLoginBottomSheet(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(12),
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (context) {
+        final double bottomInset = MediaQuery.of(context).viewInsets.bottom;
+        return GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Padding(
+            padding: EdgeInsets.only(bottom: bottomInset),
+            child: const LoginBottomSheet(),
           ),
-        ),
-        builder: (context) => const LoginBottomSheet());
+        );
+      },
+    );
   }
 
   // Fonction pour naviguer vers la page d'inscription
@@ -28,6 +37,7 @@ class WelcomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         fit: StackFit.expand,
         children: [
