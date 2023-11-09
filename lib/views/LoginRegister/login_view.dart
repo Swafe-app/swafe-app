@@ -148,12 +148,13 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
               onTap: () => Navigator.pushNamed(context, '/register'),
               child: RichText(
                 text: TextSpan(
-                  style: BodyLargeMedium,
-                  children: const <TextSpan>[
-                    TextSpan(text: 'Pas encore membre ? '),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: 'Pas encore membre ? ', style: BodyLargeMedium),
                     TextSpan(
                       text: 'Rejoignez-nous !',
-                      style: TextStyle(color: MyColors.secondary40),
+                      style:
+                          BodyLargeMedium.copyWith(color: MyColors.secondary40),
                     ),
                   ],
                 ),
