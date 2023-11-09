@@ -4,7 +4,7 @@ import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/views/LoginRegister/login_view.dart';
-import 'package:swafe/views/LoginRegister/register.dart';
+import 'package:swafe/views/LoginRegister/register_view.dart';
 
 void main() {
   runApp(const MaterialApp(

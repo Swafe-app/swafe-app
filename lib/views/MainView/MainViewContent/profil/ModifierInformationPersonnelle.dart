@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
+import 'package:swafe/components/appbar/appbar.dart'; // Importez CustomAppBar
 
 class ModifierInformationPersonnelle extends StatefulWidget {
   const ModifierInformationPersonnelle({super.key});
@@ -69,10 +69,6 @@ class _ModifierInformationPersonnelleState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        // Utilisez CustomAppBar ici
-        title: 'Modifier vos informations',
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/components/appbar/custom_appbar_page.dart'; // Importez CustomAppBar
+import 'package:swafe/components/appbar/appbar.dart'; // Importez CustomAppBar
 
 void main() {
   runApp(const MaterialApp(
@@ -101,10 +101,6 @@ class ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
     updateErrorMessages();
 
     return Scaffold(
-      appBar: const CustomAppBar(
-        // Utilisez CustomAppBar ici
-        title: 'Modifier le mot de passe',
-      ),
       body: Container(
         padding: const EdgeInsets.all(16),
         child: Column(

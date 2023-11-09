@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/components/appbar/custom_appbar_page.dart';
+import 'package:swafe/components/appbar/appbar.dart';
 
 class ModifierCoordonnees extends StatefulWidget {
   const ModifierCoordonnees({super.key});
@@ -75,9 +75,6 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Modifier vos informations',
-      ),
       body: Container(
         color: MyColors.defaultWhite, // Définir la couleur de fond en blanc
         child: Padding(
