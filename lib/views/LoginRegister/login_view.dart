@@ -38,6 +38,18 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
     }
   }
 
+  Future<void> checkEmailVerified() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.reload();
+    if (user?.emailVerified ?? false) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      setState(() {
+        errorMessage = "Veuillez vérifier votre email pour continuer.";
+      });
+    }
+  }
+
   Future<void> signIn() async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -46,11 +58,9 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
           errorMessage = '';
         });
 
-        final user = await _authInstance.signInWithEmailAndPassword(
+        await _authInstance.signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
-        if (user != null) {
-          Navigator.pushReplacementNamed(context, '/home');
-        }
+        checkEmailVerified();
       } on FirebaseAuthException catch (e) {
         if (kDebugMode) {
           print("Firebase Error: $e");

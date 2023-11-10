@@ -11,11 +11,20 @@ Future<void> main() async {
   // Initialisez Firebase
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  final FirebaseAuth _firebaseInstance = FirebaseAuth.instance;
+
+  String getInitialRoute() {
+    User? user = _firebaseInstance.currentUser;
+    if (user != null) {
+      return user.emailVerified ? '/home' : '/welcome';
+    }
+    return '/welcome';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,18 +33,11 @@ class MyApp extends StatelessWidget {
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.dark));
 
-    FirebaseAuth auth = FirebaseAuth.instance;
-    String initialRoute;
-
-    final currentUser = auth.currentUser;
-    if (currentUser != null) {
-      initialRoute = '/home';
-    } else {
-      initialRoute = '/welcome';
-    }
+    String initialRoute = getInitialRoute();
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Swafe',
       theme: ThemeData.light(),
       initialRoute: initialRoute,
       routes: {
