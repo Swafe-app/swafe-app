@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,18 +25,23 @@ class BottomSheetContentState extends State<BottomSheetContent>
 
   final List<String> _selectedDangerItems = [];
   final List<String> _selectedAnomaliesItems = [];
-
-  double markerLatitude = 0; // London latitude
-  double markerLongitude = 0; // London longitude
-
+  LatLng userPosition = const LatLng(0, 0);
+  LatLng basePosition = const LatLng(0, 0);
+  String adress = "";
+  late LatLngBounds bounds;
   final databaseReference = FirebaseDatabase.instance.ref();
-
   @override
   void initState() {
     super.initState();
-    markerLatitude = widget.position.latitude;
-    markerLongitude = widget.position.longitude;
+    userPosition = widget.position;
+    basePosition = widget.position;
     _tabController = TabController(length: 2, vsync: this);
+    bounds = LatLngBounds(
+        LatLng(widget.position.latitude - 0.00895,
+            widget.position.longitude - 0.00895),
+        LatLng(widget.position.latitude + 0.00895,
+            widget.position.longitude + 0.00895));
+
     // Get the user's current location and set the marker coordinates
     getLocation();
   }
@@ -45,14 +51,13 @@ class BottomSheetContentState extends State<BottomSheetContent>
     _tabController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     var markers = <Marker>[
       Marker(
         width: 80.0,
         height: 80.0,
-        point: LatLng(markerLatitude, markerLongitude),
+        point: userPosition,
         builder: (ctx) => const Icon(
           Icons.location_on,
           color: Colors.red,
@@ -80,13 +85,30 @@ class BottomSheetContentState extends State<BottomSheetContent>
           Expanded(
             child: FlutterMap(
               options: MapOptions(
-                center: LatLng(markerLatitude, markerLongitude),
-                zoom: 9.2,
-                onPositionChanged: (position, hasGesture) {
-                  if (position.center != null) {
+                center: userPosition,
+                bounds: bounds,
+                minZoom: 15,
+                onMapEvent: (event) {
+                  if (event.source.name == "dragEnd") {
                     setState(() {
-                      markerLatitude = position.center!.latitude;
-                      markerLongitude = position.center!.longitude;
+                    getAddressFromLatLng(userPosition);
+                  });
+                  }
+                },
+                onPositionChanged: (position, hasGesture) {
+                  if (position.center != null &&
+                      bounds.contains(position.center!)) {
+                    setState(() {
+                      userPosition = position.center!;
+                    });
+                  } else {
+                    setState(() {
+                      LatLng closest = LatLng(
+                          position.center!.latitude
+                              .clamp(bounds.south, bounds.north),
+                          position.center!.longitude
+                              .clamp(bounds.west, bounds.east));
+                      userPosition = closest;
                     });
                   }
                 },
@@ -94,19 +116,23 @@ class BottomSheetContentState extends State<BottomSheetContent>
               children: [
                 TileLayer(
                   urlTemplate:
-                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                   subdomains: const ['a', 'b', 'c'],
                 ),
                 MarkerLayer(
                   markers: markers,
                 ),
+                CircleLayer(circles: [CircleMarker(point: basePosition, radius: 250, color: const Color.fromARGB(139, 204, 155, 1),)],)
               ],
             ),
           ),
+          Text(adress),
           TabBar(
             controller: _tabController,
             tabs: const [
-              Tab(text: 'Danger',),
+              Tab(
+                text: 'Danger',
+              ),
               Tab(text: 'Anomalies'),
             ],
           ),
@@ -135,7 +161,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 },
                 child: const Text('Annuler'),
               ),
-              const SizedBox(width: 16.0),
+              const SizedBox(width: 10.0),
               ElevatedButton(
                 onPressed: _isSelectionMade
                     ? () {
@@ -153,22 +179,29 @@ class BottomSheetContentState extends State<BottomSheetContent>
 
   List<Widget> _buildSelectableItems(
       List<String> selectedItems, String tabName) {
-    final items = [ReportingType.vol, ReportingType.harcelement, ReportingType.agressionSexuelle,ReportingType.agression,ReportingType.insecurite];
+    final items = [
+      ReportingType.vol,
+      ReportingType.harcelement,
+      ReportingType.agression,
+      ReportingType.insecurite,
+      ReportingType.violence
+    ];
     return items.map((item) {
       final isSelected = selectedItems.contains(item.title);
       return CustomReport(
-        reportingType: item,
-        onPressed:
-          () => setState(() {
-              if (!isSelected) {
-                selectedItems.add(item.title);
-              } else {
-                selectedItems.remove(item.title);
-              _isSelectionMade = _selectedDangerItems.isNotEmpty ||
-                  _selectedAnomaliesItems.isNotEmpty;
-            }
-          })
-      );
+          reportingType: item,
+          onPressed: () => setState(() {
+                if (!isSelected) {
+                  selectedItems.add(item.title);
+                  print("Est il sélectionné ? $isSelected, ${selectedItems.toString()}");
+                } else {
+                  print("Est il sélectionné ? $isSelected, ${selectedItems
+                      .toString()}");
+                  selectedItems.remove(item.title);
+                }
+                  _isSelectionMade = _selectedDangerItems.isNotEmpty ||
+                      _selectedAnomaliesItems.isNotEmpty;
+              }));
     }).toList();
   }
 
@@ -180,8 +213,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
         'selectedDangerItems': _selectedDangerItems,
         'selectedAnomaliesItems': _selectedAnomaliesItems,
         'coordinates': {
-          'latitude': markerLatitude,
-          'longitude': markerLongitude,
+          'latitude': userPosition.latitude,
+          'longitude': userPosition.longitude,
         },
       };
 
@@ -205,13 +238,31 @@ class BottomSheetContentState extends State<BottomSheetContent>
       );
 
       setState(() {
-        markerLatitude = position.latitude;
-        markerLongitude = position.longitude;
+        userPosition = LatLng(position.latitude, position.longitude);
       });
     } catch (e) {
       if (kDebugMode) {
         print("Error getting location: $e");
       }
+    }
+  }
+
+  Future<void> getAddressFromLatLng(LatLng position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks[0];
+        setState(() {
+          adress =
+              '${placemark.street}, ${placemark.locality}, ${placemark.country}';
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 }
