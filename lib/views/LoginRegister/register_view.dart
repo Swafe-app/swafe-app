@@ -21,6 +21,7 @@ class RegisterView extends StatefulWidget {
 class RegisterViewState extends State<RegisterView> {
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _valideCodeFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _phoneKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -45,6 +46,10 @@ class RegisterViewState extends State<RegisterView> {
         return 'Le compte utilisateur a été désactivé.';
       case 'too-many-requests':
         return 'Trop de tentatives d\'inscription échouées. Veuillez réessayer plus tard.';
+      case 'weak-password':
+        return 'Le mot de passe n\'est pas assez robuste.';
+      case 'email-already-in-use':
+        return 'L\'adresse e-mail est déjà utilisée par un autre compte.';
       default:
         return 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer plus tard.';
     }
@@ -66,6 +71,12 @@ class RegisterViewState extends State<RegisterView> {
   }
 
   Future<void> signUp() async {
+    if (_phoneKey.currentState?.validate() ?? true) {
+      setState(() {
+        errorMessage = "Veuillez entrer un numéro de téléphone.";
+      });
+      return;
+    }
     if (_registerFormKey.currentState!.validate()) {
       try {
         // Reset errorMessage
@@ -79,13 +90,13 @@ class RegisterViewState extends State<RegisterView> {
                 email: _emailController.text,
                 password: _passwordController.text);
 
+        // Envoyez l'email de vérification
+        await userCredential.user?.sendEmailVerification();
+
         // Passer a la prochaine étape
         setState(() {
           activeStep++;
         });
-
-        // Envoyez l'email de vérification
-        await userCredential.user?.sendEmailVerification();
 
         // Commencez à vérifier si l'utilisateur a vérifié son email dans un intervalle de temps
         Timer.periodic(
@@ -163,6 +174,14 @@ class RegisterViewState extends State<RegisterView> {
           const SizedBox(height: 24),
           IntlPhoneField(
             controller: _phoneController,
+            key: _phoneKey,
+            invalidNumberMessage: 'Entrez un numéro de téléphone valide.',
+            validator: (phone) {
+              if (phone == null || phone.number.isEmpty) {
+                return 'Veuillez entrer un numéro de téléphone.';
+              }
+              return null;
+            },
             decoration: customTextFieldDecoration.copyWith(
                 label: const Text("N° de téléphone portable")),
             initialCountryCode: 'FR',
@@ -175,7 +194,12 @@ class RegisterViewState extends State<RegisterView> {
             controller: _passwordController,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Le mot de passe ne peut pas être vide.';
+                return 'Veuillez entrer un mot de passe.';
+              }
+              RegExp regex =
+                  RegExp(r'^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#$&*~.]).{8,}$');
+              if (!regex.hasMatch(value)) {
+                return 'Doit contenir au moins 8 caractères dont 1 majuscule, 1 chiffre et 1 caractère spécial.';
               }
               return null;
             },
@@ -235,7 +259,7 @@ class RegisterViewState extends State<RegisterView> {
           const SizedBox(height: 24),
           Text(
               textAlign: TextAlign.center,
-              "Nous vous avons envoyé un code de vérification sur la boite mail :\n ${_emailController.text}",
+              "Nous vous avons envoyé un lien de vérification sur la boite mail :\n ${_emailController.text}",
               style: TitleLargeMedium),
           const SizedBox(height: 32),
           // const CustomTextField(placeholder: 'Code de vérification'),
@@ -249,7 +273,7 @@ class RegisterViewState extends State<RegisterView> {
                       text: 'Vous ne l’avez pas reçu ? ',
                       style: BodyLargeRegular),
                   TextSpan(
-                    text: 'Renvoyer le code',
+                    text: 'Renvoyer le lien',
                     style:
                         BodyLargeMedium.copyWith(color: MyColors.secondary40),
                   ),
