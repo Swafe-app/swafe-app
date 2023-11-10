@@ -44,6 +44,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
     if (user?.emailVerified ?? false) {
       Navigator.pushReplacementNamed(context, '/home');
     } else {
+      user?.sendEmailVerification();
       setState(() {
         errorMessage = "Veuillez vérifier votre email pour continuer.";
       });
