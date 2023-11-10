@@ -29,11 +29,6 @@ class WelcomeView extends StatelessWidget {
     );
   }
 
-  // Fonction pour naviguer vers la page d'inscription
-  void _showRegisterPage(BuildContext context) {
-    Navigator.pushNamed(context, '/register');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +51,7 @@ class WelcomeView extends StatelessWidget {
                 Text(
                   "Il n’a jamais été aussi\n simple d’aller d'un point A\n à un point B en toute\n sécurité",
                   style:
-                      TitleXLargeMedium.copyWith(color: MyColors.defaultWhite),
+                  TitleXLargeMedium.copyWith(color: MyColors.defaultWhite),
                   textAlign: TextAlign.left,
                 ),
                 const Spacer(),
@@ -85,9 +80,8 @@ class WelcomeView extends StatelessWidget {
                       fillColor: MyColors.defaultWhite,
                       textColor: MyColors.primary10,
                       mainAxisSize: MainAxisSize.max,
-                      onPressed: () {
-                        _showRegisterPage(context);
-                      },
+                      onPressed: () =>
+                          Navigator.pushNamed(context, '/register'),
                     )
                   ],
                 ),

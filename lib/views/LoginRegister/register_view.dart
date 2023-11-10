@@ -50,6 +50,21 @@ class RegisterViewState extends State<RegisterView> {
     }
   }
 
+  Future<void> checkEmailVerified() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    await user?.reload();
+    if (user?.emailVerified ?? false) {
+      setState(() {
+        activeStep++;
+      });
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      setState(() {
+        errorMessage = "Veuillez vérifier votre email pour continuer.";
+      });
+    }
+  }
+
   Future<void> signUp() async {
     if (_registerFormKey.currentState!.validate()) {
       try {
@@ -83,8 +98,8 @@ class RegisterViewState extends State<RegisterView> {
               timer.cancel();
               setState(() {
                 activeStep++;
-                Navigator.of(context).pushReplacementNamed('/home');
               });
+              Navigator.of(context).pushReplacementNamed('/home');
             }
           },
         );
@@ -220,11 +235,11 @@ class RegisterViewState extends State<RegisterView> {
           const SizedBox(height: 24),
           Text(
               textAlign: TextAlign.center,
-              "Nous vous avons envoyé un code de vérification sur boite mail :\n ${_emailController.text}",
+              "Nous vous avons envoyé un code de vérification sur la boite mail :\n ${_emailController.text}",
               style: TitleLargeMedium),
           const SizedBox(height: 32),
-          const CustomTextField(placeholder: 'Code de vérification'),
-          const SizedBox(height: 32),
+          // const CustomTextField(placeholder: 'Code de vérification'),
+          // const SizedBox(height: 32),
           InkWell(
             onTap: resendVerificationEmail,
             child: RichText(
@@ -245,7 +260,7 @@ class RegisterViewState extends State<RegisterView> {
           const Spacer(),
           CustomButton(
             label: 'Continuer',
-            onPressed: () {},
+            onPressed: checkEmailVerified,
           ),
         ],
       ),
