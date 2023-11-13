@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:swafe/views/MainView/MainViewContent/home/homecontent.dart';
+import 'package:swafe/DS/spacing.dart';
+import 'MainViewContent/home/homecontent.dart';
 import 'repertoire.dart';
 import 'profil.dart';
 
 class HomeView extends StatelessWidget {
   final String welcomeMessage;
 
-  const HomeView({super.key, required this.welcomeMessage});
+  const HomeView({Key? key, required this.welcomeMessage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,27 +36,42 @@ class _BottomNavigationBarExampleState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Center(
+              child: _widgetOptions.elementAt(_selectedIndex),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.phone),
-            label: 'Répertoire',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
-          ),
+          Positioned(
+            left: Spacing.medium,
+            right: Spacing.medium,
+            bottom: Spacing.medium,
+            height: 88,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+                child: BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.phone),
+                      label: 'Répertoire',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      label: 'Profil',
+                    ),
+                  ],
+                  currentIndex: _selectedIndex,
+                  selectedItemColor: const Color(0xFF714DD8),
+                  onTap: _onItemTapped,
+                ),
+              ),
+            ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF714DD8),
-        onTap: _onItemTapped,
       ),
     );
   }
