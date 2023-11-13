@@ -149,36 +149,48 @@ class HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: <Widget>[
-        Expanded(
-          child: FlutterMap(
-            mapController: mapController,
-            options: MapOptions(
-              center: const LatLng(48.866667, 2.333333),
-              zoom: 9.2,
+        Column(
+          children: <Widget>[
+            Expanded(
+              child: FlutterMap(
+                mapController: mapController,
+                options: MapOptions(
+                  center: const LatLng(48.866667, 2.333333),
+                  zoom: 9.2,
+                  maxZoom: 14.92,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate: 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
+                    subdomains: const ['a', 'b', 'c'],
+                  ),
+                  MarkerLayer(
+                    markers: markersList,
+                  ),
+                ],
+              ),
             ),
-            children: [
-              TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: const ['a', 'b', 'c'],
-              ),
-              MarkerLayer(
-                markers: markersList,
-              ),
-            ],
-          ),
+          ],
         ),
-        ElevatedButton(
-          onPressed: () {
-            _showBottomSheet(context);
-          },
-          child: const Text('Ouvrir le Bottom Sheet'),
+        Positioned(
+          bottom: 300.0,
+          right: 16.0,
+          child: FloatingActionButton(
+            onPressed: () {
+              _showBottomSheet(context);
+            },
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          ),
         ),
       ],
     );
   }
+
 
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
