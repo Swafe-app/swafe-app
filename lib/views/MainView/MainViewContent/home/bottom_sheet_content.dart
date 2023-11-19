@@ -116,7 +116,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
               children: [
                 TileLayer(
                   urlTemplate:
-                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      'https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
                   subdomains: const ['a', 'b', 'c'],
                 ),
                 MarkerLayer(
