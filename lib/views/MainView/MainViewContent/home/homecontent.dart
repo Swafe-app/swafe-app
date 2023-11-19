@@ -6,10 +6,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/reporting_type.dart';
+import 'package:swafe/components/Button/iconbutton.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 void main() => runApp(MaterialApp(
       home: Scaffold(
@@ -133,6 +135,20 @@ class HomeContentState extends State<HomeContent> {
     }
   }
 
+  void _callPolice() async {
+    String cleanedPhoneNumber = "17".replaceAll(RegExp(r'\D'), '');
+    String url = "tel:$cleanedPhoneNumber";
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url);
+    } else {
+      if (kDebugMode) {
+        if (kDebugMode) {
+          print("Impossible de lancer l'appel vers $cleanedPhoneNumber");
+        }
+      }
+    }
+  }
+
   void _getUserLocation() async {
     try {
         position = await Geolocator.getCurrentPosition(
@@ -175,16 +191,25 @@ class HomeContentState extends State<HomeContent> {
           ],
         ),
         Positioned(
-          bottom: 300.0,
-          right: 16.0,
-          child: FloatingActionButton(
+          bottom: MediaQuery.of(context).size.height * .4,
+          right: 0.01,
+          child: CustomIconButton(
             onPressed: () {
               _showBottomSheet(context);
             },
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
+            size: 70,
+            image: 'assets/images/report_logo.png',
             ),
+          ),
+        Positioned(
+          bottom: MediaQuery.of(context).size.height * .30,
+          right: 0.01,
+          child: CustomIconButton(
+            onPressed: () {
+              _callPolice();
+            },
+            size: 70,
+            image: 'assets/images/call_logo.png',
           ),
         ),
       ],
