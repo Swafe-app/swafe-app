@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -11,9 +12,9 @@ class CustomMarker extends Marker {
     required this.reportingType,
     required LatLng point,
   }) : super(
-    width: 50.0,
-    height: 50.0,
-    builder: (ctx) => SvgPicture.asset(reportingType.pin),
+    width: 130.0,
+    height: 150.0,
+    builder: (ctx) =>  Stack(children: [Center(child: SvgPicture.asset(reportingType.threat)),Positioned(right: 50, bottom: 60,child: SizedBox(height: 70,width: 70, child: SvgPicture.asset('assets/images/bubble.svg'))), Positioned(right: 65, bottom: 80,child: SizedBox(height: 40,width: 40, child:Image.asset(reportingType.pin)))]),
     point: point,
   );
 }
