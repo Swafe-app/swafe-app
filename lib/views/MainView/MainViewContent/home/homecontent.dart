@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/components/Button/iconbutton.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
@@ -151,7 +152,7 @@ class HomeContentState extends State<HomeContent> {
 
   void _getUserLocation() async {
     try {
-        position = await Geolocator.getCurrentPosition(
+      position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
 
@@ -179,7 +180,8 @@ class HomeContentState extends State<HomeContent> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
+                    urlTemplate:
+                        'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
                     subdomains: const ['a', 'b', 'c'],
                   ),
                   MarkerLayer(
@@ -216,12 +218,22 @@ class HomeContentState extends State<HomeContent> {
     );
   }
 
-
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: MyColors.neutral100,
       builder: (BuildContext context) {
-        return BottomSheetContent(position: LatLng(position.latitude, position.longitude));
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height - 100,
+          ),
+          child: BottomSheetContent(
+              position: LatLng(position.latitude, position.longitude)),
+        );
       },
     );
   }
@@ -232,9 +244,10 @@ class HomeContentState extends State<HomeContent> {
 
       signalementMap.forEach((key, value) {
         log(value.selectedDangerItems.first);
-        markers.add(
-          CustomMarker(reportingType: convertStringToReportingType(value.selectedDangerItems.first), point: LatLng(value.latitude, value.longitude))
-        );
+        markers.add(CustomMarker(
+            reportingType:
+                convertStringToReportingType(value.selectedDangerItems.first),
+            point: LatLng(value.latitude, value.longitude)));
       });
 
       markers.add(userLocationMarker);
