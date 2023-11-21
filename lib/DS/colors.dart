@@ -20,6 +20,7 @@ class MyColors {
   static const Color neutral60 = Color(0xFF9BA0A4);
   static const Color neutral70 = Color(0xFFB8BBBE);
   static const Color neutral80 = Color(0xFFD4D6D8);
+  static const Color neutral90 = Color(0xFFF8F8F8);
   static const Color neutral100 = Color(0xFFFFFFFF);
   static const Color defaultWhite = Color(0xFFFFFFFF);
 }

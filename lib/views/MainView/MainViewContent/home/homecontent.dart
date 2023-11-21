@@ -191,8 +191,8 @@ class HomeContentState extends State<HomeContent> {
           ],
         ),
         Positioned(
-          bottom: MediaQuery.of(context).size.height * .4,
-          right: 0.01,
+          bottom: 272,
+          right: 12,
           child: CustomIconButton(
             onPressed: () {
               _showBottomSheet(context);
@@ -202,8 +202,8 @@ class HomeContentState extends State<HomeContent> {
             ),
           ),
         Positioned(
-          bottom: MediaQuery.of(context).size.height * .30,
-          right: 0.01,
+          bottom: 196,
+          right: 12,
           child: CustomIconButton(
             onPressed: () {
               _callPolice();

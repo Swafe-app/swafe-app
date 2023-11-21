@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/DS/typographies.dart';
+
 import 'MainViewContent/home/homecontent.dart';
-import 'repertoire.dart';
 import 'profil.dart';
+import 'repertoire.dart';
 
 class HomeView extends StatelessWidget {
   final String welcomeMessage;
@@ -11,26 +14,74 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const BottomNavigationBarExample();
+    return const CustomNavbar();
   }
 }
 
-class BottomNavigationBarExample extends StatefulWidget {
-  const BottomNavigationBarExample({Key? key}) : super(key: key);
+class CustomNavbar extends StatefulWidget {
+  const CustomNavbar({Key? key}) : super(key: key);
 
   @override
-  State<BottomNavigationBarExample> createState() =>
-      _BottomNavigationBarExampleState();
+  State<CustomNavbar> createState() => _CustomNavbarState();
 }
 
-class _BottomNavigationBarExampleState
-    extends State<BottomNavigationBarExample> {
-  int _selectedIndex = 0;
+class _CustomNavbarState extends State<CustomNavbar> {
+  int activeNavIndex = 1;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  Widget renderActiveIndexNavbar() {
+    switch (activeNavIndex) {
+      case 1:
+        return const HomeContent();
+      case 2:
+        return const RepertoireContent();
+      case 3:
+        return ProfilContent();
+      default:
+        return const HomeContent();
+    }
+  }
+
+  Widget navbarItemButton(
+      {required int index, required String label, required IconData iconData}) {
+    return InkResponse(
+      onTap: activeNavIndex == index
+          ? null
+          : () => setState(() {
+                activeNavIndex = index;
+              }),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(iconData,
+              size: 32,
+              color: activeNavIndex == index
+                  ? MyColors.secondary40
+                  : MyColors.neutral70),
+          if (activeNavIndex == index) ...[
+            const SizedBox(height: 2),
+            Container(
+              height: 4,
+              width: 4,
+              decoration: BoxDecoration(
+                  color: activeNavIndex == index
+                      ? MyColors.secondary40
+                      : MyColors.neutral70,
+                  shape: BoxShape.circle),
+            ),
+            const SizedBox(height: 2),
+          ] else
+            const SizedBox(height: 8),
+          Text(label,
+              style: typographyList
+                  .firstWhere((typo) => typo.name == "Label Medium Regular")
+                  .style
+                  .copyWith(
+                      color: activeNavIndex == index
+                          ? MyColors.secondary40
+                          : MyColors.neutral70))
+        ],
+      ),
+    );
   }
 
   @override
@@ -40,45 +91,52 @@ class _BottomNavigationBarExampleState
         children: [
           Positioned.fill(
             child: Center(
-              child: _widgetOptions.elementAt(_selectedIndex),
+              child: renderActiveIndexNavbar(),
             ),
           ),
           Positioned(
             left: Spacing.medium,
             right: Spacing.medium,
             bottom: Spacing.medium,
-            height: 88,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-                child: BottomNavigationBar(
-                  items: const <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
-                      label: 'Home',
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0),
+              decoration: BoxDecoration(
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.15),
+                      offset: Offset(0, 2), // Horizontal, Vertical
+                      blurRadius: 6,
+                      spreadRadius: 2,
                     ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.phone),
-                      label: 'Répertoire',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.person),
-                      label: 'Profil',
+                    BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.30),
+                      offset: Offset(0, 1), // Horizontal, Vertical
+                      blurRadius: 2,
+                      spreadRadius: 0,
                     ),
                   ],
-                  currentIndex: _selectedIndex,
-                  selectedItemColor: const Color(0xFF714DD8),
-                  onTap: _onItemTapped,
-                ),
+                  borderRadius: BorderRadius.circular(16),
+                  color: MyColors.neutral90),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  navbarItemButton(
+                      index: 1, label: "Home", iconData: Icons.home_outlined),
+                  navbarItemButton(
+                      index: 2,
+                      label: "Répertoire",
+                      iconData: Icons.phone_outlined),
+                  navbarItemButton(
+                      index: 3,
+                      label: "Profil",
+                      iconData: Icons.person_outline),
+                ],
               ),
             ),
+          ),
         ],
       ),
     );
   }
-
-  final List<Widget> _widgetOptions = <Widget>[
-    const HomeContent(),
-    const RepertoireContent(),
-    ProfilContent(),
-  ];
 }
