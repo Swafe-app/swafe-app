@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/ds/spacing.dart';
-import 'package:swafe/views/LoginRegister/welcome_view.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/ModifierInformationPersonnelle.dart';
+import 'package:swafe/views/MainView/MainViewContent/profil/UserProfileScreen.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ModifierMotdepasse.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ReauthenticationPage.dart';
 
@@ -18,11 +16,7 @@ class ProfilContent extends StatelessWidget {
   Future<void> _signOut(BuildContext context) async {
     try {
       await _auth.signOut();
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const WelcomeView()),
-        (Route<dynamic> route) => false,
-      );
+      Navigator.of(context).pushReplacementNamed('/welcome');
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
@@ -30,22 +24,74 @@ class ProfilContent extends StatelessWidget {
     }
   }
 
+  Widget _buildCategory(
+    BuildContext context,
+    String categoryName,
+    List<String> items,
+    List<IconData> icons,
+    List<Widget?>? navigation,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          categoryName,
+          style: TitleSmallMedium,
+        ),
+        const SizedBox(height: 12),
+        ...List.generate(
+          items.length,
+          (index) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: MyColors.neutral70,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ListTile(
+                horizontalTitleGap: 12,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                leading: Icon(
+                  icons[index],
+                  color: MyColors.primary10,
+                  size: 24,
+                ),
+                title: Text(
+                  items[index],
+                  style: BodyLargeMedium,
+                ),
+                trailing: const Icon(
+                  Icons.keyboard_arrow_right,
+                  color: MyColors.secondary40,
+                  size: 24,
+                ),
+                onTap: () {
+                  // Vérifiez s'il y a une page de navigation associée
+                  if (navigation != null && navigation[index] != null) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => navigation[index]!,
+                      ),
+                    );
+                  }
+                },
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Profil',
-          style: TitleLargeMedium,
-        ),
-        backgroundColor: MyColors.defaultWhite,
-        elevation: 0,
-      ),
-      backgroundColor: MyColors.defaultWhite,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 16), // Ajustement des marges gauche et droite
+      body: Container(
+        padding: const EdgeInsets.fromLTRB(20, 60, 20, 60),
         child: ListView(
+          padding: const EdgeInsets.only(bottom: 100),
           children: [
             // Catégorie "Paramètres"
             _buildCategory(
@@ -58,19 +104,17 @@ class ProfilContent extends StatelessWidget {
                 'Mentions légales',
               ],
               [
-                Icons.person,
-                Icons.location_on,
-                Icons.lock,
-                Icons.book,
+                Icons.person_outline,
+                Icons.location_on_outlined,
+                Icons.lock_outline,
+                Icons.book_outlined,
               ],
-              // Navigation vers la page de modification d'informations personnelles
               [
-                const ModifierInformationPersonnelle(),
+                const UserProfileScreen(),
                 const ReauthenticationPage(),
                 const ModifierMotDePasseView(),
                 null,
               ],
-              FontWeight.normal, // Définir le poids de police à normal
             ),
             // Catégorie "Nous contacter"
             _buildCategory(
@@ -80,12 +124,11 @@ class ProfilContent extends StatelessWidget {
                 'FAQ / Aide',
               ],
               [
-                Icons.help,
-                Icons.help,
+                Icons.help_outline,
               ],
-              // Ajoutez ici la navigation vers les pages correspondantes (FAQ, Aide)
-              [null, null],
-              FontWeight.normal, // Définir le poids de police à normal
+              [
+                null,
+              ],
             ),
             // Catégorie "Soutenir l'app"
             _buildCategory(
@@ -95,92 +138,38 @@ class ProfilContent extends StatelessWidget {
                 'Partager l\'application',
               ],
               [
-                Icons.share,
+                Icons.ios_share_outlined,
               ],
-              // Ajoutez ici la navigation vers la page de partage de l'application
-              [null],
-              FontWeight.normal, // Définir le poids de police à normal
+              [
+                null,
+              ],
             ),
-            // Ajoutez une marge inférieure entre le bouton "Supprimer le compte" et le bouton "Se déconnecter"
-            const SizedBox(height: Spacing.extraLarge),
-            // Utilisation de l'espacement "small"
-            // Bouton "Se déconnecter"
+            const SizedBox(height: 24),
             SizedBox(
-              height: 48, // Hauteur personnalisée
               child: CustomButton(
                 label: "Se déconnecter",
-                fillColor: MyColors.secondary40,
-                textColor:
-                    MyColors.defaultWhite, // Set to the desired text color
                 onPressed: () => _signOut(context),
               ),
             ),
-            // Ajoutez une marge inférieure entre la carte "Partager l'application" et le bouton "Supprimer le compte"
-            const SizedBox(height: Spacing.extraLarge),
-            // Utilisation de l'espacement "medium"
-            // Bouton "Supprimer le compte"
+            const SizedBox(height: 24),
+            Image.asset('assets/images/Swafe_Logo.png', width: 40, height: 40),
+            const SizedBox(height: 8),
+            Text(
+              'Version 1.1',
+              style: BodyLargeMedium.copyWith(color: MyColors.neutral70),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              child: CustomButton(
+                type: ButtonType.outlined,
+                label: "Supprimer le compte",
+                onPressed: () => _signOut(context),
+              ),
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildCategory(
-    BuildContext context,
-    String categoryName,
-    List<String> items,
-    List<IconData> icons,
-    List<Widget?>?
-        navigation, // Liste de pages à naviguer (ou null si pas de navigation)
-    FontWeight fontWeight, // Poids de police pour le texte
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            categoryName,
-            style: TitleSmallMedium,
-          ),
-        ),
-        ...List.generate(items.length, (index) {
-          return Container(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: MyColors.neutral70,
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.only(left: 12, right: 12),
-              leading: Icon(
-                icons[index],
-                color: MyColors.primary10,
-              ),
-              title: Text(
-                items[index],
-                style: BodyLargeMedium,
-              ),
-              trailing: const Icon(
-                Icons.keyboard_arrow_right,
-                color: MyColors.secondary40,
-              ),
-              onTap: () {
-                // Vérifiez s'il y a une page de navigation associée
-                if (navigation != null && navigation[index] != null) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => navigation[index]!,
-                    ),
-                  );
-                }
-              },
-            ),
-          );
-        }),
-      ],
     );
   }
 }

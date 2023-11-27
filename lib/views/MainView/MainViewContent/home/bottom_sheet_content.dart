@@ -192,19 +192,13 @@ class BottomSheetContentState extends State<BottomSheetContent>
           const SizedBox(height: 16),
           Text(
             'Spécifier la situation rencontrée',
-            style: typographyList
-                .firstWhere((typo) => typo.name == "Title Large Medium")
-                .style
-                .copyWith(color: MyColors.primary10),
+            style: TitleLargeMedium,
           ),
           const SizedBox(height: 8),
           Text(
             textAlign: TextAlign.center,
             'Votre signalement sera partagé avec toute la communauté. Tout les signalements sont anonymes.',
-            style: typographyList
-                .firstWhere((typo) => typo.name == "Body Large Medium")
-                .style
-                .copyWith(color: MyColors.primary10),
+            style: BodyLargeMedium,
           ),
           const SizedBox(height: 16),
           ClipRRect(
@@ -281,11 +275,10 @@ class BottomSheetContentState extends State<BottomSheetContent>
           if (address != null && address!.isNotEmpty)
             SizedBox(
               width: double.infinity,
-              child: Text(address!,
-                  style: typographyList
-                      .firstWhere((typo) => typo.name == "Body Large Medium")
-                      .style
-                      .copyWith(color: MyColors.primary10)),
+              child: Text(
+                address!,
+                style: BodyLargeMedium,
+              ),
             ),
           const SizedBox(height: 16),
           TabBar(
@@ -293,9 +286,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
             indicatorColor: MyColors.secondary40,
             labelColor: MyColors.primary10,
             unselectedLabelColor: MyColors.neutral40,
-            labelStyle: typographyList
-                .firstWhere((typo) => typo.name == "Body Large Regular")
-                .style,
+            labelStyle: BodyLargeRegular,
             tabs: const [
               Tab(
                 text: 'Dangers',
@@ -345,7 +336,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 mainAxisSize: MainAxisSize.max,
                 isDisabled: _isSelectionMade ? false : true,
                 onPressed:
-                _isSelectionMade ? () => _sendDataToFirebase() : null,
+                    _isSelectionMade ? () => _sendDataToFirebase() : null,
               ),
             ],
           ),

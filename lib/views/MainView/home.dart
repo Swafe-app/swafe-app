@@ -67,14 +67,14 @@ class _CustomNavbarState extends State<CustomNavbar> {
             const SizedBox(height: 2),
           ] else
             const SizedBox(height: 8),
-          Text(label,
-              style: typographyList
-                  .firstWhere((typo) => typo.name == "Label Medium Regular")
-                  .style
-                  .copyWith(
-                      color: activeNavIndex == index
-                          ? MyColors.secondary40
-                          : MyColors.neutral70))
+          Text(
+            label,
+            style: LabelMediumRegular.copyWith(
+              color: activeNavIndex == index
+                  ? MyColors.secondary40
+                  : MyColors.neutral70,
+            ),
+          )
         ],
       ),
     );
@@ -82,56 +82,59 @@ class _CustomNavbarState extends State<CustomNavbar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Center(
-              child: renderActiveIndexNavbar(),
-            ),
-          ),
-          Positioned(
-            left: Spacing.medium,
-            right: Spacing.medium,
-            bottom: Spacing.medium,
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0),
-              decoration: BoxDecoration(
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.15),
-                      offset: Offset(0, 2), // Horizontal, Vertical
-                      blurRadius: 6,
-                      spreadRadius: 2,
-                    ),
-                    BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.30),
-                      offset: Offset(0, 1), // Horizontal, Vertical
-                      blurRadius: 2,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(16),
-                  color: MyColors.neutral90),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  navbarItemButton(
-                      index: 1, label: "Home", iconData: Icons.home_outlined),
-                  navbarItemButton(
-                      index: 2,
-                      label: "Répertoire",
-                      iconData: Icons.phone_outlined),
-                  navbarItemButton(
-                      index: 3,
-                      label: "Profil",
-                      iconData: Icons.person_outline),
-                ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Center(
+                child: renderActiveIndexNavbar(),
               ),
             ),
-          ),
-        ],
+            Positioned(
+              left: Spacing.medium,
+              right: Spacing.medium,
+              bottom: Spacing.medium,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 40.0, vertical: 16.0),
+                decoration: BoxDecoration(
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 0.15),
+                        offset: Offset(0, 2), // Horizontal, Vertical
+                        blurRadius: 6,
+                        spreadRadius: 2,
+                      ),
+                      BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 0.30),
+                        offset: Offset(0, 1), // Horizontal, Vertical
+                        blurRadius: 2,
+                        spreadRadius: 0,
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(16),
+                    color: MyColors.neutral90),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    navbarItemButton(
+                        index: 1, label: "Home", iconData: Icons.home_outlined),
+                    navbarItemButton(
+                        index: 2,
+                        label: "Répertoire",
+                        iconData: Icons.phone_outlined),
+                    navbarItemButton(
+                        index: 3,
+                        label: "Profil",
+                        iconData: Icons.person_outline),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:swafe/DS/colors.dart';
+import 'package:swafe/DS/typographies.dart';
 
 import '../../DS/reporting_type.dart';
-import '../../DS/typographies.dart';
 
 class CustomReport extends StatefulWidget {
   final ReportingType reportingType;
@@ -16,17 +17,21 @@ class CustomReport extends StatefulWidget {
 
 class CustomReportState extends State<CustomReport> {
   bool _isSelected = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => {
-        if (widget.onPressed != null) {
-      widget.onPressed!(),
-    },setState(() {
-      // Toggle the isSelected state
-      // If it was selected, make it unselected; if it was unselected, make it selected
-      _isSelected = !_isSelected;
-    })},
+        if (widget.onPressed != null)
+          {
+            widget.onPressed!(),
+          },
+        setState(() {
+          // Toggle the isSelected state
+          // If it was selected, make it unselected; if it was unselected, make it selected
+          _isSelected = !_isSelected;
+        })
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -46,7 +51,11 @@ class CustomReportState extends State<CustomReport> {
                     fit: BoxFit.fill,
                   ),
                   shape: OvalBorder(
-                    side: BorderSide(width: 3, color: _isSelected ? Colors.purple : Colors.white),
+                    side: BorderSide(
+                        width: 3,
+                        color: _isSelected
+                            ? MyColors.secondary40
+                            : MyColors.defaultWhite),
                   ),
                 ),
               ),
@@ -56,10 +65,7 @@ class CustomReportState extends State<CustomReport> {
             child: Text(
               widget.reportingType.title,
               textAlign: TextAlign.center,
-              style: typographyList
-                  .firstWhere(
-                      (element) => element.name == 'Title XSmall Medium')
-                  .style,
+              style: TitleXSmallMedium,
             ),
           ),
         ],
