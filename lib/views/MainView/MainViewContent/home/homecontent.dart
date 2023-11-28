@@ -8,6 +8,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/components/Button/iconbutton.dart';
+import 'package:swafe/components/marker/custom_grouped_marker.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
@@ -34,6 +35,7 @@ class HomeContentState extends State<HomeContent> {
   final dbService = FirebaseDatabaseService();
   final MapController mapController = MapController();
   late Position position;
+  double zoom = 9.2;
 
   Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
@@ -52,7 +54,6 @@ class HomeContentState extends State<HomeContent> {
   @override
   void initState() {
     super.initState();
-    _getDataFromFirebase();
     _requestLocationPermission();
   }
 
@@ -78,7 +79,7 @@ class HomeContentState extends State<HomeContent> {
           signalementMap = data;
 
           // Appel à _buildMarkers pour mettre à jour l'interface utilisateur
-          _buildMarkers();
+          _buildMarkers(zoom);
         } else {
           if (kDebugMode) {
             print("Aucune donnée Firebase disponible.");
@@ -91,6 +92,23 @@ class HomeContentState extends State<HomeContent> {
             "Erreur lors de la récupération des données depuis Firebase : $error");
       }
     }
+  }
+
+  double calculateDistance(LatLng point1, LatLng point2) {
+    return const Distance().as(LengthUnit.Kilometer, point1, point2);
+  }
+
+  Map<String, SignalementModel> getNearbySignalements(Position userPosition, Map<String, SignalementModel> signalementMap, double maxDistanceInKm) {
+    Map<String, SignalementModel> nearbySignalements = {};
+
+    signalementMap.forEach((key, value) {
+      double distance = calculateDistance(LatLng(userPosition.latitude, userPosition.longitude), LatLng(value.latitude, value.longitude));
+      if (distance <= maxDistanceInKm) {
+        nearbySignalements[key] = value;
+      }
+    });
+
+    return nearbySignalements;
   }
 
   void updateLocationMarker(Position position) {
@@ -152,10 +170,10 @@ class HomeContentState extends State<HomeContent> {
 
   void _getUserLocation() async {
     try {
-      position = await Geolocator.getCurrentPosition(
+        position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-
+      _getDataFromFirebase();
       updateLocationMarker(position);
     } catch (e) {
       if (kDebugMode) {
@@ -174,8 +192,13 @@ class HomeContentState extends State<HomeContent> {
               child: FlutterMap(
                 mapController: mapController,
                 options: MapOptions(
+                  onMapEvent: (event) {
+                    if (event.source == MapEventSource.multiFingerEnd) {
+                      _buildMarkers(event.zoom);
+                    }
+                  },
                   center: const LatLng(48.866667, 2.333333),
-                  zoom: 9.2,
+                  zoom: zoom,
                   maxZoom: 14.92,
                 ),
                 children: [
@@ -193,8 +216,8 @@ class HomeContentState extends State<HomeContent> {
           ],
         ),
         Positioned(
-          bottom: 272,
-          right: 12,
+          bottom: MediaQuery.of(context).size.height * .4,
+          right: 0.01,
           child: CustomIconButton(
             onPressed: () {
               _showBottomSheet(context);
@@ -204,8 +227,8 @@ class HomeContentState extends State<HomeContent> {
             ),
           ),
         Positioned(
-          bottom: 196,
-          right: 12,
+          bottom: MediaQuery.of(context).size.height * .30,
+          right: 0.01,
           child: CustomIconButton(
             onPressed: () {
               _callPolice();
@@ -217,6 +240,7 @@ class HomeContentState extends State<HomeContent> {
       ],
     );
   }
+
 
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -238,16 +262,14 @@ class HomeContentState extends State<HomeContent> {
     );
   }
 
-  void _buildMarkers() {
+  void _buildMarkers(double zoom) {
     setState(() {
       List<Marker> markers = [];
-
-      signalementMap.forEach((key, value) {
-        log(value.selectedDangerItems.first);
-        markers.add(CustomMarker(
-            reportingType:
-                convertStringToReportingType(value.selectedDangerItems.first),
-            point: LatLng(value.latitude, value.longitude)));
+      getNearbySignalements(position, signalementMap, 10).forEach((key, value) {
+        print(value.selectedDangerItems.first);
+        markers.add(
+          CustomGroupedMarker(point: LatLng(value.latitude, value.longitude), numberReports: value.selectedDangerItems.length, imagePath: convertStringToReportingType(value.selectedDangerItems.first).pin
+        ));
       });
 
       markers.add(userLocationMarker);

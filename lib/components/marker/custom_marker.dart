@@ -12,9 +12,29 @@ class CustomMarker extends Marker {
     required this.reportingType,
     required LatLng point,
   }) : super(
-    width: 130.0,
-    height: 150.0,
-    builder: (ctx) =>  Stack(children: [Center(child: SvgPicture.asset(reportingType.threat)),Positioned(right: 50, bottom: 60,child: SizedBox(height: 70,width: 70, child: SvgPicture.asset('assets/images/bubble.svg'))), Positioned(right: 65, bottom: 80,child: SizedBox(height: 40,width: 40, child:Image.asset(reportingType.pin)))]),
-    point: point,
-  );
+          width: 130.0,
+          height: 150.0,
+          builder: (ctx) => Stack(children: [
+            Center(child: SvgPicture.asset(reportingType.threat)),
+            Positioned(
+                right: 50,
+                bottom: 60,
+                child: SizedBox(
+                    height: 70,
+                    width: 70,
+                    child: SvgPicture.asset(
+                      'assets/images/bubble.svg',
+                      width: 50,
+                      height: 50,
+                    ))),
+            Positioned(
+                right: 62,
+                bottom: 77,
+                child: SizedBox(
+                    height: 45,
+                    width: 45,
+                    child: Image.asset(reportingType.pin)))
+          ]),
+          point: point,
+        );
 }
