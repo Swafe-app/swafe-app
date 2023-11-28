@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -14,6 +13,8 @@ import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+// fichier lib/views/MainView/MainViewContent/home/homecontent.dart dans l'application Flutter
+
 
 void main() => runApp(MaterialApp(
       home: Scaffold(
@@ -98,19 +99,6 @@ class HomeContentState extends State<HomeContent> {
     return const Distance().as(LengthUnit.Kilometer, point1, point2);
   }
 
-  Map<String, SignalementModel> getNearbySignalements(Position userPosition, Map<String, SignalementModel> signalementMap, double maxDistanceInKm) {
-    Map<String, SignalementModel> nearbySignalements = {};
-
-    signalementMap.forEach((key, value) {
-      double distance = calculateDistance(LatLng(userPosition.latitude, userPosition.longitude), LatLng(value.latitude, value.longitude));
-      if (distance <= maxDistanceInKm) {
-        nearbySignalements[key] = value;
-      }
-    });
-
-    return nearbySignalements;
-  }
-
   void updateLocationMarker(Position position) {
     if (userLocationMarker.point.latitude == position.latitude &&
         userLocationMarker.point.longitude == position.longitude) return;
@@ -170,7 +158,7 @@ class HomeContentState extends State<HomeContent> {
 
   void _getUserLocation() async {
     try {
-        position = await Geolocator.getCurrentPosition(
+      position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
       _getDataFromFirebase();
@@ -194,6 +182,7 @@ class HomeContentState extends State<HomeContent> {
                 options: MapOptions(
                   onMapEvent: (event) {
                     if (event.source == MapEventSource.multiFingerEnd) {
+                      print(event.zoom);
                       _buildMarkers(event.zoom);
                     }
                   },
@@ -224,8 +213,8 @@ class HomeContentState extends State<HomeContent> {
             },
             size: 70,
             image: 'assets/images/report_logo.png',
-            ),
           ),
+        ),
         Positioned(
           bottom: MediaQuery.of(context).size.height * .30,
           right: 0.01,
@@ -240,7 +229,6 @@ class HomeContentState extends State<HomeContent> {
       ],
     );
   }
-
 
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -262,15 +250,73 @@ class HomeContentState extends State<HomeContent> {
     );
   }
 
+  Map<String, SignalementModel> getNonNearbySignalements(Position userPosition,
+      Map<String, SignalementModel> signalementMap, double maxDistanceInKm) {
+    Map<String, SignalementModel> nonNearbySignalements = {};
+
+    signalementMap.forEach((key, value) {
+      double distance = calculateDistance(
+          LatLng(userPosition.latitude, userPosition.longitude),
+          LatLng(value.latitude, value.longitude));
+      if (distance > maxDistanceInKm) {
+        nonNearbySignalements[key] = value;
+      }
+    });
+
+    return nonNearbySignalements;
+  }
+
   void _buildMarkers(double zoom) {
     setState(() {
       List<Marker> markers = [];
-      getNearbySignalements(position, signalementMap, 10).forEach((key, value) {
-        print(value.selectedDangerItems.first);
-        markers.add(
-          CustomGroupedMarker(point: LatLng(value.latitude, value.longitude), numberReports: value.selectedDangerItems.length, imagePath: convertStringToReportingType(value.selectedDangerItems.first).pin
-        ));
-      });
+      List<List<SignalementModel>> clusters = [];
+      double radius = 1700 / (pow(2, zoom) / 2); // Adjust the radius based on the zoom level
+
+      // Create clusters
+      for (var signalement in signalementMap.values) {
+        bool added = false;
+        for (var cluster in clusters) {
+          for (var signalementInCluster in cluster) {
+            if (calculateDistance(
+                LatLng(signalement.latitude, signalement.longitude),
+                LatLng(signalementInCluster.latitude, signalementInCluster.longitude)) <=
+                radius) {
+              cluster.add(signalement);
+              added = true;
+              break;
+            }
+          }
+        }
+        if (!added) {
+          clusters.add([signalement]);
+        }
+      }
+
+      // Create markers
+      for (var cluster in clusters) {
+        double sumLatitude = 0;
+        double sumLongitude = 0;
+        for (var signalement in cluster) {
+          sumLatitude += signalement.latitude;
+          sumLongitude += signalement.longitude;
+        }
+        double avgLatitude = sumLatitude / cluster.length;
+        double avgLongitude = sumLongitude / cluster.length;
+
+        if (cluster.length > 1) {
+          markers.add(CustomGroupedMarker(
+            point: LatLng(avgLatitude, avgLongitude),
+            numberReports: cluster.length,
+            imagePath: convertStringToReportingType(cluster[0].selectedDangerItems.first).pin,
+          ));
+        } else {
+          markers.add(
+              CustomMarker(
+                point: LatLng(avgLatitude, avgLongitude),
+                reportingType: convertStringToReportingType(cluster[0].selectedDangerItems.first),
+              ));
+        }
+      }
 
       markers.add(userLocationMarker);
       markersList = markers;
