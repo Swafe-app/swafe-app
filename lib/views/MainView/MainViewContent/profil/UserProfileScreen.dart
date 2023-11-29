@@ -7,6 +7,7 @@ import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ChangeUserInformation/ChangeEmail.dart';
+import 'package:swafe/views/MainView/MainViewContent/profil/ChangeUserInformation/ChangePhoneNumber.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -21,6 +22,7 @@ class UserProfileScreenState extends State<UserProfileScreen> {
   TextEditingController lastNameController = TextEditingController();
   String? email;
   String? phoneNumber;
+  String? phoneCountryCode;
   bool isLoading = false;
   String errorMessage = '';
 
@@ -38,8 +40,9 @@ class UserProfileScreenState extends State<UserProfileScreen> {
       setState(() {
         firstNameController.text = userData['firstName'] ?? '';
         lastNameController.text = userData['lastName'] ?? '';
-        email = user.email ?? '-';
-        phoneNumber = user.phoneNumber ?? '-';
+        phoneNumber = userData['phoneNumber'];
+        phoneCountryCode = userData['phoneCountryCode'];
+        email = user.email;
         isLoading = false;
       });
     } catch (e) {
@@ -71,7 +74,6 @@ class UserProfileScreenState extends State<UserProfileScreen> {
           ),
         );
       } catch (e) {
-        // Afficher un message d'erreur
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Erreur lors de la mise à jour des informations."),
@@ -178,8 +180,9 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                                 onPressed: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChangeEmail(email: email),
+                                      builder: (context) => ChangeEmail(
+                                        email: email,
+                                      ),
                                     ),
                                   );
                                 },
@@ -211,7 +214,7 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    phoneNumber ?? '-',
+                                    '+${phoneCountryCode ?? '00'} ${phoneNumber ?? '-'}',
                                     style: TitleSmallMedium.copyWith(
                                       color: MyColors.neutral40,
                                     ),
@@ -219,10 +222,19 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                                 ],
                               ),
                               const SizedBox(height: 20),
-                              const CustomButton(
+                              CustomButton(
                                 type: ButtonType.text,
                                 label: 'Modifier',
                                 mainAxisSize: MainAxisSize.min,
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ChangePhoneNumber(
+                                        phoneNumber: phoneNumber,
+                                      ),
+                                    ),
+                                  );
+                                },
                               )
                             ],
                           ),

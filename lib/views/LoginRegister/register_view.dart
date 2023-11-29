@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,6 @@ class RegisterView extends StatefulWidget {
 
 class RegisterViewState extends State<RegisterView> {
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _phoneKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -30,6 +30,7 @@ class RegisterViewState extends State<RegisterView> {
       TextEditingController();
   bool visiblePassword = false;
   bool visibleConfirmPassword = false;
+  String phoneCountryCode = '33';
   String errorMessage = '';
   final _firebaseInstance = FirebaseAuth.instance;
   int activeStep = 1;
@@ -44,14 +45,8 @@ class RegisterViewState extends State<RegisterView> {
 
   Future<void> signUp() async {
     setState(() {
-      errorMessage = "";
+      errorMessage = '';
     });
-    if (_phoneKey.currentState?.validate() ?? false) {
-      setState(() {
-        errorMessage = "Veuillez entrer un numéro de téléphone.";
-      });
-      return;
-    }
     if (_registerFormKey.currentState!.validate()) {
       try {
         // Reset errorMessage
@@ -71,6 +66,15 @@ class RegisterViewState extends State<RegisterView> {
         // Passer a la prochaine étape
         setState(() {
           activeStep++;
+        });
+
+        // Enregistrer le numéro de téléphone
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user?.uid)
+            .update({
+          'phoneNumber': _phoneController.text.trim(),
+          'phoneCountryCode': phoneCountryCode,
         });
       } on FirebaseAuthException catch (e) {
         if (kDebugMode) {
@@ -139,13 +143,17 @@ class RegisterViewState extends State<RegisterView> {
               const SizedBox(height: 24),
               IntlPhoneField(
                 controller: _phoneController,
-                key: _phoneKey,
                 invalidNumberMessage: 'Entrez un numéro de téléphone valide.',
                 validator: (phone) {
                   if (phone == null || phone.number.isEmpty) {
                     return 'Veuillez entrer un numéro de téléphone.';
                   }
                   return null;
+                },
+                onCountryChanged: (newCountryCode) {
+                  setState(() {
+                    phoneCountryCode = newCountryCode.dialCode;
+                  });
                 },
                 decoration: customTextFieldDecoration.copyWith(
                     label: const Text("N° de téléphone portable")),

@@ -39,7 +39,9 @@ class ChangeEmailState extends State<ChangeEmail> {
       try {
         User? user = FirebaseAuth.instance.currentUser;
         await user?.updateEmail(_emailController.text.trim());
-        user?.sendEmailVerification();
+        if (!user!.emailVerified) {
+          user.sendEmailVerification();
+        }
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => CodeValidationView(
             email: _emailController.text.trim(),
