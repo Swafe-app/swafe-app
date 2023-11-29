@@ -64,9 +64,19 @@ class UserProfileScreenState extends State<UserProfileScreen> {
           'firstName': firstName,
           'lastName': lastName,
         });
-        // Afficher un message de succès
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Vos informations ont été mises à jour avec succès."),
+          ),
+        );
       } catch (e) {
         // Afficher un message d'erreur
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Erreur lors de la mise à jour des informations."),
+          ),
+        );
       }
     }
   }
@@ -92,6 +102,15 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                   ? const CircularProgressIndicator()
                   : Column(
                       children: [
+                        if (errorMessage.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: Text(
+                              errorMessage,
+                              style: BodyLargeMedium.copyWith(
+                                  color: MyColors.error40),
+                            ),
+                          ),
                         CustomTextField(
                           placeholder: 'Prénom',
                           controller: firstNameController,
@@ -200,18 +219,10 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                                 ],
                               ),
                               const SizedBox(height: 20),
-                              CustomButton(
+                              const CustomButton(
                                 type: ButtonType.text,
                                 label: 'Modifier',
                                 mainAxisSize: MainAxisSize.min,
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const UserProfileScreen(),
-                                    ),
-                                  );
-                                },
                               )
                             ],
                           ),

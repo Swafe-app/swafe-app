@@ -38,6 +38,11 @@ class CodeValidationViewState extends State<CodeValidationView> {
         var user = FirebaseAuth.instance.currentUser;
         if (user!.emailVerified) {
           timer.cancel();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Votre e-mail a été vérifié avec succès."),
+            ),
+          );
           widget.onSuccess();
         }
       },
@@ -48,6 +53,11 @@ class CodeValidationViewState extends State<CodeValidationView> {
     User? user = FirebaseAuth.instance.currentUser;
     await user?.reload();
     if (user?.emailVerified ?? false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Votre e-mail a été vérifié avec succès."),
+        ),
+      );
       widget.onSuccess();
     } else {
       setState(() {
