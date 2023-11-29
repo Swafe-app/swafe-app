@@ -74,39 +74,33 @@ class ChangePhoneNumberState extends State<ChangePhoneNumber> {
                 style: TitleLargeMedium,
               ),
               const SizedBox(height: 24),
-              Column(
-                children: [
-                  if (errorMessage.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Text(
-                        errorMessage,
-                        style:
-                            BodyLargeMedium.copyWith(color: MyColors.error40),
-                      ),
-                    ),
-                  IntlPhoneField(
-                    controller: _phoneController,
-                    invalidNumberMessage:
-                        'Entrez un numéro de téléphone valide.',
-                    validator: (phone) {
-                      if (phone == null || phone.number.isEmpty) {
-                        return 'Veuillez entrer un numéro de téléphone.';
-                      }
-                      return null;
-                    },
-                    onCountryChanged: (newCountryCode) {
-                      setState(() {
-                        countryCode = newCountryCode.dialCode;
-                      });
-                    },
-                    decoration: customTextFieldDecoration.copyWith(
-                        label: const Text("N° de téléphone portable")),
-                    initialCountryCode: 'FR',
-                    countries: List<Country>.of(
-                        countries.where((ct) => ['FR'].contains(ct.code))),
+              if (errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    errorMessage,
+                    style: BodyLargeMedium.copyWith(color: MyColors.error40),
                   ),
-                ],
+                ),
+              IntlPhoneField(
+                controller: _phoneController,
+                invalidNumberMessage: 'Entrez un numéro de téléphone valide.',
+                validator: (phone) {
+                  if (phone == null || phone.number.isEmpty) {
+                    return 'Veuillez entrer un numéro de téléphone.';
+                  }
+                  return null;
+                },
+                onCountryChanged: (newCountryCode) {
+                  setState(() {
+                    countryCode = newCountryCode.dialCode;
+                  });
+                },
+                decoration: customTextFieldDecoration.copyWith(
+                    label: const Text("N° de téléphone portable")),
+                initialCountryCode: 'FR',
+                countries: List<Country>.of(
+                    countries.where((ct) => ['FR'].contains(ct.code))),
               ),
               const Spacer(),
               CustomButton(

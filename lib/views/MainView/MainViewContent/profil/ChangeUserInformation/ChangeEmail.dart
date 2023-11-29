@@ -83,31 +83,26 @@ class ChangeEmailState extends State<ChangeEmail> {
                 style: TitleLargeMedium,
               ),
               const SizedBox(height: 24),
-              Column(
-                children: [
-                  if (errorMessage.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Text(
-                        errorMessage,
-                        style:
-                            BodyLargeMedium.copyWith(color: MyColors.error40),
-                      ),
-                    ),
-                  CustomTextField(
-                    placeholder: 'E-mail',
-                    controller: _emailController,
-                    validator: (value) {
-                      if (value == null ||
-                          value.isEmpty ||
-                          !RegExp(r'\b[\w.-]+@[\w.-]+\.\w{2,4}\b')
-                              .hasMatch(value)) {
-                        return "L'adresse e-mail n'est pas valide.";
-                      }
-                      return null;
-                    },
+              if (errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    errorMessage,
+                    style: BodyLargeMedium.copyWith(color: MyColors.error40),
                   ),
-                ],
+                ),
+              CustomTextField(
+                placeholder: 'E-mail',
+                controller: _emailController,
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      !RegExp(r'\b[\w.-]+@[\w.-]+\.\w{2,4}\b')
+                          .hasMatch(value)) {
+                    return "L'adresse e-mail n'est pas valide.";
+                  }
+                  return null;
+                },
               ),
               const Spacer(),
               CustomButton(

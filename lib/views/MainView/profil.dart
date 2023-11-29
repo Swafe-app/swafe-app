@@ -5,7 +5,7 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/UserProfileScreen.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/ModifierMotdepasse.dart';
+import 'package:swafe/views/MainView/MainViewContent/profil/UpdatePassword.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ReauthenticationPage.dart';
 
 class ProfilContent extends StatelessWidget {
@@ -99,20 +99,20 @@ class ProfilContent extends StatelessWidget {
               'Paramètres',
               [
                 'Information personnelle',
-                'Coordonnées',
                 'Mot de passe',
+                'Notifications',
                 'Mentions légales',
               ],
               [
                 Icons.person_outline,
-                Icons.location_on_outlined,
                 Icons.lock_outline,
-                Icons.book_outlined,
+                Icons.notifications_active_outlined,
+                Icons.gavel_outlined,
               ],
               [
                 const UserProfileScreen(),
+                const UpdatePasswordView(),
                 const ReauthenticationPage(),
-                const ModifierMotDePasseView(),
                 null,
               ],
             ),
@@ -136,11 +136,17 @@ class ProfilContent extends StatelessWidget {
               'Soutenir l\'app',
               [
                 'Partager l\'application',
+                'Noter l\'application',
+                'Faire un don',
               ],
               [
                 Icons.ios_share_outlined,
+                Icons.star_outline,
+                Icons.handshake_outlined,
               ],
               [
+                null,
+                null,
                 null,
               ],
             ),
