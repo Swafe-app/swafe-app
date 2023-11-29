@@ -189,6 +189,7 @@ class HomeContentState extends State<HomeContent> {
                   center: const LatLng(48.866667, 2.333333),
                   zoom: zoom,
                   maxZoom: 14.92,
+                  interactiveFlags: InteractiveFlag.all  & ~InteractiveFlag.rotate,
                 ),
                 children: [
                   TileLayer(
