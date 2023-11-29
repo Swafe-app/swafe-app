@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -29,6 +30,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
   final List<String> _selectedAnomaliesItems = [];
   LatLng userPosition = const LatLng(0, 0);
   LatLng basePosition = const LatLng(0, 0);
+  String pin = 'assets/images/pinDown.svg';
   String? address;
   late LatLngBounds bounds;
   final databaseReference = FirebaseDatabase.instance.ref();
@@ -195,6 +197,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                   onMapEvent: (event) {
                     if (event.source.name == "dragEnd") {
                       setState(() {
+                        pin = 'assets/images/pinDown.svg';
                         getAddressFromLatLng(userPosition);
                       });
                     }
@@ -204,6 +207,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                       if (isWithinCircle(
                           basePosition, position.center!, 1000)) {
                         setState(() {
+                          pin = 'assets/images/pinUp.svg';
                           userPosition = position.center!;
                         });
                       } else {
@@ -212,6 +216,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                         final closestPoint = const Distance()
                             .offset(basePosition, 1000, bearing);
                         setState(() {
+                          pin = 'assets/images/pinUp.svg';
                           userPosition = closestPoint;
                         });
                       }
@@ -227,13 +232,12 @@ class BottomSheetContentState extends State<BottomSheetContent>
                   MarkerLayer(
                     markers: [
                       Marker(
-                        width: 80.0,
-                        height: 80.0,
+                        width: 50.0,
+                        height: 50.0,
                         point: userPosition,
-                        builder: (ctx) => const Icon(
-                          Icons.location_on,
-                          color: Colors.red,
-                          size: 50.0,
+                        builder: (ctx) => SvgPicture.asset(
+                          pin,
+                          width: 30,
                         ),
                       ),
                     ],
