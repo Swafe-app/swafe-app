@@ -120,13 +120,35 @@ class BottomSheetContentState extends State<BottomSheetContent>
 
   List<Widget> _buildSelectableItems(
       List<String> selectedItems, String tabName) {
-    final items = [
-      ReportingType.vol,
-      ReportingType.harcelement,
-      ReportingType.agression,
-      ReportingType.insecurite,
-      ReportingType.violence
-    ];
+    late List<ReportingType> items;
+    if(tabName == "Danger") {
+      items = [
+        ReportingType.autre,
+        ReportingType.vol,
+        ReportingType.harcelement,
+        ReportingType.agressionSexuelle,
+        ReportingType.incendie,
+        ReportingType.violenceVerbale,
+        ReportingType.insecurite,
+        ReportingType.violence,
+        ReportingType.harcelement,
+        ReportingType.conduite,
+        ReportingType.ivresse,
+        ReportingType.obstacle,
+      ];
+    } else{
+      items = [
+        ReportingType.autre,
+        ReportingType.travaux,
+        ReportingType.accessibilite,
+        ReportingType.eclairage,
+        ReportingType.voiture,
+        ReportingType.inondation,
+        ReportingType.chaussee,
+        ReportingType.feuPieton,
+      ];
+    }
+
     return items.map((item) {
       final isSelected = selectedItems.contains(item.title);
       return CustomReport(
