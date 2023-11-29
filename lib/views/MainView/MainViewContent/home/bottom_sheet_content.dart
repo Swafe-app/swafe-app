@@ -169,6 +169,8 @@ class _BottomSheetContentState extends State<BottomSheetContent>
     }).toList();
   }
 
+  // CORRECTION/COMMENTAIRE : KEY_1
+
   void _sendDataToFirebase() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {

@@ -32,6 +32,8 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
     _tabController = TabController(length: 2, vsync: this);
   }
 
+  // CORRECTION/COMMENTAIRE : KEY_1
+
   Future<void> _loadUserData() async {
     if (_currentUser != null) {
       final userData =
@@ -116,7 +118,7 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
                                   ? _email
                                   : _currentUser?.email),
                         ),
-                        SizedBox(height: 16.0),
+                        const SizedBox(height: 16.0),
                         CustomButton(
                           label: "Envoyer",
                           fillColor: MyColors.secondary40,

@@ -8,6 +8,13 @@ import 'package:swafe/views/LoginRegister/register.dart';
 import 'package:swafe/views/LoginRegister/welcome_view.dart';
 import 'package:swafe/views/MainView/home.dart';
 
+// CORRECTION/COMMENTAIRE : suivre, pour le nommage des fichiers le style de dart (chercher dart_effective_style).
+
+// CORRECTION/COMMENTAIRE : KEY_1 : D'une manière générale, il faut faire en sorte de ne pas avoir d'appels réseaux directement dans les widgets, 
+// mais au moins de mettre au meme endroit, pour une feature donnée, les appels réseau correspondants.
+
+// CORRECTION/COMMENTAIRE : Ceci est la SEULE fonction main qui doit être présente dans le dossier lib ! 
+// Il y en a une dans le dossier test (que j'ai supprimé car il ne comprenait pas de test) 
 Future<void> main() async {
   // Initialisez Firebase
   WidgetsFlutterBinding.ensureInitialized();

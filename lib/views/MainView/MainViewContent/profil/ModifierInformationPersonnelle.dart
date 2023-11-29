@@ -30,6 +30,8 @@ class _ModifierInformationPersonnelleState
     _loadUserData();
   }
 
+  // CORRECTION/COMMENTAIRE : KEY_1
+
   Future<void> _loadUserData() async {
     if (_currentUser != null) {
       final userData =

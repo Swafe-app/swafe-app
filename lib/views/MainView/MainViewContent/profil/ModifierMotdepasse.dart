@@ -8,7 +8,7 @@ void main() {
   runApp(const MaterialApp(
     home: ModifierMotDePasseView(),
   ));
-}
+} // CORRECTION/COMMENTAIRE : To remove, voir main.dart
 
 class ModifierMotDePasseView extends StatefulWidget {
   const ModifierMotDePasseView({super.key});
@@ -64,6 +64,8 @@ class ModifierMotDePasseViewState extends State<ModifierMotDePasseView> {
       }
     });
   }
+
+  // CORRECTION/COMMENTAIRE : KEY_1
 
   Future<void> updatePassword() async {
     try {

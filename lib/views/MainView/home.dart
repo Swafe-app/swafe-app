@@ -3,6 +3,7 @@ import 'package:swafe/views/MainView/MainViewContent/home/homecontent.dart';
 import 'repertoire.dart';
 import 'profil.dart';
 
+// CORRECTION/COMMENTAIRE : Toujours faire coïncider les noms des fichiers et les noms des widgets/classes
 class HomeView extends StatelessWidget {
   final String welcomeMessage;
 

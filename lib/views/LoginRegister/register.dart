@@ -10,6 +10,9 @@ import 'package:swafe/components/appbar/custom_appbar_page.dart';
 import 'package:swafe/firebase/firebase_auth_services.dart';
 import 'package:swafe/views/MainView/home.dart';
 
+// CORRECTION/COMMENTAIRE : Commentaire valable pour tous les écrans relatifs au Login, ou Register :
+// Suivre le tutoriel de bloclibrary.dev sur l'authentification peut aider à avoir rapidement qqchose de propre.
+
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -235,10 +238,8 @@ class RegisterViewState extends State<RegisterView> {
                     width: double.infinity,
                     child: CustomButton(
                       label: "Continuer",
-                      fillColor: MyColors
-                          .secondary40,
-                      textColor: MyColors
-                          .defaultWhite,
+                      fillColor: MyColors.secondary40,
+                      textColor: MyColors.defaultWhite,
                       onPressed: signUp,
                     ),
                   ),

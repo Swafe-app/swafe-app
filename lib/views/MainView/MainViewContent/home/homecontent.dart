@@ -15,6 +15,7 @@ void main() => runApp(MaterialApp(
         body: const HomeContent(),
       ),
     ));
+// CORRECTION/COMMENTAIRE : to remove voir main.dart
 
 class HomeContent extends StatefulWidget {
   const HomeContent({Key? key}) : super(key: key);
@@ -47,6 +48,8 @@ class HomeContentState extends State<HomeContent> {
     _getDataFromFirebase();
     _requestLocationPermission();
   }
+
+  // CORRECTION/COMMENTAIRE : KEY_1
 
   void _getDataFromFirebase() {
     try {

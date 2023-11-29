@@ -128,28 +128,30 @@ class LoginViewState extends State<LoginView> {
                   label: "Continuer",
                   fillColor: MyColors.secondary40,
                   textColor: MyColors.defaultWhite,
-                  onPressed: isEmailValid
-                      ? () async {
-                          User? user =
-                              await _authService.signInWithEmailAndPassword(
-                            email,
-                            password,
-                          );
+                  onPressed:
+                      isEmailValid // CORRECTION/COMMENTAIRE : Attention aux operateurs ternaires , ça peut vite rendre le code très moche.
+                          ? () async {
+                              User? user =
+                                  await _authService.signInWithEmailAndPassword(
+                                email,
+                                password,
+                              );
 
-                          if (user != null) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomeView(
-                                  welcomeMessage: "Bienvenue ${user.email} !",
-                                ),
-                              ),
-                            );
-                          } else {
-                            // Gérer la connexion échouée
-                          }
-                        }
-                      : null,
+                              if (user != null) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomeView(
+                                      welcomeMessage:
+                                          "Bienvenue ${user.email} !",
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                // Gérer la connexion échouée
+                              }
+                            }
+                          : null,
                 ),
                 const SizedBox(height: Spacing.small),
                 CustomButton(
@@ -161,6 +163,7 @@ class LoginViewState extends State<LoginView> {
                   // Set to the desired stroke color
                   textColor: MyColors.primary10,
                   // Set to the desired text color
+                  // CORRECTION/COMMENTAIRE : Commentaires inutiles
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -175,6 +178,8 @@ class LoginViewState extends State<LoginView> {
                 ),
                 const SizedBox(height: Spacing.huge),
                 // Utilisation de Spacing.huge pour l'espacement vertical
+
+                // CORRECTION/COMMENTAIRE : idem
               ],
             ),
           ],

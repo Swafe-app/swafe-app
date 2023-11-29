@@ -13,6 +13,8 @@ class RepertoireContent extends StatefulWidget {
 }
 
 class _RepertoireContentState extends State<RepertoireContent> {
+
+  // CORRECTION/COMMENTAIRE : Ces données devrait etre dans un fichier approprié, pas dans une view.
   final List<RepertoireCategory> _repertoireData = [
     RepertoireCategory(
       "Catégorie Numéros d'Urgence",
