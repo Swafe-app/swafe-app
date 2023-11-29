@@ -5,6 +5,7 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
+import 'package:swafe/helper/getFirebaseErrorMessage.dart';
 
 class LoginBottomSheet extends StatefulWidget {
   const LoginBottomSheet({super.key});
@@ -20,23 +21,6 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
   bool visiblePassword = false;
   String errorMessage = '';
   final _authInstance = FirebaseAuth.instance;
-
-  String getFirebaseErrorMessage(String errorCode) {
-    switch (errorCode) {
-      case 'user-not-found':
-        return 'Aucun utilisateur trouvé pour cet e-mail.';
-      case 'wrong-password':
-        return 'Mot de passe incorrect.';
-      case 'invalid-email':
-        return 'L\'adresse e-mail n\'est pas valide.';
-      case 'user-disabled':
-        return 'Le compte utilisateur a été désactivé.';
-      case 'too-many-requests':
-        return 'Trop de tentatives de connexion échouées. Veuillez réessayer plus tard.';
-      default:
-        return 'Une erreur est survenue lors de la connexion. Veuillez réessayer plus tard.';
-    }
-  }
 
   Future<void> checkEmailVerified() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -74,7 +58,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
           print("Error: $e");
         }
         setState(() {
-          errorMessage = "Une erreur est survenue lors de la connexion.";
+          errorMessage = getFirebaseErrorMessage('');
         });
       }
     }

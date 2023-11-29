@@ -10,6 +10,8 @@ import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/components/appbar/appbar.dart';
+import 'package:swafe/helper/getFirebaseErrorMessage.dart';
+import 'package:swafe/views/LoginRegister/valide_email_code.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -20,7 +22,6 @@ class RegisterView extends StatefulWidget {
 
 class RegisterViewState extends State<RegisterView> {
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _valideCodeFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _phoneKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -34,44 +35,18 @@ class RegisterViewState extends State<RegisterView> {
   int activeStep = 1;
   int maxStep = 3;
 
-  String getFirebaseErrorMessage(String errorCode) {
-    switch (errorCode) {
-      case 'user-not-found':
-        return 'Aucun utilisateur trouvé pour cet e-mail.';
-      case 'wrong-password':
-        return 'Mot de passe incorrect.';
-      case 'invalid-email':
-        return 'L\'adresse e-mail n\'est pas valide.';
-      case 'user-disabled':
-        return 'Le compte utilisateur a été désactivé.';
-      case 'too-many-requests':
-        return 'Trop de tentatives d\'inscription échouées. Veuillez réessayer plus tard.';
-      case 'weak-password':
-        return 'Le mot de passe n\'est pas assez robuste.';
-      case 'email-already-in-use':
-        return 'L\'adresse e-mail est déjà utilisée par un autre compte.';
-      default:
-        return 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer plus tard.';
-    }
-  }
-
-  Future<void> checkEmailVerified() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    await user?.reload();
-    if (user?.emailVerified ?? false) {
-      setState(() {
-        activeStep++;
-      });
-      Navigator.of(context).pushReplacementNamed('/home');
-    } else {
-      setState(() {
-        errorMessage = "Veuillez vérifier votre email pour continuer.";
-      });
-    }
+  void onEmailVerified() {
+    setState(() {
+      activeStep++;
+    });
+    Navigator.of(context).pushReplacementNamed('/home');
   }
 
   Future<void> signUp() async {
-    if (_phoneKey.currentState?.validate() ?? true) {
+    setState(() {
+      errorMessage = "";
+    });
+    if (_phoneKey.currentState?.validate() ?? false) {
       setState(() {
         errorMessage = "Veuillez entrer un numéro de téléphone.";
       });
@@ -97,23 +72,6 @@ class RegisterViewState extends State<RegisterView> {
         setState(() {
           activeStep++;
         });
-
-        // Commencez à vérifier si l'utilisateur a vérifié son email dans un intervalle de temps
-        Timer.periodic(
-          const Duration(seconds: 3),
-          (timer) async {
-            // Vérifiez si l'utilisateur a validé son email
-            await _firebaseInstance.currentUser!.reload();
-            var user = _firebaseInstance.currentUser;
-            if (user!.emailVerified) {
-              timer.cancel();
-              setState(() {
-                activeStep++;
-              });
-              Navigator.of(context).pushReplacementNamed('/home');
-            }
-          },
-        );
       } on FirebaseAuthException catch (e) {
         if (kDebugMode) {
           print("Firebase Error: $e");
@@ -126,7 +84,7 @@ class RegisterViewState extends State<RegisterView> {
           print("Error: $e");
         }
         setState(() {
-          errorMessage = "Une erreur est survenue lors de l'inscription.";
+          errorMessage = getFirebaseErrorMessage('');
         });
       }
     }
@@ -137,158 +95,124 @@ class RegisterViewState extends State<RegisterView> {
       case 1:
         return registerForm();
       case 2:
-        return codeValidationForm();
+        return CodeValidationView(
+          email: _emailController.text.trim(),
+          onSuccess: onEmailVerified,
+          customBackPageLogic: backPageLogic,
+        );
       default:
         return const CustomAppBar();
     }
   }
 
   Widget registerForm() {
-    return Form(
-      key: _registerFormKey,
-      child: Column(
-        children: [
-          CustomAppBar(iconButtonOnPressed: backPageLogic),
-          const SizedBox(height: 24),
-          if (errorMessage.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Text(
-                errorMessage,
-                style: BodyLargeMedium.copyWith(color: MyColors.error40),
-              ),
-            ),
-          CustomTextField(
-            placeholder: 'E-mail',
-            controller: _emailController,
-            validator: (value) {
-              if (value == null ||
-                  value.isEmpty ||
-                  !RegExp(r'\b[\w.-]+@[\w.-]+\.\w{2,4}\b').hasMatch(value)) {
-                return "L'adresse e-mail n'est pas valide.";
-              }
-              return null;
-            },
-            keyboardType: TextInputType.emailAddress,
-          ),
-          const SizedBox(height: 24),
-          IntlPhoneField(
-            controller: _phoneController,
-            key: _phoneKey,
-            invalidNumberMessage: 'Entrez un numéro de téléphone valide.',
-            validator: (phone) {
-              if (phone == null || phone.number.isEmpty) {
-                return 'Veuillez entrer un numéro de téléphone.';
-              }
-              return null;
-            },
-            decoration: customTextFieldDecoration.copyWith(
-                label: const Text("N° de téléphone portable")),
-            initialCountryCode: 'FR',
-            countries: List<Country>.of(
-                countries.where((ct) => ['FR'].contains(ct.code))),
-          ),
-          const SizedBox(height: 24),
-          CustomTextField(
-            placeholder: 'Mot de passe',
-            controller: _passwordController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Veuillez entrer un mot de passe.';
-              }
-              RegExp regex =
-                  RegExp(r'^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#$&*~.]).{8,}$');
-              if (!regex.hasMatch(value)) {
-                return 'Doit contenir au moins 8 caractères dont 1 majuscule, 1 chiffre et 1 caractère spécial.';
-              }
-              return null;
-            },
-            obscureText: !visiblePassword,
-            rightIcon: visiblePassword
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
-            onRightIconPressed: () =>
-                setState(() => visiblePassword = !visiblePassword),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: Text(
-                "Doit contenir au moins :\n  • 1 majuscule\n  • 1 chiffre\n  • 1 caractère spécial\n  • 8 caractères",
-                style: BodyLargeRegular),
-          ),
-          const SizedBox(height: 24),
-          CustomTextField(
-            placeholder: 'Confirmer le mot de passe',
-            controller: _confirmPasswordController,
-            validator: (value) {
-              if (value != _passwordController.text) {
-                return 'Les mots de passe ne correspondent pas.';
-              }
-              return null;
-            },
-            obscureText: !visibleConfirmPassword,
-            rightIcon: visibleConfirmPassword
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
-            onRightIconPressed: () => setState(
-                () => visibleConfirmPassword = !visibleConfirmPassword),
-          ),
-          const Spacer(),
-          Text(
-              textAlign: TextAlign.center,
-              "En cliquant sur “continuer”, vous acceptez les\n conditions générales d’utilisation",
-              style: SubtitleLargeRegular),
-          const SizedBox(height: 20),
-          CustomButton(
-            label: 'Continuer',
-            onPressed: () => signUp(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget codeValidationForm() {
-    return Form(
-      key: _valideCodeFormKey,
-      child: Column(
-        children: [
-          CustomAppBar(iconButtonOnPressed: backPageLogic),
-          const SizedBox(height: 24),
-          Text(
-              textAlign: TextAlign.center,
-              "Nous vous avons envoyé un lien de vérification sur la boite mail :\n ${_emailController.text}",
-              style: TitleLargeMedium),
-          const SizedBox(height: 32),
-          // const CustomTextField(placeholder: 'Code de vérification'),
-          // const SizedBox(height: 32),
-          InkWell(
-            onTap: resendVerificationEmail,
-            child: RichText(
-              text: TextSpan(
-                children: <TextSpan>[
-                  TextSpan(
-                      text: 'Vous ne l’avez pas reçu ? ',
-                      style: BodyLargeRegular),
-                  TextSpan(
-                    text: 'Renvoyer le lien',
-                    style:
-                        BodyLargeMedium.copyWith(color: MyColors.secondary40),
+    return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
+        child: Form(
+          key: _registerFormKey,
+          child: Column(
+            children: [
+              CustomAppBar(iconButtonOnPressed: backPageLogic),
+              const SizedBox(height: 24),
+              if (errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    errorMessage,
+                    style: BodyLargeMedium.copyWith(color: MyColors.error40),
                   ),
-                ],
+                ),
+              CustomTextField(
+                placeholder: 'E-mail',
+                controller: _emailController,
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      !RegExp(r'\b[\w.-]+@[\w.-]+\.\w{2,4}\b')
+                          .hasMatch(value)) {
+                    return "L'adresse e-mail n'est pas valide.";
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.emailAddress,
               ),
-            ),
+              const SizedBox(height: 24),
+              IntlPhoneField(
+                controller: _phoneController,
+                key: _phoneKey,
+                invalidNumberMessage: 'Entrez un numéro de téléphone valide.',
+                validator: (phone) {
+                  if (phone == null || phone.number.isEmpty) {
+                    return 'Veuillez entrer un numéro de téléphone.';
+                  }
+                  return null;
+                },
+                decoration: customTextFieldDecoration.copyWith(
+                    label: const Text("N° de téléphone portable")),
+                initialCountryCode: 'FR',
+                countries: List<Country>.of(
+                    countries.where((ct) => ['FR'].contains(ct.code))),
+              ),
+              const SizedBox(height: 24),
+              CustomTextField(
+                placeholder: 'Mot de passe',
+                controller: _passwordController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer un mot de passe.';
+                  }
+                  RegExp regex = RegExp(
+                      r'^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!@#$%^&*(),.?":{}|<>+]).{8,}$');
+                  if (!regex.hasMatch(value)) {
+                    return 'Doit contenir au moins 8 caractères dont 1 majuscule, 1 chiffre et 1 caractère spécial.';
+                  }
+                  return null;
+                },
+                obscureText: !visiblePassword,
+                rightIcon: visiblePassword
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                onRightIconPressed: () =>
+                    setState(() => visiblePassword = !visiblePassword),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Text(
+                    "Doit contenir au moins :\n  • 1 majuscule\n  • 1 chiffre\n  • 1 caractère spécial\n  • 8 caractères",
+                    style: BodyLargeRegular),
+              ),
+              const SizedBox(height: 24),
+              CustomTextField(
+                placeholder: 'Confirmer le mot de passe',
+                controller: _confirmPasswordController,
+                validator: (value) {
+                  if (value != _passwordController.text) {
+                    return 'Les mots de passe ne correspondent pas.';
+                  }
+                  return null;
+                },
+                obscureText: !visibleConfirmPassword,
+                rightIcon: visibleConfirmPassword
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                onRightIconPressed: () => setState(
+                    () => visibleConfirmPassword = !visibleConfirmPassword),
+              ),
+              const Spacer(),
+              Text(
+                  textAlign: TextAlign.center,
+                  "En cliquant sur “continuer”, vous acceptez les\n conditions générales d’utilisation",
+                  style: SubtitleLargeRegular),
+              const SizedBox(height: 20),
+              CustomButton(
+                label: 'Continuer',
+                onPressed: () => signUp(),
+              ),
+            ],
           ),
-          const Spacer(),
-          CustomButton(
-            label: 'Continuer',
-            onPressed: checkEmailVerified,
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   void backPageLogic() async {
@@ -298,14 +222,6 @@ class RegisterViewState extends State<RegisterView> {
       });
     } else {
       Navigator.of(context).pop();
-    }
-  }
-
-  // Fonction pour renvoyer l'email de vérification
-  void resendVerificationEmail() async {
-    User? user = _firebaseInstance.currentUser;
-    if (user != null && !user.emailVerified) {
-      await user.sendEmailVerification();
     }
   }
 
@@ -322,9 +238,8 @@ class RegisterViewState extends State<RegisterView> {
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 60, 20, 60),
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: screenSize.height - 120),
+            constraints: BoxConstraints(maxHeight: screenSize.height),
             child: WillPopScope(
               onWillPop: () async {
                 backPageLogic();
