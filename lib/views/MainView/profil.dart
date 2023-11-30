@@ -6,7 +6,6 @@ import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/UserProfileScreen.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/UpdatePassword.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/ReauthenticationPage.dart';
 
 class ProfilContent extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -112,7 +111,7 @@ class ProfilContent extends StatelessWidget {
               [
                 const UserProfileScreen(),
                 const UpdatePasswordView(),
-                const ReauthenticationPage(),
+                null,
                 null,
               ],
             ),
