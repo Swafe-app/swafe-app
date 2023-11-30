@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
+import 'package:swafe/DS/typographies.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:swafe/ds/typographies.dart';
-import 'package:swafe/DS/spacing.dart'; // Importez la classe Spacing
+import 'package:swafe/DS/spacing.dart';
 
 class RepertoireContent extends StatefulWidget {
   const RepertoireContent({Key? key}) : super(key: key);
@@ -159,12 +159,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
       appBar: AppBar(
         title: Text(
           'Répertoire',
-          style: typographyList
-              .firstWhere((info) => info.name == 'Title Large Medium')
-              .style
-              .copyWith(
-                color: MyColors.primary10,
-              ),
+          style: TitleLargeMedium,
         ),
         backgroundColor: MyColors.defaultWhite,
         elevation: 0,
@@ -212,13 +207,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
                       ),
                       child: Text(
                         category.name,
-                        style: typographyList
-                            .firstWhere(
-                                (info) => info.name == 'Title Small Medium')
-                            .style
-                            .copyWith(
-                              color: MyColors.primary10,
-                            ),
+                        style: TitleSmallMedium,
                       ),
                     ),
                     for (RepertoireCardData card in category.cards)
@@ -271,12 +260,7 @@ class RepertoireCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(Spacing.small),
         title: Text(
           cardData.name,
-          style: typographyList
-              .firstWhere((info) => info.name == 'Body Large Medium')
-              .style
-              .copyWith(
-                color: MyColors.primary10,
-              ),
+          style: BodyLargeMedium,
         ),
         subtitle: Text(cardData.description),
         trailing: IconButton(
