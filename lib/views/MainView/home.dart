@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/DS/typographies.dart';
 import 'MainViewContent/home/homecontent.dart';
 import 'profil.dart';
 import 'repertoire.dart';

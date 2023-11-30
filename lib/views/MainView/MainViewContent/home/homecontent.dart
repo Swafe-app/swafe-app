@@ -41,11 +41,11 @@ class HomeContentState extends State<HomeContent> {
   Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
 
-  Marker userLocationMarker = Marker(
+  Marker userLocationMarker = const Marker(
     width: 80.0,
     height: 80.0,
-    point: const LatLng(0.0, 0.0),
-    builder: (ctx) => const Icon(
+    point: LatLng(0.0, 0.0),
+    child: Icon(
       Icons.location_on,
       color: Colors.blue,
       size: 50.0,
@@ -108,7 +108,7 @@ class HomeContentState extends State<HomeContent> {
         width: 80.0,
         height: 80.0,
         point: LatLng(position.latitude, position.longitude),
-        builder: (ctx) => const Icon(
+        child: const Icon(
           Icons.location_on,
           color: Colors.blue,
           size: 50.0,
@@ -182,8 +182,8 @@ class HomeContentState extends State<HomeContent> {
                 options: MapOptions(
                   onMapEvent: (event) {
                     if (event.source == MapEventSource.multiFingerEnd) {
-                      print(event.zoom);
-                      _buildMarkers(event.zoom);
+                      print(event.camera.zoom);
+                      _buildMarkers(event.camera.zoom);
                     }
                   },
                   center: const LatLng(48.866667, 2.333333),

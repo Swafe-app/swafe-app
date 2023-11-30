@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../DS/reporting_type.dart';
-import 'package:latlong2/latlong.dart';
 
 class CustomMarker extends Marker {
   final ReportingType reportingType;
@@ -14,7 +14,7 @@ class CustomMarker extends Marker {
   }) : super(
           width: 130.0,
           height: 150.0,
-          builder: (ctx) => Stack(children: [
+          child: Stack(children: [
             Center(child: SvgPicture.asset(reportingType.threat)),
             Positioned(
                 right: 50,

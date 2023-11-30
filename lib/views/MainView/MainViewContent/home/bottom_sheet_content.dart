@@ -251,7 +251,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                         width: 50.0,
                         height: 50.0,
                         point: userPosition,
-                        builder: (ctx) => SvgPicture.asset(
+                        child: SvgPicture.asset(
                           pin,
                           width: 30,
                         ),
