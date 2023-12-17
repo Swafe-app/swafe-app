@@ -6,15 +6,16 @@ enum ReportingType {
   harcelement(title: 'Harcèlement',pin: 'assets/images/harcelement.png',threat: 'assets/images/midDangerPin.svg'),
   agressionSexuelle(title: 'Agression Sexuelle',pin: 'assets/images/agression.png',threat: 'assets/images/midDangerPin.svg'),
   incendie(title: 'Incendie',pin: 'assets/images/incendie.png',threat: 'assets/images/highDangerPin.svg'),
+  meteo(title: 'Météo',pin: 'assets/images/meteo.png',threat: 'assets/images/lowDangerPin.svg'),
   travaux(title: 'Travaux',pin: 'assets/images/travaux.png',threat: 'assets/images/lowDangerPin.svg'),
-  accessibilite(title: 'Manque d\'accessibilité',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg'),
-  voiture(title: 'Accident de voiture',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg'),
-  inondation(title: 'Inondation',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg'),
-  chaussee(title: 'Trou sur la chaussée',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg'),
-  obstacle(title: 'Obstacle sur la chaussée',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg'),
-  ivresse(title: 'Personne ivre',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg'),
-  conduite(title: 'Conduite dangereuse',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg'),
-  feuPieton(title: 'Feu de pieton dysfonctionnel',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg'),
+  accessibilite(title: 'Manque d\'accessibilité',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
+  voiture(title: 'Accident de voiture',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
+  inondation(title: 'Inondation',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
+  chaussee(title: 'Trou sur la chaussée',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
+  obstacle(title: 'Obstacle sur la chaussée',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
+  ivresse(title: 'Personne ivre',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
+  conduite(title: 'Conduite dangereuse',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
+  feuPieton(title: 'Feu de pieton dysfonctionnel',pin: 'assets/images/pieton.png',threat: 'assets/images/lowDangerPin.svg'),
   eclairage(title: 'Mauvais éclairage',pin: 'assets/images/light.png',threat: 'assets/images/lowDangerPin.svg'),
   autre(title: 'Autre',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg');
 
@@ -46,6 +47,8 @@ enum ReportingType {
         return ReportingType.agressionSexuelle;
       case 'Incendie':
         return ReportingType.incendie;
+      case 'Météo':
+        return ReportingType.meteo;
       case 'Travaux':
         return ReportingType.travaux;
       case 'manque d\'accessibilité':
