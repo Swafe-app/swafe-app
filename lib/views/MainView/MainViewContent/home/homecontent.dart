@@ -186,10 +186,10 @@ class HomeContentState extends State<HomeContent> {
                       _buildMarkers(event.camera.zoom);
                     }
                   },
-                  center: const LatLng(48.866667, 2.333333),
-                  zoom: zoom,
+                  initialCenter: const LatLng(48.866667, 2.333333),
+                  initialZoom: zoom,
                   maxZoom: 14.92,
-                  interactiveFlags: InteractiveFlag.all  & ~InteractiveFlag.rotate,
+                  interactionOptions: const InteractionOptions(rotationWinGestures: InteractiveFlag.none),
                 ),
                 children: [
                   TileLayer(
