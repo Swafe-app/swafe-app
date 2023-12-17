@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../DS/colors.dart';
 import '../../DS/reporting_type.dart';
 
 class CustomMarker extends Marker {
@@ -30,10 +31,13 @@ class CustomMarker extends Marker {
             Positioned(
                 right: 62,
                 bottom: 77,
-                child: SizedBox(
+                child: Container(
                     height: 45,
                     width: 45,
-                    child: Image.asset(reportingType.pin)))
+                    decoration: ShapeDecoration(image: DecorationImage(image: AssetImage(reportingType.pin)), shape: const OvalBorder(
+                        side: BorderSide(
+                            width: 3,
+                            color: MyColors.defaultWhite))))),
           ]),
           point: point,
         );
