@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
@@ -48,15 +47,16 @@ class BottomSheetContentState extends State<BottomSheetContent>
             widget.position.longitude + 0.00895));
 
     // Get the user's current location and set the marker coordinates
-    getLocation();
   }
 
+  //Vérifie si le signalement est dans le cercle
   bool isWithinCircle(LatLng center, LatLng point, double radius) {
     const distance = Distance();
     return distance(center, point) <= radius;
   }
 
-  void _sendDataToFirebase() async {
+  //Envoi du signalement à Firebase
+  Future<void> _sendDataToFirebase() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final selectedData = {
@@ -70,7 +70,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
       };
 
       try {
-        await databaseReference.child('signalements').push().set(selectedData);
+        await databaseReference.child('signalements').push().set(selectedData).then((value) => Navigator.of(context).pop());
         if (kDebugMode) {
           print("Données envoyées à Firebase avec succès.");
         }
@@ -82,23 +82,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
     }
   }
 
-  void getLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      setState(() {
-        userPosition = LatLng(position.latitude, position.longitude);
-        getAddressFromLatLng(userPosition);
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error getting location: $e");
-      }
-    }
-  }
-
+  //Obtention de l'adresse à partir de la latitude et de la longitude
   Future<void> getAddressFromLatLng(LatLng position) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -118,6 +102,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
     }
   }
 
+  //Création des signalements sélectionnables
   List<Widget> _buildSelectableItems(
       List<String> selectedItems, String tabName) {
     late List<ReportingType> items;
@@ -127,24 +112,22 @@ class BottomSheetContentState extends State<BottomSheetContent>
         ReportingType.vol,
         ReportingType.harcelement,
         ReportingType.agressionSexuelle,
-        ReportingType.incendie,
-        ReportingType.violenceVerbale,
-        ReportingType.insecurite,
         ReportingType.violence,
-        ReportingType.harcelement,
-        ReportingType.conduite,
-        ReportingType.ivresse,
-        ReportingType.obstacle,
+        ReportingType.incendie,
+        ReportingType.insecurite,
+        ReportingType.violenceVerbale,
+        ReportingType.meteo,
       ];
     } else{
       items = [
         ReportingType.autre,
-        ReportingType.travaux,
-        ReportingType.accessibilite,
         ReportingType.eclairage,
-        ReportingType.voiture,
-        ReportingType.inondation,
         ReportingType.chaussee,
+        ReportingType.inondation,
+        ReportingType.travaux,
+        ReportingType.obstacle,
+        ReportingType.accessibilite,
+        ReportingType.voiture,
         ReportingType.feuPieton,
       ];
     }
@@ -207,8 +190,9 @@ class BottomSheetContentState extends State<BottomSheetContent>
               height: 145,
               child: FlutterMap(
                 options: MapOptions(
-                  center: userPosition,
-                  bounds: bounds,
+
+                  initialCenter: userPosition,
+                  initialCameraFit: CameraFit.insideBounds(bounds: bounds),
                   minZoom: 15,
                   onMapEvent: (event) {
                     if (event.source.name == "dragEnd") {
@@ -242,7 +226,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 children: [
                   TileLayer(
                     urlTemplate:
-                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     subdomains: const ['a', 'b', 'c'],
                   ),
                   MarkerLayer(
@@ -287,6 +271,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
             labelColor: MyColors.primary10,
             unselectedLabelColor: MyColors.neutral40,
             labelStyle: BodyLargeRegular,
+            onTap: (value) => setState(() {
+              _selectedAnomaliesItems.clear();
+              _selectedDangerItems.clear();
+              _isSelectionMade = false;
+            }),
             tabs: const [
               Tab(
                 text: 'Dangers',
@@ -336,7 +325,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 mainAxisSize: MainAxisSize.max,
                 isDisabled: _isSelectionMade ? false : true,
                 onPressed:
-                    _isSelectionMade ? () => _sendDataToFirebase() : null,
+                     () => _sendDataToFirebase(),
               ),
             ],
           ),
