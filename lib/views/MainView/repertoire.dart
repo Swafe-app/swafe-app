@@ -5,6 +5,9 @@ import 'package:swafe/DS/spacing.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../DS/typographies.dart';
+import '../../components/Repertory/repertory.dart';
+import '../../models/repertory_category.dart';
+import '../../models/repertory_data.dart';
 
 class RepertoireContent extends StatefulWidget {
   const RepertoireContent({super.key});
@@ -45,7 +48,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
         ),
         RepertoireCardData(
           "Sécurité RATP / SNCF - 3117",
-          "Si vous êtes témoin d’une situation qui présente un risque pour votre sécurité ou celle des autres voyageurs",
+          "Si vous êtes témoin d’une situation qui présente un risque pour votre sécurité ou celle des autres voyageurs.",
           "3117",
         ),
       ],
@@ -159,7 +162,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: Spacing.extraHuge),
+          const SizedBox(height: 60),
           Container(
             color: MyColors.defaultWhite,
             child: const Text(
@@ -250,57 +253,5 @@ class _RepertoireContentState extends State<RepertoireContent> {
   }
 }
 
-class RepertoireCategory {
-  final String name;
-  final List<RepertoireCardData> cards;
 
-  RepertoireCategory(this.name, this.cards);
-}
 
-class RepertoireCardData {
-  final String name;
-  final String description;
-  final String phoneNumber;
-
-  RepertoireCardData(this.name, this.description, this.phoneNumber);
-}
-
-class RepertoireCard extends StatelessWidget {
-  final RepertoireCardData cardData;
-  final Function(String) onCardTapped;
-  final EdgeInsetsGeometry? margin;
-
-  const RepertoireCard(
-      {super.key,
-      required this.cardData,
-      required this.onCardTapped,
-      this.margin});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: margin,
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              cardData.name,
-              style: BodyXLargeMedium,
-            ),
-            const SizedBox(height: 4),
-          ],
-        ),
-        subtitle: Text(cardData.description),
-        trailing: IconButton(
-          icon: const Icon(size: 32, Icons.phone_in_talk_outlined),
-          color: MyColors.secondary40,
-          onPressed: () {
-            onCardTapped(cardData.phoneNumber);
-          },
-        ),
-      ),
-    );
-  }
-}
