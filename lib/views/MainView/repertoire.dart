@@ -1,12 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
-import 'package:swafe/DS/typographies.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:swafe/DS/spacing.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
+import '../../DS/typographies.dart';
 
 class RepertoireContent extends StatefulWidget {
-  const RepertoireContent({Key? key}) : super(key: key);
+  const RepertoireContent({super.key});
 
   @override
   State<RepertoireContent> createState() => _RepertoireContentState();
@@ -15,15 +16,15 @@ class RepertoireContent extends StatefulWidget {
 class _RepertoireContentState extends State<RepertoireContent> {
   final List<RepertoireCategory> _repertoireData = [
     RepertoireCategory(
-      "Catégorie Numéros d'Urgence",
+      "Numéro en cas d’urgence - Par téléphone",
       [
         RepertoireCardData(
-          "Police - 17",
+          "Police Secours - 17",
           "Pour signaler une infraction qui nécessite l’intervention immédiate des policiers.",
           "17",
         ),
         RepertoireCardData(
-          "Pompiers - 18",
+          "Sapeur-Pompiers - 18",
           "Pour signaler une situation de péril ou un accident concernant des biens ou des personnes et obtenir leur intervention rapide.",
           "18",
         ),
@@ -142,8 +143,8 @@ class _RepertoireContentState extends State<RepertoireContent> {
   void _callNumber(String phoneNumber) async {
     String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
     String url = "tel:$cleanedPhoneNumber";
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url);
     } else {
       if (kDebugMode) {
         if (kDebugMode) {
@@ -156,25 +157,32 @@ class _RepertoireContentState extends State<RepertoireContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Répertoire',
-          style: TitleLargeMedium,
-        ),
-        backgroundColor: MyColors.defaultWhite,
-        elevation: 0,
-      ),
-      backgroundColor: MyColors.neutral80,
       body: Column(
         children: [
+          const SizedBox(height: Spacing.extraHuge),
           Container(
             color: MyColors.defaultWhite,
-            padding: const EdgeInsets.all(Spacing.small),
+            child: const Text(
+              "Numéros d'urgence",
+              style: TextStyle(
+                color: Color(0xFF021F40),
+                fontSize: 20,
+                fontFamily: 'SF Pro Display',
+                fontWeight: FontWeight.w500,
+                height: 0.07,
+              ),
+            ),
+          ),
+          const SizedBox(height: Spacing.extraLarge),
+          Container(
+            color: MyColors.defaultWhite,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            // Reduced padding to 0
             child: TextField(
               onChanged: _filterData,
               decoration: const InputDecoration(
                 hintText: "Rechercher",
-                prefixIcon: Icon(
+                suffixIcon: Icon(
                   Icons.search,
                   color: MyColors.primary10,
                 ),
@@ -184,6 +192,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(
                     color: MyColors.neutral40,
                   ),
@@ -191,6 +200,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
               ),
             ),
           ),
+          const SizedBox(height: Spacing.extraLarge),
           Expanded(
             child: ListView.builder(
               itemCount: _filteredData.length,
@@ -199,25 +209,36 @@ class _RepertoireContentState extends State<RepertoireContent> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: Spacing.small,
-                        left: Spacing.standard,
-                        right: Spacing.standard,
-                      ),
-                      child: Text(
-                        category.name,
-                        style: TitleSmallMedium,
+                    if (index != 0) const SizedBox(height: 24),
+                    // Add spacing if not the first category
+                    Container(
+                      color: const Color(0xFFECECEC),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 12),
+                          Text(
+                            category.name,
+                            style: const TextStyle(
+                              color: Color(0xFF021F40),
+                              fontSize: 14,
+                              fontFamily: 'SF Pro Display',
+                              fontWeight: FontWeight.w500,
+                              height: 0.10,
+                              letterSpacing: 0.06,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          for (RepertoireCardData card in category.cards)
+                            RepertoireCard(
+                              cardData: card,
+                              onCardTapped: _callNumber,
+                            ),
+                        ],
                       ),
                     ),
-                    for (RepertoireCardData card in category.cards)
-                      RepertoireCard(
-                        cardData: card,
-                        onCardTapped: _callNumber,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: Spacing.standard,
-                            vertical: Spacing.small),
-                      ),
                   ],
                 );
               },
@@ -250,21 +271,30 @@ class RepertoireCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const RepertoireCard(
-      {super.key, required this.cardData, required this.onCardTapped, this.margin});
+      {super.key,
+      required this.cardData,
+      required this.onCardTapped,
+      this.margin});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: margin,
       child: ListTile(
-        contentPadding: const EdgeInsets.all(Spacing.small),
-        title: Text(
-          cardData.name,
-          style: BodyLargeMedium,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              cardData.name,
+              style: BodyXLargeMedium,
+            ),
+            const SizedBox(height: 4),
+          ],
         ),
         subtitle: Text(cardData.description),
         trailing: IconButton(
-          icon: const Icon(Icons.phone),
+          icon: const Icon(size: 32, Icons.phone_in_talk_outlined),
           color: MyColors.secondary40,
           onPressed: () {
             onCardTapped(cardData.phoneNumber);
