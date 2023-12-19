@@ -6,15 +6,15 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
-import 'package:swafe/components/Button/iconbutton.dart';
 import 'package:swafe/components/marker/custom_grouped_marker.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-// fichier lib/views/MainView/MainViewContent/home/homecontent.dart dans l'application Flutter
 
+import '../../../../components/IconButton/icon_button.dart';
+// fichier lib/views/MainView/MainViewContent/home/homecontent.dart dans l'application Flutter
 
 void main() => runApp(MaterialApp(
       home: Scaffold(
@@ -189,7 +189,8 @@ class HomeContentState extends State<HomeContent> {
                   center: const LatLng(48.866667, 2.333333),
                   zoom: zoom,
                   maxZoom: 14.92,
-                  interactiveFlags: InteractiveFlag.all  & ~InteractiveFlag.rotate,
+                  interactiveFlags:
+                      InteractiveFlag.all & ~InteractiveFlag.rotate,
                 ),
                 children: [
                   TileLayer(
@@ -208,25 +209,36 @@ class HomeContentState extends State<HomeContent> {
         Positioned(
           bottom: MediaQuery.of(context).size.height * .4,
           right: 0.01,
-          child: CustomIconButton(
+          child: IconButton(
             onPressed: () {
               _showBottomSheet(context);
             },
-            size: 70,
-            image: 'assets/images/report_logo.png',
+            iconSize: 52,
+            icon: Image.asset('assets/images/report_logo.png'),
           ),
         ),
         Positioned(
           bottom: MediaQuery.of(context).size.height * .30,
           right: 0.01,
-          child: CustomIconButton(
+          child: IconButton(
             onPressed: () {
               _callPolice();
             },
-            size: 70,
-            image: 'assets/images/call_logo.png',
+            iconSize: 52,
+            icon: Image.asset('assets/images/call_logo.png'),
           ),
         ),
+        Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.15,
+            left: 30,
+            child: CustomIconButton(
+              type: IconButtonType.square,
+              size: IconButtonSize.L,
+              icon: Icons.near_me_outlined,
+              onPressed: () {
+                _calculateCenter();
+              },
+            )),
       ],
     );
   }
@@ -271,7 +283,8 @@ class HomeContentState extends State<HomeContent> {
     setState(() {
       List<Marker> markers = [];
       List<List<SignalementModel>> clusters = [];
-      double radius = 1700 / (pow(2, zoom) / 2); // Adjust the radius based on the zoom level
+      double radius = 1700 /
+          (pow(2, zoom) / 2); // Adjust the radius based on the zoom level
 
       // Create clusters
       for (var signalement in signalementMap.values) {
@@ -279,8 +292,9 @@ class HomeContentState extends State<HomeContent> {
         for (var cluster in clusters) {
           for (var signalementInCluster in cluster) {
             if (calculateDistance(
-                LatLng(signalement.latitude, signalement.longitude),
-                LatLng(signalementInCluster.latitude, signalementInCluster.longitude)) <=
+                    LatLng(signalement.latitude, signalement.longitude),
+                    LatLng(signalementInCluster.latitude,
+                        signalementInCluster.longitude)) <=
                 radius) {
               cluster.add(signalement);
               added = true;
@@ -308,14 +322,16 @@ class HomeContentState extends State<HomeContent> {
           markers.add(CustomGroupedMarker(
             point: LatLng(avgLatitude, avgLongitude),
             numberReports: cluster.length,
-            imagePath: convertStringToReportingType(cluster[0].selectedDangerItems.first).pin,
+            imagePath: convertStringToReportingType(
+                    cluster[0].selectedDangerItems.first)
+                .pin,
           ));
         } else {
-          markers.add(
-              CustomMarker(
-                point: LatLng(avgLatitude, avgLongitude),
-                reportingType: convertStringToReportingType(cluster[0].selectedDangerItems.first),
-              ));
+          markers.add(CustomMarker(
+            point: LatLng(avgLatitude, avgLongitude),
+            reportingType: convertStringToReportingType(
+                cluster[0].selectedDangerItems.first),
+          ));
         }
       }
 
