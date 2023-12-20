@@ -192,7 +192,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
               child: FlutterMap(
                 mapController: mapController,
                 options: MapOptions(
-                  initialCenter: userPosition,
+                  initialCenter: LatLng(userPosition.latitude,
+                      userPosition.longitude), // Initial position of the map
                   initialCameraFit: CameraFit.insideBounds(bounds: bounds),
                   minZoom: 15,
                   onMapEvent: (event) {
@@ -247,8 +248,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
                   CircleLayer(
                     circles: [
                       CircleMarker(
-                        point: basePosition,
-                        radius: 300,
+                        point: LatLng(basePosition.latitude-0.0005,basePosition.longitude),
+                        radius: 310,
                         color: MyColors.secondary40.withOpacity(0.2),
                       )
                     ],
