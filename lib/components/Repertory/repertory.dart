@@ -20,6 +20,7 @@ class RepertoireCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: margin,
+      surfaceTintColor: MyColors.neutral100,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         title: Column(
@@ -27,12 +28,12 @@ class RepertoireCard extends StatelessWidget {
           children: [
             Text(
               cardData.name,
-              style: BodyXLargeMedium,
+              style: TitleSmallMedium,
             ),
             const SizedBox(height: 4),
           ],
         ),
-        subtitle: Text(cardData.description),
+        subtitle: Text(cardData.description, style: BodyLargeMedium),
         trailing: IconButton(
           icon: const Icon(size: 32, Icons.phone_in_talk_outlined),
           color: MyColors.secondary40,
