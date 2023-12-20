@@ -15,7 +15,7 @@ enum ReportingType {
   obstacle(title: 'Obstacle sur la chaussée',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
   ivresse(title: 'Personne ivre',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
   conduite(title: 'Conduite dangereuse',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
-  feuPieton(title: 'Feu de pieton dysfonctionnel',pin: 'assets/images/pieton.png',threat: 'assets/images/lowDangerPin.svg'),
+  feuPieton(title: 'Feu de pieton dysfonctionnel',pin: 'assets/images/feuPieton.png',threat: 'assets/images/lowDangerPin.svg'),
   eclairage(title: 'Mauvais éclairage',pin: 'assets/images/light.png',threat: 'assets/images/lowDangerPin.svg'),
   autre(title: 'Autre',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg');
 

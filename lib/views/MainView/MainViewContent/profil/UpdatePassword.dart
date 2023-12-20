@@ -5,6 +5,7 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/helper/getFirebaseErrorMessage.dart';
 
@@ -26,6 +27,33 @@ class UpdatePasswordViewState extends State<UpdatePasswordView> {
   bool visibleNewPassword = false;
   bool visibleConfirmNewPassword = false;
   String errorMessage = '';
+  bool hasUpperCase = false;
+  bool hasDigit = false;
+  bool hasSpecialCharacter = false;
+  bool hasMinLength = false;
+
+  void _validatePassword(String value) {
+    setState(() {
+      hasUpperCase = value.contains(RegExp(r'[A-Z]'));
+      hasDigit = value.contains(RegExp(r'[0-9]'));
+      hasSpecialCharacter = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>+]'));
+      hasMinLength = value.length >= 8;
+    });
+  }
+
+  Widget _buildCriteriaRow(String criteria, bool isValid) {
+    return Row(
+      children: [
+        const SizedBox(width: 8),
+        Icon(
+          isValid ? Icons.check : Icons.close,
+          color: isValid ? Colors.green : Colors.red,
+        ),
+        const SizedBox(width: 5),
+        Text(criteria, style: BodyLargeRegular),
+      ],
+    );
+  }
 
   Future<void> updatePassword() async {
     if (_formKey.currentState!.validate()) {
@@ -44,8 +72,9 @@ class UpdatePasswordViewState extends State<UpdatePasswordView> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content:
-                    Text("Votre mot de passe a été mis à jour avec succès.")),
+              content: CustomSnackbar(
+                  label: "Votre mot de passe a été mis à jour avec succès."),
+            ),
           );
 
           Navigator.of(context).pop();
@@ -115,8 +144,9 @@ class UpdatePasswordViewState extends State<UpdatePasswordView> {
               ),
               const SizedBox(height: 24),
               CustomTextField(
-                placeholder: 'Confirmer le mot de passe',
+                placeholder: 'Nouveau mot de passe',
                 controller: _newPasswordController,
+                onChanged: (value) => _validatePassword(value),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un mot de passe.';
@@ -136,12 +166,19 @@ class UpdatePasswordViewState extends State<UpdatePasswordView> {
                     setState(() => visibleNewPassword = !visibleNewPassword),
               ),
               const SizedBox(height: 24),
-              Container(
-                width: double.infinity,
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
-                child: Text(
-                    "Doit contenir au moins :\n  • 1 majuscule\n  • 1 chiffre\n  • 1 caractère spécial\n  • 8 caractères",
-                    style: BodyLargeRegular),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Doit contenir au moins :', style: BodyLargeRegular),
+                    _buildCriteriaRow('1 majuscule', hasUpperCase),
+                    _buildCriteriaRow('1 chiffre', hasDigit),
+                    _buildCriteriaRow(
+                        '1 caractère spécial', hasSpecialCharacter),
+                    _buildCriteriaRow('8 caractères', hasMinLength),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
               CustomTextField(

@@ -6,6 +6,7 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
 
 class CodeValidationView extends StatefulWidget {
   final String email;
@@ -40,7 +41,7 @@ class CodeValidationViewState extends State<CodeValidationView> {
           timer.cancel();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Votre e-mail a été vérifié avec succès."),
+              content: CustomSnackbar(label: "Votre e-mail a été vérifié avec succès.")
             ),
           );
           widget.onSuccess();
@@ -55,7 +56,7 @@ class CodeValidationViewState extends State<CodeValidationView> {
     if (user?.emailVerified ?? false) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Votre e-mail a été vérifié avec succès."),
+          content: CustomSnackbar(label: "Votre e-mail a été vérifié avec succès."),
         ),
       );
       widget.onSuccess();

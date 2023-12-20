@@ -45,7 +45,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
             widget.position.longitude - 0.00895),
         LatLng(widget.position.latitude + 0.00895,
             widget.position.longitude + 0.00895));
-
+    getAddressFromLatLng(widget.position);
     // Get the user's current location and set the marker coordinates
   }
 

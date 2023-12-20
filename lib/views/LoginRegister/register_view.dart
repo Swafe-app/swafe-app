@@ -144,6 +144,7 @@ class RegisterViewState extends State<RegisterView> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
         child: Form(
           key: _registerFormKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
               CustomAppBar(iconButtonOnPressed: backPageLogic),

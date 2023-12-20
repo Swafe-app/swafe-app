@@ -5,6 +5,8 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ChangeUserInformation/ChangeEmail.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ChangeUserInformation/ChangePhoneNumber.dart';
@@ -70,13 +72,18 @@ class UserProfileScreenState extends State<UserProfileScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Vos informations ont été mises à jour avec succès."),
+            content: CustomSnackbar(
+              label: "Vos informations ont été mises à jour avec succès.",
+            ),
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Erreur lors de la mise à jour des informations."),
+            content: CustomSnackbar(
+              label: "Erreur lors de la mise à jour des informations.",
+              isError: true,
+            ),
           ),
         );
       }
