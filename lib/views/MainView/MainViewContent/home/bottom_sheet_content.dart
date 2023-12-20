@@ -70,7 +70,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
       };
 
       try {
-        await databaseReference.child('signalements').push().set(selectedData).then((value) => Navigator.of(context).pop());
+        await databaseReference
+            .child('signalements')
+            .push()
+            .set(selectedData)
+            .then((value) => Navigator.of(context).pop());
         if (kDebugMode) {
           print("Données envoyées à Firebase avec succès.");
         }
@@ -106,7 +110,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
   List<Widget> _buildSelectableItems(
       List<String> selectedItems, String tabName) {
     late List<ReportingType> items;
-    if(tabName == "Danger") {
+    if (tabName == "Danger") {
       items = [
         ReportingType.autre,
         ReportingType.vol,
@@ -118,7 +122,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
         ReportingType.violenceVerbale,
         ReportingType.meteo,
       ];
-    } else{
+    } else {
       items = [
         ReportingType.autre,
         ReportingType.eclairage,
@@ -190,7 +194,6 @@ class BottomSheetContentState extends State<BottomSheetContent>
               height: 145,
               child: FlutterMap(
                 options: MapOptions(
-
                   initialCenter: userPosition,
                   initialCameraFit: CameraFit.insideBounds(bounds: bounds),
                   minZoom: 15,
@@ -226,7 +229,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 children: [
                   TileLayer(
                     urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
                     subdomains: const ['a', 'b', 'c'],
                   ),
                   MarkerLayer(
@@ -324,8 +327,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 label: 'Envoyer',
                 mainAxisSize: MainAxisSize.max,
                 isDisabled: _isSelectionMade ? false : true,
-                onPressed:
-                     () => _sendDataToFirebase(),
+                onPressed: () => _sendDataToFirebase(),
               ),
             ],
           ),

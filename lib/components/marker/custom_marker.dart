@@ -18,26 +18,30 @@ class CustomMarker extends Marker {
           child: Stack(children: [
             Center(child: SvgPicture.asset(reportingType.threat)),
             Positioned(
-                right: 50,
-                bottom: 60,
-                child: SizedBox(
-                    height: 70,
-                    width: 70,
-                    child: SvgPicture.asset(
-                      'assets/images/bubble.svg',
-                      width: 50,
-                      height: 50,
-                    ))),
+              right: 50,
+              bottom: 60,
+              child: SizedBox(
+                height: 70,
+                width: 70,
+                child: SvgPicture.asset(
+                  'assets/images/bubble.svg',
+                  width: 50,
+                  height: 50,
+                ),
+              ),
+            ),
             Positioned(
                 right: 62,
                 bottom: 77,
                 child: Container(
                     height: 45,
                     width: 45,
-                    decoration: ShapeDecoration(image: DecorationImage(image: AssetImage(reportingType.pin)), shape: const OvalBorder(
-                        side: BorderSide(
-                            width: 3,
-                            color: MyColors.defaultWhite))))),
+                    decoration: ShapeDecoration(
+                        image: DecorationImage(
+                            image: AssetImage(reportingType.pin)),
+                        shape: const OvalBorder(
+                            side: BorderSide(
+                                width: 3, color: MyColors.defaultWhite))))),
           ]),
           point: point,
         );

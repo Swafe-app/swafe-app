@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/components/appbar/appbar.dart';
 
 class ModifierCoordonnees extends StatefulWidget {
   const ModifierCoordonnees({super.key});

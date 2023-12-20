@@ -250,33 +250,41 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                               ),
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
+                          child: Opacity(
+                            opacity: 0.4,
+                            child: IgnorePointer(
+                              ignoring: true,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    'Pièce d’identité',
-                                    style: TitleSmallMedium,
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Pièce d’identité',
+                                        style: TitleSmallMedium,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '/',
+                                        style: TitleSmallMedium.copyWith(
+                                          color: MyColors.neutral40,
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Fournie',
-                                    style: TitleSmallMedium.copyWith(
-                                      color: MyColors.neutral40,
-                                    ),
-                                  )
+                                  const SizedBox(height: 20),
+                                  const CustomButton(
+                                    type: ButtonType.text,
+                                    label: 'Supprimer',
+                                    mainAxisSize: MainAxisSize.min,
+                                  ),
                                 ],
                               ),
-                              const SizedBox(height: 20),
-                              const CustomButton(
-                                type: ButtonType.text,
-                                label: 'Supprimer',
-                                mainAxisSize: MainAxisSize.min,
-                              )
-                            ],
+                            ),
                           ),
                         ),
                       ],

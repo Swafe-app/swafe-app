@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
+import 'package:swafe/DS/shadows.dart';
 
-enum IconButtonType { outlined, filled, square }
+enum IconButtonType { outlined, filled, square, image }
 
 enum IconButtonSize { S, M, L, XL }
 
@@ -93,23 +94,25 @@ class CustomIconButton extends StatefulWidget {
   final bool isDisabled;
   final bool isLoading;
   final VoidCallback? onPressed;
-  final IconData icon;
+  final String? image;
+  final IconData? icon;
   final Color? fillColor;
   final Color? strokeColor;
   final Color? iconColor;
 
   const CustomIconButton({
-    Key? key,
+    super.key,
     this.size = IconButtonSize.L,
     this.type = IconButtonType.filled,
     this.isDisabled = false,
     this.isLoading = false,
-    required this.icon,
+    this.image,
+    this.icon,
     this.onPressed,
     this.fillColor,
     this.strokeColor,
     this.iconColor,
-  }) : super(key: key);
+  });
 
   @override
   CustomIconButtonState createState() => CustomIconButtonState();
@@ -125,46 +128,70 @@ class CustomIconButtonState extends State<CustomIconButton> {
     Color strokeColor = widget.strokeColor ?? styleData.borderColor;
     Color iconColor = widget.iconColor ?? styleData.iconColor;
 
-    return InkWell(
-      onTap: widget.isDisabled || widget.isLoading ? null : widget.onPressed,
-      child: Container(
-        padding: EdgeInsets.all(styleData.padding),
-        decoration: BoxDecoration(
-          color: fillColor,
-          borderRadius: BorderRadius.circular(
-              widget.type == IconButtonType.square ? 8 : 50),
-          border: widget.type == IconButtonType.square
-              ? null
-              : Border.all(color: strokeColor, width: 2),
-          boxShadow: widget.type == IconButtonType.square
-              ? const [
-                  BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, 0.25),
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 2.0,
-                  ),
-                  BoxShadow(
-                    color: Color.fromRGBO(222, 222, 222, 0.25),
-                    offset: Offset(-1.0, -1.0),
-                    blurRadius: 2.0,
-                  ),
-                ]
-              : null,
-        ),
-        child: Center(
-          child: widget.isLoading
-              ? SizedBox(
-                  width: styleData.iconSize,
-                  height: styleData.iconSize,
-                  child: const CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(MyColors.secondary40),
-                  ),
-                )
-              : Icon(widget.icon, color: iconColor, size: styleData.iconSize),
-        ),
-      ),
-    );
+    return (widget.type == IconButtonType.image && widget.image!.isNotEmpty)
+        ? InkWell(
+            onTap:
+                widget.isDisabled || widget.isLoading ? null : widget.onPressed,
+            child: Container(
+              height: 56,
+              width: 56,
+              decoration: ShapeDecoration(
+                color: MyColors.secondary40,
+                shape: RoundedRectangleBorder(
+                  side:
+                      const BorderSide(width: 2, color: MyColors.defaultWhite),
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                shadows: Shadows.shadow4,
+                image: DecorationImage(
+                  image: AssetImage(widget.image!),
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          )
+        : InkWell(
+            onTap:
+                widget.isDisabled || widget.isLoading ? null : widget.onPressed,
+            child: Container(
+              padding: EdgeInsets.all(styleData.padding),
+              decoration: BoxDecoration(
+                color: fillColor,
+                borderRadius: BorderRadius.circular(
+                    widget.type == IconButtonType.square ? 8 : 50),
+                border: widget.type == IconButtonType.square
+                    ? null
+                    : Border.all(color: strokeColor, width: 2),
+                boxShadow: widget.type == IconButtonType.square
+                    ? const [
+                        BoxShadow(
+                          color: Color.fromRGBO(0, 0, 0, 0.25),
+                          offset: Offset(1.0, 1.0),
+                          blurRadius: 2.0,
+                        ),
+                        BoxShadow(
+                          color: Color.fromRGBO(222, 222, 222, 0.25),
+                          offset: Offset(-1.0, -1.0),
+                          blurRadius: 2.0,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Center(
+                child: widget.isLoading
+                    ? SizedBox(
+                        width: styleData.iconSize,
+                        height: styleData.iconSize,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              MyColors.secondary40),
+                        ),
+                      )
+                    : Icon(widget.icon,
+                        color: iconColor, size: styleData.iconSize),
+              ),
+            ),
+          );
   }
 }
