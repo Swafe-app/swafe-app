@@ -162,7 +162,7 @@ class _RepertoireContentState extends State<RepertoireContent> {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 60),
+          const SizedBox(height: Spacing.extraHuge),
           Container(
             color: MyColors.defaultWhite,
             child: const Text(
@@ -203,7 +203,6 @@ class _RepertoireContentState extends State<RepertoireContent> {
               ),
             ),
           ),
-          const SizedBox(height: Spacing.extraLarge),
           Expanded(
             child: ListView.builder(
               itemCount: _filteredData.length,
