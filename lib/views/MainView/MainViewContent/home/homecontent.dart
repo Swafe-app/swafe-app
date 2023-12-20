@@ -207,7 +207,7 @@ class HomeContentState extends State<HomeContent> {
           ],
         ),
         Positioned(
-          bottom: MediaQuery.of(context).size.height * .4,
+          bottom: MediaQuery.of(context).size.height * .3,
           right: 0.01,
           child: IconButton(
             onPressed: () {
@@ -218,8 +218,8 @@ class HomeContentState extends State<HomeContent> {
           ),
         ),
         Positioned(
-          bottom: MediaQuery.of(context).size.height * .30,
-          right: 0.01,
+          bottom: MediaQuery.of(context).size.height * .2,
+          right: 0.1,
           child: IconButton(
             onPressed: () {
               _callPolice();
@@ -229,11 +229,12 @@ class HomeContentState extends State<HomeContent> {
           ),
         ),
         Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.15,
-            left: 30,
+            bottom: MediaQuery.of(context).size.height * 0.14,
+            left: 15,
             child: CustomIconButton(
               type: IconButtonType.square,
               size: IconButtonSize.L,
+              iconColor: MyColors.secondary40,
               icon: Icons.near_me_outlined,
               onPressed: () {
                 _calculateCenter();
