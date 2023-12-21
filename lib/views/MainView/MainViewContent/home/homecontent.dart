@@ -131,7 +131,7 @@ class HomeContentState extends State<HomeContent> {
   void _getUserLocation() async {
     try {
       position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation,
+        desiredAccuracy: LocationAccuracy.high,
       );
       _getDataFromFirebase();
       updateLocationMarker(position);
@@ -161,7 +161,8 @@ class HomeContentState extends State<HomeContent> {
                   initialZoom: zoom,
                   maxZoom: 20,
                   interactionOptions: const InteractionOptions(
-                      flags: InteractiveFlag.all & ~InteractiveFlag.rotate),
+                      flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                  ),
                 ),
                 children: [
                   TileLayer(
@@ -193,6 +194,19 @@ class HomeContentState extends State<HomeContent> {
             onPressed: () => _callPolice(),
             type: IconButtonType.image,
             image: 'assets/images/call_logo.png',
+          ),
+        ),
+        Positioned(
+          bottom: 112,
+          left: 12,
+          child: CustomIconButton(
+            type: IconButtonType.square,
+            size: IconButtonSize.L,
+            iconColor: MyColors.secondary40,
+            icon: Icons.near_me_outlined,
+            onPressed: () {
+              _calculateCenter();
+            },
           ),
         ),
       ],
