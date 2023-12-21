@@ -32,6 +32,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
   String pin = 'assets/images/pinDown.svg';
   String? address;
   late LatLngBounds bounds;
+  final mapController = MapController();
   final databaseReference = FirebaseDatabase.instance.ref();
 
   @override
@@ -193,6 +194,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
             child: SizedBox(
               height: 145,
               child: FlutterMap(
+                mapController: mapController,
                 options: MapOptions(
                   initialCenter: userPosition,
                   initialCameraFit: CameraFit.insideBounds(bounds: bounds),
@@ -218,6 +220,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                             .bearing(basePosition, position.center!);
                         final closestPoint = const Distance()
                             .offset(basePosition, 1000, bearing);
+                        mapController.move(closestPoint, position.zoom!);
                         setState(() {
                           pin = 'assets/images/pinUp.svg';
                           userPosition = closestPoint;
@@ -248,8 +251,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
                   CircleLayer(
                     circles: [
                       CircleMarker(
-                        point: basePosition,
-                        radius: 300,
+                        point: LatLng(basePosition.latitude-0.0005,basePosition.longitude),
+                        radius: 310,
                         color: MyColors.secondary40.withOpacity(0.2),
                       )
                     ],
