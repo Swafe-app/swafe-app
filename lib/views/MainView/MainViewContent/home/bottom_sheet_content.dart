@@ -199,6 +199,10 @@ class BottomSheetContentState extends State<BottomSheetContent>
                   initialCenter: userPosition,
                   initialCameraFit: CameraFit.insideBounds(bounds: bounds),
                   minZoom: 15,
+                  maxZoom: 20,
+                  interactionOptions: const InteractionOptions(
+                    flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                  ),
                   onMapEvent: (event) {
                     if (event.source.name == "dragEnd") {
                       setState(() {
