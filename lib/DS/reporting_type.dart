@@ -16,7 +16,7 @@ enum ReportingType {
   ivresse(title: 'Personne ivre',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
   conduite(title: 'Conduite dangereuse',pin: 'assets/images/noImage.png',threat: 'assets/images/lowDangerPin.svg'),
   feuPieton(title: 'Feu de pieton dysfonctionnel',pin: 'assets/images/feuPieton.png',threat: 'assets/images/lowDangerPin.svg'),
-  eclairage(title: 'Mauvais éclairage',pin: 'assets/images/light.png',threat: 'assets/images/lowDangerPin.svg'),
+  eclairage(title: 'Mauvais éclairage',pin: 'assets/images/light.png',threat: 'assets/images/signalement_point.svg'),
   autre(title: 'Autre',pin: 'assets/images/autreReport.png',threat: 'assets/images/lowDangerPin.svg');
 
 
@@ -51,7 +51,7 @@ enum ReportingType {
         return ReportingType.meteo;
       case 'Travaux':
         return ReportingType.travaux;
-      case 'manque d\'accessibilité':
+      case 'Manque d\'accessibilité':
         return ReportingType.accessibilite;
       case 'Accident de voiture':
         return ReportingType.voiture;
@@ -67,6 +67,8 @@ enum ReportingType {
         return ReportingType.conduite;
       case 'Feu de pieton dysfonctionnel':
         return ReportingType.feuPieton;
+      case 'Mauvais éclairage':
+        return ReportingType.eclairage;
       default:
         return ReportingType.autre;
     }

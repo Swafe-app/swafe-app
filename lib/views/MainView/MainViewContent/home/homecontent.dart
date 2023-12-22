@@ -37,6 +37,7 @@ class HomeContentState extends State<HomeContent> {
   void initState() {
     super.initState();
     _requestLocationPermission();
+    _getDataFromFirebase();
   }
 
   void _getDataFromFirebase() {
@@ -48,19 +49,24 @@ class HomeContentState extends State<HomeContent> {
           Map<String, SignalementModel> data = {};
 
           rawData.forEach((key, value) {
+            double latitude =
+                (value['coordinates']['latitude'] as double?) ?? 0.0;
+            double longitude =
+                (value['coordinates']['longitude'] as double?) ?? 0.0;
+            List<String> selectedDangerItems =
+                List<String>.from(value['selectedDangerItems'] ?? []);
+
             data[key] = SignalementModel(
-              latitude: value['coordinates']['latitude'] as double,
-              longitude: value['coordinates']['longitude'] as double,
-              selectedDangerItems:
-                  List<String>.from(value['selectedDangerItems']),
-              userId: value['userId'] as String,
+              latitude: latitude,
+              longitude: longitude,
+              selectedDangerItems: selectedDangerItems,
+              userId: value['userId'] as String? ?? 'Inconnu',
             );
           });
 
-          // Mise à jour de la liste signalementMap
-          signalementMap = data;
-
-          // Appel à _buildMarkers pour mettre à jour l'interface utilisateur
+          setState(() {
+            signalementMap = data;
+          });
           _buildMarkers(zoom);
         } else {
           if (kDebugMode) {
@@ -133,8 +139,8 @@ class HomeContentState extends State<HomeContent> {
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      _getDataFromFirebase();
       updateLocationMarker(position);
+      _buildMarkers(zoom);
     } catch (e) {
       if (kDebugMode) {
         print("Erreur lors de l'obtention de la position : $e");
@@ -161,7 +167,7 @@ class HomeContentState extends State<HomeContent> {
                   initialZoom: zoom,
                   maxZoom: 20,
                   interactionOptions: const InteractionOptions(
-                      flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                    flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                   ),
                 ),
                 children: [
@@ -253,8 +259,7 @@ class HomeContentState extends State<HomeContent> {
     setState(() {
       List<Marker> markers = [];
       List<List<SignalementModel>> clusters = [];
-      double radius = 1700 /
-          (pow(2, zoom) / 2); // Adjust the radius based on the zoom level
+      double radius = 800 / (pow(2, zoom) / 2);
 
       // Create clusters
       for (var signalement in signalementMap.values) {

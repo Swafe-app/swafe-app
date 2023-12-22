@@ -16,6 +16,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
+
   final FirebaseAuth _firebaseInstance = FirebaseAuth.instance;
 
   String getInitialRoute() {
@@ -35,16 +36,19 @@ class MyApp extends StatelessWidget {
 
     String initialRoute = getInitialRoute();
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Swafe',
-      theme: ThemeData.light(),
-      initialRoute: initialRoute,
-      routes: {
-        '/register': (context) => const RegisterView(),
-        '/welcome': (context) => const WelcomeView(),
-        '/home': (context) => const HomeView(),
-      },
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Swafe',
+        theme: ThemeData.light(),
+        initialRoute: initialRoute,
+        routes: {
+          '/register': (context) => const RegisterView(),
+          '/welcome': (context) => const WelcomeView(),
+          '/home': (context) => const HomeView(),
+        },
+      ),
     );
   }
 }
