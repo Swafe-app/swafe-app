@@ -2,12 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
-import '../../DS/typographies.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../components/Repertory/repertory.dart';
 import '../../models/repertory_category.dart';
 import '../../models/repertory_data.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class RepertoireContent extends StatefulWidget {
   const RepertoireContent({super.key});
@@ -144,15 +143,23 @@ class _RepertoireContentState extends State<RepertoireContent> {
   }
 
   void _callNumber(String phoneNumber) async {
+    await requestPhonePermission();
     String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
     String url = "tel:$cleanedPhoneNumber";
-    if (await canLaunchUrlString(url)) {
-      await launchUrlString(url);
+    if (await launch(url)) {
+      await launch(url);
     } else {
-      if (kDebugMode) {
-        if (kDebugMode) {
-          print("Impossible de lancer l'appel vers $cleanedPhoneNumber");
-        }
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> requestPhonePermission() async {
+    PermissionStatus status = await Permission.phone.status;
+
+    if (!status.isGranted) {
+      PermissionStatus newStatus = await Permission.phone.request();
+      if (!newStatus.isGranted) {
+        print('Phone permission was denied');
       }
     }
   }

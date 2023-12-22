@@ -13,7 +13,10 @@ import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -115,15 +118,23 @@ class HomeContentState extends State<HomeContent> {
   }
 
   void _callPolice() async {
+    await requestPhonePermission();
     String cleanedPhoneNumber = "17".replaceAll(RegExp(r'\D'), '');
     String url = "tel:$cleanedPhoneNumber";
-    if (await canLaunchUrlString(url)) {
-      await launchUrlString(url);
+    if (await launch(url)) {
+      await launch(url);
     } else {
-      if (kDebugMode) {
-        if (kDebugMode) {
-          print("Impossible de lancer l'appel vers $cleanedPhoneNumber");
-        }
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> requestPhonePermission() async {
+    PermissionStatus status = await Permission.phone.status;
+
+    if (!status.isGranted) {
+      PermissionStatus newStatus = await Permission.phone.request();
+      if (!newStatus.isGranted) {
+        print('Phone permission was denied');
       }
     }
   }
