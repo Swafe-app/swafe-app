@@ -62,8 +62,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
     if (user != null) {
       final selectedData = {
         'userId': user.uid,
-        'selectedDangerItems': _selectedDangerItems,
-        'selectedAnomaliesItems': _selectedAnomaliesItems,
+        'selectedDangerItems': _selectedDangerItems + _selectedAnomaliesItems,
         'coordinates': {
           'latitude': userPosition.latitude,
           'longitude': userPosition.longitude,
@@ -255,7 +254,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
                   CircleLayer(
                     circles: [
                       CircleMarker(
-                        point: LatLng(basePosition.latitude-0.0005,basePosition.longitude),
+                        point: LatLng(basePosition.latitude - 0.0005,
+                            basePosition.longitude),
                         radius: 310,
                         color: MyColors.secondary40.withOpacity(0.2),
                       )

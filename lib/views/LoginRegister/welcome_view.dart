@@ -18,12 +18,9 @@ class WelcomeView extends StatelessWidget {
       ),
       builder: (context) {
         final double bottomInset = MediaQuery.of(context).viewInsets.bottom;
-        return GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Padding(
-            padding: EdgeInsets.only(bottom: bottomInset),
-            child: const LoginBottomSheet(),
-          ),
+        return Padding(
+          padding: EdgeInsets.only(bottom: bottomInset),
+          child: const LoginBottomSheet(),
         );
       },
     );
@@ -51,7 +48,7 @@ class WelcomeView extends StatelessWidget {
                 Text(
                   "Il n’a jamais été aussi\n simple d’aller d'un point A\n à un point B en toute\n sécurité",
                   style:
-                  TitleXLargeMedium.copyWith(color: MyColors.defaultWhite),
+                      TitleXLargeMedium.copyWith(color: MyColors.defaultWhite),
                   textAlign: TextAlign.left,
                 ),
                 const Spacer(),
