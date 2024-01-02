@@ -11,6 +11,7 @@ import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/typeReport/custom_report.dart';
+import 'package:swafe/views/MainView/MainViewContent/home/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
   const BottomSheetContent({super.key, required this.position});
@@ -192,75 +193,96 @@ class BottomSheetContentState extends State<BottomSheetContent>
             borderRadius: BorderRadius.circular(16),
             child: SizedBox(
               height: 145,
-              child: FlutterMap(
-                mapController: mapController,
-                options: MapOptions(
-                  initialCenter: userPosition,
-                  initialCameraFit: CameraFit.insideBounds(bounds: bounds),
-                  minZoom: 15,
-                  maxZoom: 20,
-                  interactionOptions: const InteractionOptions(
-                    flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-                  ),
-                  onMapEvent: (event) {
-                    if (event.source.name == "dragEnd") {
-                      setState(() {
-                        pin = 'assets/images/pinDown.svg';
-                        getAddressFromLatLng(userPosition);
-                      });
-                    }
-                  },
-                  onPositionChanged: (position, hasGesture) {
-                    if (position.center != null) {
-                      if (isWithinCircle(
-                          basePosition, position.center!, 1000)) {
-                        setState(() {
-                          pin = 'assets/images/pinUp.svg';
-                          userPosition = position.center!;
-                        });
-                      } else {
-                        final bearing = const Distance()
-                            .bearing(basePosition, position.center!);
-                        final closestPoint = const Distance()
-                            .offset(basePosition, 1000, bearing);
-                        mapController.move(closestPoint, position.zoom!);
-                        setState(() {
-                          pin = 'assets/images/pinUp.svg';
-                          userPosition = closestPoint;
-                        });
-                      }
-                    }
-                  },
-                ),
+              child: Stack(
                 children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
-                    subdomains: const ['a', 'b', 'c'],
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        width: 50.0,
-                        height: 50.0,
-                        point: userPosition,
-                        child: SvgPicture.asset(
-                          pin,
-                          width: 30,
-                        ),
+                  FlutterMap(
+                    mapController: mapController,
+                    options: MapOptions(
+                      initialCenter: userPosition,
+                      initialCameraFit: CameraFit.insideBounds(bounds: bounds),
+                      minZoom: 15,
+                      maxZoom: 20,
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                       ),
-                    ],
-                  ),
-                  CircleLayer(
-                    circles: [
-                      CircleMarker(
-                        point: LatLng(basePosition.latitude - 0.0005,
-                            basePosition.longitude),
-                        radius: 310,
-                        color: MyColors.secondary40.withOpacity(0.2),
+                      onMapEvent: (event) {
+                        if (event.source.name == "dragEnd") {
+                          setState(() {
+                            pin = 'assets/images/pinDown.svg';
+                            getAddressFromLatLng(userPosition);
+                          });
+                        }
+                      },
+                      onPositionChanged: (position, hasGesture) {
+                        if (position.center != null) {
+                          if (isWithinCircle(
+                              basePosition, position.center!, 1000)) {
+                            setState(() {
+                              pin = 'assets/images/pinUp.svg';
+                              userPosition = position.center!;
+                            });
+                          } else {
+                            final bearing = const Distance()
+                                .bearing(basePosition, position.center!);
+                            final closestPoint = const Distance()
+                                .offset(basePosition, 1000, bearing);
+                            mapController.move(closestPoint, position.zoom!);
+                            setState(() {
+                              pin = 'assets/images/pinUp.svg';
+                              userPosition = closestPoint;
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
+                        subdomains: const ['a', 'b', 'c'],
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            width: 50.0,
+                            height: 50.0,
+                            point: userPosition,
+                            child: SvgPicture.asset(
+                              pin,
+                              width: 30,
+                            ),
+                          ),
+                        ],
+                      ),
+                      CircleLayer(
+                        circles: [
+                          CircleMarker(
+                            point: LatLng(basePosition.latitude - 0.0005,
+                                basePosition.longitude),
+                            radius: 310,
+                            color: MyColors.secondary40.withOpacity(0.2),
+                          )
+                        ],
                       )
                     ],
-                  )
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: CustomButton(
+                      onPressed: () {
+                        () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => FillAdressMap(latLng: userPosition)),
+                        );
+                      },
+                      label: 'Modifier la position',
+                      type: ButtonType.outlined,
+                      mainAxisSize: MainAxisSize.min,
+                      textColor: MyColors.secondary40,
+                    ),
+                  ),
                 ],
               ),
             ),

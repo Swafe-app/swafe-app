@@ -127,8 +127,8 @@ class HomeContentState extends State<HomeContent> {
     await requestPhonePermission();
     String cleanedPhoneNumber = "17".replaceAll(RegExp(r'\D'), '');
     String url = "tel:$cleanedPhoneNumber";
-    if (await launch(url)) {
-      await launch(url);
+    if (await launchUrlString(url)) {
+      await launchUrlString(url);
     } else {
       throw 'Could not launch $url';
     }
