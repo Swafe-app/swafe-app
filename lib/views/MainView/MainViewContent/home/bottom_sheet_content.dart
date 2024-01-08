@@ -271,7 +271,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
               right: 0,
               child: CustomButton(
                 onPressed: () {
-                      () => Navigator.push(
+                      Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => FillAdressMap(latLng: userPosition)),
                   );
