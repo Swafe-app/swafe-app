@@ -11,6 +11,7 @@ import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/typeReport/custom_report.dart';
+import 'package:swafe/views/MainView/MainViewContent/home/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
   const BottomSheetContent({super.key, required this.position});
@@ -71,7 +72,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
       };
 
       try {
-        await databaseReference.child('signalements').push().set(selectedData).then((value) => Navigator.of(context).pop());
+        await databaseReference
+            .child('signalements')
+            .push()
+            .set(selectedData)
+            .then((value) => Navigator.of(context).pop());
         if (kDebugMode) {
           print("Données envoyées à Firebase avec succès.");
         }
@@ -107,7 +112,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
   List<Widget> _buildSelectableItems(
       List<String> selectedItems, String tabName) {
     late List<ReportingType> items;
-    if(tabName == "Danger") {
+    if (tabName == "Danger") {
       items = [
         ReportingType.autre,
         ReportingType.vol,
@@ -119,7 +124,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
         ReportingType.violenceVerbale,
         ReportingType.meteo,
       ];
-    } else{
+    } else {
       items = [
         ReportingType.autre,
         ReportingType.eclairage,
@@ -187,76 +192,99 @@ class BottomSheetContentState extends State<BottomSheetContent>
           const SizedBox(height: 16),
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: SizedBox(
-              height: 145,
-              child: FlutterMap(
-                mapController: mapController,
-                options: MapOptions(
-                  initialCenter: LatLng(userPosition.latitude,
-                      userPosition.longitude), // Initial position of the map
-                  initialCameraFit: CameraFit.insideBounds(bounds: bounds),
-                  minZoom: 15,
-                  onMapEvent: (event) {
-                    if (event.source.name == "dragEnd") {
+          child: SizedBox(
+            height: 145,
+            child: Stack(children: [FlutterMap(
+              mapController: mapController,
+              options: MapOptions(
+                initialCenter: userPosition,
+                initialCameraFit: CameraFit.insideBounds(bounds: bounds),
+                minZoom: 15,
+                maxZoom: 20,
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                ),
+                onMapEvent: (event) {
+                  if (event.source.name == "dragEnd") {
+                    setState(() {
+                      pin = 'assets/images/pinDown.svg';
+                      getAddressFromLatLng(userPosition);
+                    });
+                  }
+                },
+                onPositionChanged: (position, hasGesture) {
+                  if (position.center != null) {
+                    if (isWithinCircle(
+                        basePosition, position.center!, 1000)) {
                       setState(() {
-                        pin = 'assets/images/pinDown.svg';
-                        getAddressFromLatLng(userPosition);
+                        pin = 'assets/images/pinUp.svg';
+                        userPosition = position.center!;
+                      });
+                    } else {
+                      final bearing = const Distance()
+                          .bearing(basePosition, position.center!);
+                      final closestPoint = const Distance()
+                          .offset(basePosition, 1000, bearing);
+                      mapController.move(closestPoint, position.zoom!);
+                      setState(() {
+                        pin = 'assets/images/pinUp.svg';
+                        userPosition = closestPoint;
                       });
                     }
-                  },
-                  onPositionChanged: (position, hasGesture) {
-                    if (position.center != null) {
-                      if (isWithinCircle(
-                          basePosition, position.center!, 1000)) {
-                        setState(() {
-                          pin = 'assets/images/pinUp.svg';
-                          userPosition = position.center!;
-                        });
-                      } else {
-                        final bearing = const Distance()
-                            .bearing(basePosition, position.center!);
-                        final closestPoint = const Distance()
-                            .offset(basePosition, 1000, bearing);
-                        mapController.move(closestPoint, position.zoom!);
-                        setState(() {
-                          pin = 'assets/images/pinUp.svg';
-                          userPosition = closestPoint;
-                        });
-                      }
-                    }
-                  },
+                  }
+                },
+              ),
+              children: [
+              TileLayer(
+              urlTemplate:
+              'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
+              subdomains: const ['a', 'b', 'c'],
+            ),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  width: 50.0,
+                  height: 50.0,
+                  point: userPosition,
+                  child: SvgPicture.asset(
+                    pin,
+                    width: 30,
+                  ),
                 ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    subdomains: const ['a', 'b', 'c'],
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        width: 50.0,
-                        height: 50.0,
-                        point: userPosition,
-                        child: SvgPicture.asset(
-                          pin,
-                          width: 30,
-                        ),
-                      ),
-                    ],
-                  ),
-                  CircleLayer(
-                    circles: [
-                      CircleMarker(
-                        point: LatLng(basePosition.latitude-0.0005,basePosition.longitude),
-                        radius: 310,
-                        color: MyColors.secondary40.withOpacity(0.2),
-                      )
-                    ],
-                  )
-                ],
+              ],
+            ),
+            CircleLayer(
+              circles: [
+                CircleMarker(
+                  point: LatLng(basePosition.latitude - 0.0005,
+                      basePosition.longitude),
+                  radius: 310,
+                  color: MyColors.secondary40.withOpacity(0.2),
+                )
+              ],
+            ),
+              ],
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: CustomButton(
+                onPressed: () {
+                      () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FillAdressMap(latLng: userPosition)),
+                  );
+                },
+                label: 'Modifier la position',
+                type: ButtonType.outlined,
+                mainAxisSize: MainAxisSize.min,
+                textColor: MyColors.secondary40,
               ),
             ),
+            ],
+          ),
+          ),
           ),
           const SizedBox(height: 12),
           if (address != null && address!.isNotEmpty)
@@ -327,8 +355,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 label: 'Envoyer',
                 mainAxisSize: MainAxisSize.max,
                 isDisabled: _isSelectionMade ? false : true,
-                onPressed:
-                     () => _sendDataToFirebase(),
+                onPressed: () => _sendDataToFirebase(),
               ),
             ],
           ),
