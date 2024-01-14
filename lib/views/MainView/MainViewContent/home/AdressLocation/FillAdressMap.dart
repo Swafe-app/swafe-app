@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
+
+import '../../../../../DS/spacing.dart';
 
 class FillAdressMap extends StatefulWidget {
   final LatLng? latLng;
@@ -16,20 +22,21 @@ class FillAdressMap extends StatefulWidget {
   FillAdressMapState createState() => FillAdressMapState();
 }
 
-class FillAdressMapState extends State<FillAdressMap> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class FillAdressMapState extends State<FillAdressMap>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _adressController = TextEditingController();
   late String address = '';
+  late String country = '';
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    getAddressFromLatLng(widget.latLng!);
-    _adressController.text = widget.latLng.toString();
+    print(dotenv.env['GOOGLE_API_KEY']!);
   }
 
   //Obtention de l'adresse à partir de la latitude et de la longitude
   Future<void> getAddressFromLatLng(LatLng position) async {
+    print('getAddressFromLatLng');
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
@@ -37,10 +44,16 @@ class FillAdressMapState extends State<FillAdressMap> {
       );
 
       if (placemarks.isNotEmpty) {
+        print(placemarks);
         Placemark placemark = placemarks[0];
         setState(() {
-          address =
+          country = placemark.isoCountryCode!;
+          _adressController.text =
               '${placemark.street}, ${placemark.locality}, ${placemark.country}';
+        });
+      } else {
+        setState(() {
+          _adressController.text = 'No address found';
         });
       }
     } catch (e) {
@@ -48,34 +61,143 @@ class FillAdressMapState extends State<FillAdressMap> {
     }
   }
 
+  List<String> getAdressList(addresses) {
+    List<String> adressList = [];
+    for (var item in addresses) {
+      adressList.add(item.description);
+    }
+    return adressList;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        FlutterMap(
-          options: MapOptions(initialCenter: widget.latLng!),
-          children: [
-            TileLayer(
-              urlTemplate:
-                  'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
-              subdomains: const ['a', 'b', 'c'],
-            ),
-            MarkerLayer(
-              markers: [
-                Marker(
-                  width: 50.0,
-                  height: 50.0,
-                  point: widget.latLng!,
-                  child: SvgPicture.asset(
-                    'assets/images/pinDown.svg',
-                    width: 30,
-                  ),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Center(
+              child: FlutterMap(
+                options: MapOptions(
+                  initialCenter: widget.latLng!,
+                  onMapReady: () {
+                    getAddressFromLatLng(widget.latLng!);
+                    _adressController.text = widget.latLng.toString();
+                  },
                 ),
-              ],
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
+                    subdomains: const ['a', 'b', 'c'],
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        width: 50.0,
+                        height: 50.0,
+                        point: widget.latLng!,
+                        child: SvgPicture.asset(
+                          'assets/images/pinDown.svg',
+                          width: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ],
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+              height: MediaQuery.of(context).size.height * 0.2,
+              decoration: const BoxDecoration(
+                color: MyColors.defaultWhite,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 160,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: MyColors.neutral70,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: GooglePlaceAutoCompleteTextField( // widget used to autocomplete the address
+                          textEditingController: _adressController,
+                          googleAPIKey: dotenv.env['GOOGLE_API_KEY']!,
+                          countries: [country], // we give the country code to the widget to only return addresses from this country
+                          itemClick: (Prediction prediction) async {
+                            LatLng? coords;
+                            if (prediction.lat != null &&
+                                prediction.lng != null) { //we check if the address has coordinates
+                              print("${prediction.lat} ${prediction.lng}");
+                              coords = LatLng(prediction.lat! as double,
+                                  prediction.lng! as double);
+                            }
+                            else {
+                              await GeocodingPlatform.instance
+                                  .locationFromAddress(prediction.description!)
+                                  .then((value) { //if not we get the coordinates from the address using geocoding
+                                coords = LatLng(value.first.latitude,
+                                    value.first.longitude);
+                              });
+                            }
+                            Distance distance = const Distance();
+                            if (distance.as(
+                                LengthUnit.Kilometer,
+                                widget.latLng!,
+                                coords!) > 300) { //we check if the coordinates are in a 3 kilometers radius from the user's position
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Vous devez choisir une adresse proche de votre position'), //if not we show a snackbar
+                                ),
+                              );
+                            }
+                            else {
+                              setState(() {
+                                _adressController.text = prediction.description!;
+                              });
+                            }
+                          },
+                          inputDecoration: InputDecoration(
+                            hintText: 'Rechercher une adresse',
+                            hintStyle: TitleMediumMedium,
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _adressController.text = '';
+                          });
+                        },
+                        icon: const Icon(Icons.search),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Spacing.standard),
+                  const CustomButton(label: "Confirmer la position", type: ButtonType.filled, fillColor: MyColors.secondary40,)
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
