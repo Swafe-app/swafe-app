@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -37,26 +38,26 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA5F_t4QTKoz7VM953_aw1Qf9MI2ObKzqM',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_API_KEY']!,
     appId: '1:32610493328:android:a9bf042df5763d9e7b8915',
     messagingSenderId: '32610493328',
     projectId: 'swafe-app',
     databaseURL:
-        'https://swafe-app-default-rtdb.europe-west1.firebasedatabase.app',
+        dotenv.env['FIREBASE_DB_URL']!,
     storageBucket: 'swafe-app.appspot.com',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCeHjmsR2CYhkGsOer5NO2_eU1S_FoMbGo',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_API_KEY']!,
     appId: '1:32610493328:ios:31042fc4d18b28827b8915',
     messagingSenderId: '32610493328',
     projectId: 'swafe-app',
     databaseURL:
-        'https://swafe-app-default-rtdb.europe-west1.firebasedatabase.app',
+        dotenv.env['FIREBASE_DB_URL']!,
     storageBucket: 'swafe-app.appspot.com',
     iosClientId:
-        '32610493328-pipqs3e783dbfpkjgf8sr7c146mh55mq.apps.googleusercontent.com',
+        dotenv.env['FIREBASE_IOS_CLIENT_ID']!,
     iosBundleId: 'com.example.swafe',
   );
 }
