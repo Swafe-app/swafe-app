@@ -27,11 +27,21 @@ class FillAdressMapState extends State<FillAdressMap>
   final TextEditingController _adressController = TextEditingController();
   late String address = '';
   late String country = '';
+  late LatLngBounds bounds;
+  late LatLng userPosition;
+  String pin = 'assets/images/pinDown.svg';
+  final mapController = MapController();
 
   @override
   void initState() {
     super.initState();
-    print(dotenv.env['GOOGLE_API_KEY']!);
+    print(widget.latLng!);
+    userPosition = widget.latLng!;
+    bounds = LatLngBounds(
+        LatLng(widget.latLng!.latitude - 0.00870,
+            widget.latLng!.longitude - 0.00870),
+        LatLng(widget.latLng!.latitude + 0.00870,
+            widget.latLng!.longitude + 0.00870));
   }
 
   //Obtention de l'adresse à partir de la latitude et de la longitude
@@ -44,7 +54,6 @@ class FillAdressMapState extends State<FillAdressMap>
       );
 
       if (placemarks.isNotEmpty) {
-        print(placemarks);
         Placemark placemark = placemarks[0];
         setState(() {
           country = placemark.isoCountryCode!;
@@ -69,6 +78,11 @@ class FillAdressMapState extends State<FillAdressMap>
     return adressList;
   }
 
+  bool isWithinCircle(LatLng center, LatLng point, double radius) {
+    const distance = Distance();
+    return distance(center, point) <= radius;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,11 +91,46 @@ class FillAdressMapState extends State<FillAdressMap>
           Positioned.fill(
             child: Center(
               child: FlutterMap(
+                mapController: mapController,
                 options: MapOptions(
-                  initialCenter: widget.latLng!,
+                  initialCenter: userPosition,
                   onMapReady: () {
                     getAddressFromLatLng(widget.latLng!);
                     _adressController.text = widget.latLng.toString();
+                  },
+                  initialCameraFit: CameraFit.insideBounds(bounds: bounds),
+                  minZoom: 15,
+                  interactionOptions: const InteractionOptions(
+                    flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                  ),
+                  onMapEvent: (event) {
+                    if (event.source.name == "dragEnd") {
+                      setState(() {
+                        pin = 'assets/images/pinDown.svg';
+                        getAddressFromLatLng(widget.latLng!);
+                      });
+                    }
+                  },
+                  onPositionChanged: (position, hasGesture) {
+                    if (position.center != null) {
+                      if (isWithinCircle(
+                          widget.latLng!, position.center!, 1000)) {
+                        setState(() {
+                          pin = 'assets/images/pinUp.svg';
+                          userPosition = position.center!;
+                        });
+                      } else {
+                        final bearing = const Distance()
+                            .bearing(widget.latLng!, position.center!);
+                        final closestPoint = const Distance()
+                            .offset(widget.latLng!, 1000, bearing);
+                        mapController.move(closestPoint, position.zoom!);
+                        setState(() {
+                          pin = 'assets/images/pinUp.svg';
+                          userPosition = closestPoint;
+                        });
+                      }
+                    }
                   },
                 ),
                 children: [
@@ -95,12 +144,22 @@ class FillAdressMapState extends State<FillAdressMap>
                       Marker(
                         width: 50.0,
                         height: 50.0,
-                        point: widget.latLng!,
+                        point: userPosition,
                         child: SvgPicture.asset(
-                          'assets/images/pinDown.svg',
+                          pin,
                           width: 30,
                         ),
                       ),
+                    ],
+                  ),
+                  CircleLayer(
+                    circles: [
+                      CircleMarker(
+                        point: LatLng(widget.latLng!.latitude,
+                            widget.latLng!.longitude),
+                        radius: 310,
+                        color: MyColors.secondary40.withOpacity(0.2),
+                      )
                     ],
                   ),
                 ],
