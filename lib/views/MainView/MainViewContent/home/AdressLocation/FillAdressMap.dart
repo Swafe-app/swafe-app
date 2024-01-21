@@ -30,15 +30,14 @@ class FillAdressMapState extends State<FillAdressMap>
   late String country = '';
   late LatLngBounds bounds;
   late LatLng userPosition;
+  LatLng? selectedPosition;
   String pin = 'assets/images/pinDown.svg';
   final mapController = MapController();
 
   @override
   void initState() {
     super.initState();
-    print("Position dans FillAdress: ${widget.latLng}");
     userPosition = widget.latLng;
-    print("userPosition dans FillAdress: $userPosition");
     bounds = calculateBounds(widget.latLng, 3);
   }
 
@@ -46,10 +45,10 @@ class FillAdressMapState extends State<FillAdressMap>
     final double latitudeDelta = (radiusInKm / (111.1 * cos(center.latitude)));
     final double longitudeDelta = (radiusInKm / (111.1 * cos(center.latitude)));
 
-    final LatLng southWest = LatLng(center.latitude - latitudeDelta,
-        center.longitude - longitudeDelta);
-    final LatLng northEast = LatLng(center.latitude + latitudeDelta,
-        center.longitude + longitudeDelta);
+    final LatLng southWest = LatLng(
+        center.latitude - latitudeDelta, center.longitude - longitudeDelta);
+    final LatLng northEast = LatLng(
+        center.latitude + latitudeDelta, center.longitude + longitudeDelta);
 
     return LatLngBounds(southWest, northEast);
   }
@@ -216,7 +215,6 @@ class FillAdressMapState extends State<FillAdressMap>
                             if (prediction.lat != null &&
                                 prediction.lng != null) {
                               //we check if the address has coordinates
-                              print("${prediction.lat} ${prediction.lng}");
                               coords = LatLng(prediction.lat! as double,
                                   prediction.lng! as double);
                             } else {
@@ -229,9 +227,9 @@ class FillAdressMapState extends State<FillAdressMap>
                               });
                             }
                             Distance distance = const Distance();
-                            if (distance.as(LengthUnit.Kilometer,
-                                    widget.latLng, coords!) >
-                                300) {
+                            if (distance.as(LengthUnit.Meter, widget.latLng,
+                                    coords!) >
+                                1000) {
                               //we check if the coordinates are in a 3 kilometers radius from the user's position
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -243,7 +241,7 @@ class FillAdressMapState extends State<FillAdressMap>
                               setState(() {
                                 _adressController.text =
                                     prediction.description!;
-                                userPosition = coords!;
+                                selectedPosition = coords!;
                               });
                             }
                           },
@@ -256,10 +254,23 @@ class FillAdressMapState extends State<FillAdressMap>
                       ),
                       IconButton(
                         onPressed: () {
-                          setState(() {
-                            mapController.move(
-                                userPosition, mapController.camera.zoom);
-                          });
+                          Distance distance = const Distance();
+                          if (distance.as(LengthUnit.Meter, widget.latLng,
+                                  selectedPosition!) >
+                              1000) {
+                            //we check if the coordinates are in a 3 kilometers radius from the user's position
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Vous devez choisir une adresse proche de votre position'), //if not we show a snackbar
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              mapController.move(
+                                  userPosition, mapController.camera.zoom);
+                            });
+                          }
                         },
                         icon: const Icon(Icons.search),
                       ),
@@ -271,8 +282,7 @@ class FillAdressMapState extends State<FillAdressMap>
                       type: ButtonType.filled,
                       fillColor: MyColors.secondary40,
                       onPressed: () {
-                        if (isWithinCircle(
-                            widget.latLng, userPosition, 1000)) {
+                        if (isWithinCircle(widget.latLng, userPosition, 1000)) {
                           Navigator.pop(context, userPosition);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
