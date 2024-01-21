@@ -256,9 +256,10 @@ class BottomSheetContentState extends State<BottomSheetContent>
               right: 0,
               child: CustomButton(
                 onPressed: () async {
+                  print("userPosition : $userPosition");
                       final result = await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => FillAdressMap(latLng: userPosition)),
+                    MaterialPageRoute(builder: (context) => FillAdressMap(latLng: widget.position)),
                   );
                       setState(() {
                         userPosition = result;

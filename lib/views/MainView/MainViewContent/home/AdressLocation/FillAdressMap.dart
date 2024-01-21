@@ -15,7 +15,7 @@ import 'package:swafe/components/Button/button.dart';
 import '../../../../../DS/spacing.dart';
 
 class FillAdressMap extends StatefulWidget {
-  final LatLng? latLng;
+  final LatLng latLng;
 
   const FillAdressMap({super.key, required this.latLng});
 
@@ -36,26 +36,26 @@ class FillAdressMapState extends State<FillAdressMap>
   @override
   void initState() {
     super.initState();
-    print(widget.latLng!);
-    userPosition = widget.latLng!;
-    bounds = calculateBounds(userPosition, 3);
+    print("Position dans FillAdress: ${widget.latLng}");
+    userPosition = widget.latLng;
+    print("userPosition dans FillAdress: $userPosition");
+    bounds = calculateBounds(widget.latLng, 3);
   }
 
   LatLngBounds calculateBounds(LatLng center, double radiusInKm) {
     final double latitudeDelta = (radiusInKm / (111.1 * cos(center.latitude)));
     final double longitudeDelta = (radiusInKm / (111.1 * cos(center.latitude)));
 
-    final LatLng southWest = LatLng(center.latitude - (latitudeDelta + 0.5),
-        center.longitude - (longitudeDelta + 0.5));
-    final LatLng northEast = LatLng(center.latitude + (latitudeDelta + 0.5),
-        center.longitude + (longitudeDelta + 0.5));
+    final LatLng southWest = LatLng(center.latitude - latitudeDelta,
+        center.longitude - longitudeDelta);
+    final LatLng northEast = LatLng(center.latitude + latitudeDelta,
+        center.longitude + longitudeDelta);
 
     return LatLngBounds(southWest, northEast);
   }
 
   //Obtention de l'adresse à partir de la latitude et de la longitude
   Future<void> getAddressFromLatLng(LatLng position) async {
-    print('getAddressFromLatLng');
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
@@ -64,7 +64,6 @@ class FillAdressMapState extends State<FillAdressMap>
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks[0];
-        print(placemark);
         setState(() {
           country = placemark.isoCountryCode!;
           _adressController.text =
@@ -103,11 +102,13 @@ class FillAdressMapState extends State<FillAdressMap>
               child: FlutterMap(
                 mapController: mapController,
                 options: MapOptions(
-                  initialCenter: userPosition,
-                  onMapReady: () {
-                    getAddressFromLatLng(widget.latLng!);
-                  },
                   initialCameraFit: CameraFit.insideBounds(bounds: bounds),
+                  initialCenter: widget.latLng,
+                  initialZoom: 18,
+                  onMapReady: () {
+                    getAddressFromLatLng(widget.latLng);
+                    mapController.move(userPosition, 18);
+                  },
                   minZoom: 15,
                   interactionOptions: const InteractionOptions(
                     flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
@@ -123,16 +124,16 @@ class FillAdressMapState extends State<FillAdressMap>
                   onPositionChanged: (position, hasGesture) {
                     if (position.center != null) {
                       if (isWithinCircle(
-                          widget.latLng!, position.center!, 1000)) {
+                          widget.latLng, position.center!, 1000)) {
                         setState(() {
                           pin = 'assets/images/pinUp.svg';
                           userPosition = position.center!;
                         });
                       } else {
                         final bearing = const Distance()
-                            .bearing(widget.latLng!, position.center!);
+                            .bearing(widget.latLng, position.center!);
                         final closestPoint = const Distance()
-                            .offset(widget.latLng!, 1000, bearing);
+                            .offset(widget.latLng, 1000, bearing);
                         mapController.move(closestPoint, position.zoom!);
                         setState(() {
                           pin = 'assets/images/pinUp.svg';
@@ -164,9 +165,10 @@ class FillAdressMapState extends State<FillAdressMap>
                   CircleLayer(
                     circles: [
                       CircleMarker(
-                        point: LatLng(widget.latLng!.latitude - 0.0005,
-                            widget.latLng!.longitude),
-                        radius: 320,
+                        point: LatLng(widget.latLng.latitude - 0.0005,
+                            widget.latLng.longitude),
+                        radius: 1000,
+                        useRadiusInMeter: true,
                         color: MyColors.secondary40.withOpacity(0.2),
                       )
                     ],
@@ -228,7 +230,7 @@ class FillAdressMapState extends State<FillAdressMap>
                             }
                             Distance distance = const Distance();
                             if (distance.as(LengthUnit.Kilometer,
-                                    widget.latLng!, coords!) >
+                                    widget.latLng, coords!) >
                                 300) {
                               //we check if the coordinates are in a 3 kilometers radius from the user's position
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -270,8 +272,7 @@ class FillAdressMapState extends State<FillAdressMap>
                       fillColor: MyColors.secondary40,
                       onPressed: () {
                         if (isWithinCircle(
-                            widget.latLng!, userPosition, 1000)) {
-                          print(userPosition);
+                            widget.latLng, userPosition, 1000)) {
                           Navigator.pop(context, userPosition);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
