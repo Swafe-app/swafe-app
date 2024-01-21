@@ -1,9 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:latlong2/latlong.dart';
@@ -37,11 +38,19 @@ class FillAdressMapState extends State<FillAdressMap>
     super.initState();
     print(widget.latLng!);
     userPosition = widget.latLng!;
-    bounds = LatLngBounds(
-        LatLng(widget.latLng!.latitude - 0.00870,
-            widget.latLng!.longitude - 0.00870),
-        LatLng(widget.latLng!.latitude + 0.00870,
-            widget.latLng!.longitude + 0.00870));
+    bounds = calculateBounds(userPosition, 3);
+  }
+
+  LatLngBounds calculateBounds(LatLng center, double radiusInKm) {
+    final double latitudeDelta = (radiusInKm / (111.1 * cos(center.latitude)));
+    final double longitudeDelta = (radiusInKm / (111.1 * cos(center.latitude)));
+
+    final LatLng southWest = LatLng(center.latitude - (latitudeDelta + 0.5),
+        center.longitude - (longitudeDelta + 0.5));
+    final LatLng northEast = LatLng(center.latitude + (latitudeDelta + 0.5),
+        center.longitude + (longitudeDelta + 0.5));
+
+    return LatLngBounds(southWest, northEast);
   }
 
   //Obtention de l'adresse à partir de la latitude et de la longitude
@@ -55,6 +64,7 @@ class FillAdressMapState extends State<FillAdressMap>
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks[0];
+        print(placemark);
         setState(() {
           country = placemark.isoCountryCode!;
           _adressController.text =
@@ -96,7 +106,6 @@ class FillAdressMapState extends State<FillAdressMap>
                   initialCenter: userPosition,
                   onMapReady: () {
                     getAddressFromLatLng(widget.latLng!);
-                    _adressController.text = widget.latLng.toString();
                   },
                   initialCameraFit: CameraFit.insideBounds(bounds: bounds),
                   minZoom: 15,
@@ -107,7 +116,7 @@ class FillAdressMapState extends State<FillAdressMap>
                     if (event.source.name == "dragEnd") {
                       setState(() {
                         pin = 'assets/images/pinDown.svg';
-                        getAddressFromLatLng(widget.latLng!);
+                        getAddressFromLatLng(event.camera.center);
                       });
                     }
                   },
@@ -155,9 +164,9 @@ class FillAdressMapState extends State<FillAdressMap>
                   CircleLayer(
                     circles: [
                       CircleMarker(
-                        point: LatLng(widget.latLng!.latitude,
+                        point: LatLng(widget.latLng!.latitude - 0.0005,
                             widget.latLng!.longitude),
-                        radius: 310,
+                        radius: 320,
                         color: MyColors.secondary40.withOpacity(0.2),
                       )
                     ],
@@ -194,41 +203,45 @@ class FillAdressMapState extends State<FillAdressMap>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: GooglePlaceAutoCompleteTextField( // widget used to autocomplete the address
+                        child: GooglePlaceAutoCompleteTextField(
+                          // widget used to autocomplete the address
                           textEditingController: _adressController,
                           googleAPIKey: dotenv.env['GOOGLE_API_KEY']!,
-                          countries: [country], // we give the country code to the widget to only return addresses from this country
+                          countries: [country],
+                          // we give the country code to the widget to only return addresses from this country
                           itemClick: (Prediction prediction) async {
                             LatLng? coords;
                             if (prediction.lat != null &&
-                                prediction.lng != null) { //we check if the address has coordinates
+                                prediction.lng != null) {
+                              //we check if the address has coordinates
                               print("${prediction.lat} ${prediction.lng}");
                               coords = LatLng(prediction.lat! as double,
                                   prediction.lng! as double);
-                            }
-                            else {
+                            } else {
                               await GeocodingPlatform.instance
                                   .locationFromAddress(prediction.description!)
-                                  .then((value) { //if not we get the coordinates from the address using geocoding
+                                  .then((value) {
+                                //if not we get the coordinates from the address using geocoding
                                 coords = LatLng(value.first.latitude,
                                     value.first.longitude);
                               });
                             }
                             Distance distance = const Distance();
-                            if (distance.as(
-                                LengthUnit.Kilometer,
-                                widget.latLng!,
-                                coords!) > 300) { //we check if the coordinates are in a 3 kilometers radius from the user's position
+                            if (distance.as(LengthUnit.Kilometer,
+                                    widget.latLng!, coords!) >
+                                300) {
+                              //we check if the coordinates are in a 3 kilometers radius from the user's position
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
                                       'Vous devez choisir une adresse proche de votre position'), //if not we show a snackbar
                                 ),
                               );
-                            }
-                            else {
+                            } else {
                               setState(() {
-                                _adressController.text = prediction.description!;
+                                _adressController.text =
+                                    prediction.description!;
+                                userPosition = coords!;
                               });
                             }
                           },
@@ -242,7 +255,8 @@ class FillAdressMapState extends State<FillAdressMap>
                       IconButton(
                         onPressed: () {
                           setState(() {
-                            _adressController.text = '';
+                            mapController.move(
+                                userPosition, mapController.camera.zoom);
                           });
                         },
                         icon: const Icon(Icons.search),
@@ -250,7 +264,24 @@ class FillAdressMapState extends State<FillAdressMap>
                     ],
                   ),
                   const SizedBox(height: Spacing.standard),
-                  const CustomButton(label: "Confirmer la position", type: ButtonType.filled, fillColor: MyColors.secondary40,)
+                  CustomButton(
+                      label: "Confirmer la position",
+                      type: ButtonType.filled,
+                      fillColor: MyColors.secondary40,
+                      onPressed: () {
+                        if (isWithinCircle(
+                            widget.latLng!, userPosition, 1000)) {
+                          print(userPosition);
+                          Navigator.pop(context, userPosition);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Le pin est hors de la limite définie sur la carte'),
+                            ),
+                          );
+                        }
+                      })
                 ],
               ),
             ),

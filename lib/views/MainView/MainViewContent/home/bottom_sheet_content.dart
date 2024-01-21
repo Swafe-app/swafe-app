@@ -14,9 +14,10 @@ import 'package:swafe/components/typeReport/custom_report.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
-  const BottomSheetContent({super.key, required this.position});
+  const BottomSheetContent({super.key, required this.position, this.userPosition});
 
   final LatLng position;
+  final LatLng? userPosition;
 
   @override
   BottomSheetContentState createState() => BottomSheetContentState();
@@ -28,25 +29,20 @@ class BottomSheetContentState extends State<BottomSheetContent>
   bool _isSelectionMade = false;
   final List<String> _selectedDangerItems = [];
   final List<String> _selectedAnomaliesItems = [];
-  LatLng userPosition = const LatLng(0, 0);
+  late LatLng userPosition;
   LatLng basePosition = const LatLng(0, 0);
   String pin = 'assets/images/pinDown.svg';
   String? address;
-  late LatLngBounds bounds;
   final mapController = MapController();
   final databaseReference = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
     super.initState();
-    userPosition = widget.position;
+    print("position : ${widget.userPosition}");
+    userPosition = widget.userPosition ?? widget.position;
     basePosition = widget.position;
     _tabController = TabController(length: 2, vsync: this);
-    bounds = LatLngBounds(
-        LatLng(widget.position.latitude - 0.00895,
-            widget.position.longitude - 0.00895),
-        LatLng(widget.position.latitude + 0.00895,
-            widget.position.longitude + 0.00895));
 
     // Get the user's current location and set the marker coordinates
   }
@@ -198,10 +194,10 @@ class BottomSheetContentState extends State<BottomSheetContent>
               mapController: mapController,
               options: MapOptions(
                 initialCenter: userPosition,
-                initialCameraFit: CameraFit.insideBounds(bounds: bounds),
                 minZoom: 15,
+                initialZoom: 18,
                 interactionOptions: const InteractionOptions(
-                  flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                  flags: InteractiveFlag.all & ~InteractiveFlag.rotate & ~InteractiveFlag.drag,
                 ),
                 onMapEvent: (event) {
                   if (event.source.name == "dragEnd") {
@@ -252,16 +248,6 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 ),
               ],
             ),
-            CircleLayer(
-              circles: [
-                CircleMarker(
-                  point: LatLng(basePosition.latitude - 0.0005,
-                      basePosition.longitude),
-                  radius: 310,
-                  color: MyColors.secondary40.withOpacity(0.2),
-                )
-              ],
-            ),
               ],
             ),
             Positioned(
@@ -269,11 +255,15 @@ class BottomSheetContentState extends State<BottomSheetContent>
               left: 0,
               right: 0,
               child: CustomButton(
-                onPressed: () {
-                      Navigator.push(
+                onPressed: () async {
+                      final result = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => FillAdressMap(latLng: userPosition)),
                   );
+                      setState(() {
+                        userPosition = result;
+                        mapController.move(userPosition, 18);
+                      });
                 },
                 label: 'Modifier la position',
                 type: ButtonType.outlined,
