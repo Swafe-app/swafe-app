@@ -146,7 +146,7 @@ class FillAdressMapState extends State<FillAdressMap>
                 children: [
                   TileLayer(
                     urlTemplate:
-                        'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
+                        'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']!}',
                     subdomains: const ['a', 'b', 'c'],
                   ),
                   MarkerLayer(
