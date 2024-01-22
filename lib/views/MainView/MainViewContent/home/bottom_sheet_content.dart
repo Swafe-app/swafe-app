@@ -15,7 +15,8 @@ import 'package:swafe/components/typeReport/custom_report.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
-  const BottomSheetContent({super.key, required this.position, this.userPosition});
+  const BottomSheetContent(
+      {super.key, required this.position, this.userPosition});
 
   final LatLng position;
   final LatLng? userPosition;
@@ -189,93 +190,108 @@ class BottomSheetContentState extends State<BottomSheetContent>
           const SizedBox(height: 16),
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-          child: SizedBox(
-            height: 145,
-            child: Stack(children: [FlutterMap(
-              mapController: mapController,
-              options: MapOptions(
-                initialCenter: userPosition,
-                minZoom: 15,
-                initialZoom: 18,
-                interactionOptions: const InteractionOptions(
-                  flags: InteractiveFlag.all & ~InteractiveFlag.rotate & ~InteractiveFlag.drag,
-                ),
-                onMapEvent: (event) {
-                  if (event.source.name == "dragEnd") {
-                    setState(() {
-                      pin = 'assets/images/pinDown.svg';
-                      getAddressFromLatLng(userPosition);
-                    });
-                  }
-                },
-                onPositionChanged: (position, hasGesture) {
-                  if (position.center != null) {
-                    if (isWithinCircle(
-                        basePosition, position.center!, 1000)) {
-                      setState(() {
-                        pin = 'assets/images/pinUp.svg';
-                        userPosition = position.center!;
-                      });
-                    } else {
-                      final bearing = const Distance()
-                          .bearing(basePosition, position.center!);
-                      final closestPoint = const Distance()
-                          .offset(basePosition, 1000, bearing);
-                      mapController.move(closestPoint, position.zoom!);
-                      setState(() {
-                        pin = 'assets/images/pinUp.svg';
-                        userPosition = closestPoint;
-                      });
-                    }
-                  }
-                },
-              ),
-              children: [
-              TileLayer(
-              urlTemplate:
-              'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
-              subdomains: const ['a', 'b', 'c'],
-            ),
-            MarkerLayer(
-              markers: [
-                Marker(
-                  width: 50.0,
-                  height: 50.0,
-                  point: userPosition,
-                  child: SvgPicture.asset(
-                    pin,
-                    width: 30,
+            child: SizedBox(
+              height: 145,
+              child: Stack(
+                children: [
+                  FlutterMap(
+                    mapController: mapController,
+                    options: MapOptions(
+                      initialCenter: LatLng(
+                        userPosition.latitude - 0.0003,
+                        userPosition.longitude,
+                      ),
+                      minZoom: 15,
+                      initialZoom: 16,
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.all &
+                            ~InteractiveFlag.rotate &
+                            ~InteractiveFlag.drag,
+                      ),
+                      onMapEvent: (event) {
+                        if (event.source.name == "dragEnd") {
+                          setState(() {
+                            pin = 'assets/images/pinDown.svg';
+                            getAddressFromLatLng(userPosition);
+                          });
+                        }
+                      },
+                      onPositionChanged: (position, hasGesture) {
+                        if (position.center != null) {
+                          if (isWithinCircle(
+                              basePosition, position.center!, 1000)) {
+                            setState(() {
+                              pin = 'assets/images/pinUp.svg';
+                              userPosition = position.center!;
+                            });
+                          } else {
+                            final bearing = const Distance()
+                                .bearing(basePosition, position.center!);
+                            final closestPoint = const Distance()
+                                .offset(basePosition, 1000, bearing);
+                            mapController.move(closestPoint, position.zoom!);
+                            setState(() {
+                              pin = 'assets/images/pinUp.svg';
+                              userPosition = closestPoint;
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
+                        subdomains: const ['a', 'b', 'c'],
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            width: 50.0,
+                            height: 50.0,
+                            point: userPosition,
+                            child: SvgPicture.asset(
+                              pin,
+                              width: 30,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-              ],
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: CustomButton(
-                onPressed: () async {
-                  print("userPosition : $userPosition");
-                      final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => FillAdressMap(latLng: widget.position)),
-                  );
-                      setState(() {
-                        userPosition = result;
-                        mapController.move(userPosition, 18);
-                      });
-                },
-                label: 'Modifier la position',
-                type: ButtonType.outlined,
-                mainAxisSize: MainAxisSize.min,
-                textColor: MyColors.secondary40,
+                  Positioned(
+                    bottom: 10,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomButton(
+                          onPressed: () async {
+                            print("userPosition : $userPosition");
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      FillAdressMap(latLng: widget.position)),
+                            );
+                            setState(() {
+                              userPosition = result;
+                              mapController.move(userPosition, 18);
+                            });
+                          },
+                          label: 'Modifier la position',
+                          type: ButtonType.filled,
+                          mainAxisSize: MainAxisSize.min,
+                          textColor: MyColors.secondary40,
+                          fillColor: MyColors.defaultWhite,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            ],
-          ),
-          ),
           ),
           const SizedBox(height: 12),
           if (address != null && address!.isNotEmpty)
