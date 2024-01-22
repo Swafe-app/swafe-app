@@ -13,32 +13,43 @@ class CustomMarker extends Marker {
     required this.reportingType,
     required LatLng point,
   }) : super(
-          width: 130.0,
-          height: 150.0,
-          child: Stack(children: [
-            Center(child: SvgPicture.asset(reportingType.threat)),
-            Positioned(
+          width: 132.0,
+          height: 137.0,
+          child: Stack(
+            children: [
+              Center(
+                child: SvgPicture.asset(reportingType.threat),
+              ),
+              Positioned(
                 right: 50,
                 bottom: 60,
                 child: SizedBox(
-                    height: 70,
-                    width: 70,
-                    child: SvgPicture.asset(
-                      'assets/images/bubble.svg',
-                      width: 50,
-                      height: 50,
-                    ))),
-            Positioned(
+                  height: 70,
+                  width: 70,
+                  child: SvgPicture.asset(
+                    'assets/images/bubble.svg',
+                    width: 50,
+                    height: 50,
+                  ),
+                ),
+              ),
+              Positioned(
                 right: 62,
                 bottom: 77,
                 child: Container(
-                    height: 45,
-                    width: 45,
-                    decoration: ShapeDecoration(image: DecorationImage(image: AssetImage(reportingType.pin)), shape: const OvalBorder(
-                        side: BorderSide(
-                            width: 3,
-                            color: MyColors.defaultWhite))))),
-          ]),
+                  height: 45,
+                  width: 45,
+                  decoration: ShapeDecoration(
+                    image:
+                        DecorationImage(image: AssetImage(reportingType.pin)),
+                    shape: const OvalBorder(
+                      side: BorderSide(width: 3, color: MyColors.defaultWhite),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           point: point,
         );
 }

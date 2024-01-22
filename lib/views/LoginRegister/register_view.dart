@@ -35,6 +35,19 @@ class RegisterViewState extends State<RegisterView> {
   final _firebaseInstance = FirebaseAuth.instance;
   int activeStep = 1;
   int maxStep = 3;
+  bool hasUpperCase = false;
+  bool hasDigit = false;
+  bool hasSpecialCharacter = false;
+  bool hasMinLength = false;
+
+  void _validatePassword(String value) {
+    setState(() {
+      hasUpperCase = value.contains(RegExp(r'[A-Z]'));
+      hasDigit = value.contains(RegExp(r'[0-9]'));
+      hasSpecialCharacter = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>+]'));
+      hasMinLength = value.length >= 8;
+    });
+  }
 
   void onEmailVerified() {
     setState(() {
@@ -57,24 +70,27 @@ class RegisterViewState extends State<RegisterView> {
         // Enregistrez l'utilisateur
         UserCredential userCredential =
             await _firebaseInstance.createUserWithEmailAndPassword(
-                email: _emailController.text,
-                password: _passwordController.text);
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim());
 
         // Envoyez l'email de vérification
         await userCredential.user?.sendEmailVerification();
-
-        // Passer a la prochaine étape
-        setState(() {
-          activeStep++;
-        });
 
         // Enregistrer le numéro de téléphone
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user?.uid)
-            .update({
+            .set({
+          'email': _emailController.text.trim(),
+          'firstName': "",
+          'lastName': "",
           'phoneNumber': _phoneController.text.trim(),
           'phoneCountryCode': phoneCountryCode,
+        });
+
+        // Passer a la prochaine étape
+        setState(() {
+          activeStep++;
         });
       } on FirebaseAuthException catch (e) {
         if (kDebugMode) {
@@ -109,11 +125,26 @@ class RegisterViewState extends State<RegisterView> {
     }
   }
 
+  Widget _buildCriteriaRow(String criteria, bool isValid) {
+    return Row(
+      children: [
+        const SizedBox(width: 8),
+        Icon(
+          isValid ? Icons.check : Icons.close,
+          color: isValid ? Colors.green : Colors.red,
+        ),
+        const SizedBox(width: 5),
+        Text(criteria, style: BodyLargeRegular),
+      ],
+    );
+  }
+
   Widget registerForm() {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
         child: Form(
           key: _registerFormKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
               CustomAppBar(iconButtonOnPressed: backPageLogic),
@@ -165,6 +196,7 @@ class RegisterViewState extends State<RegisterView> {
               CustomTextField(
                 placeholder: 'Mot de passe',
                 controller: _passwordController,
+                onChanged: (value) => _validatePassword(value),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un mot de passe.';
@@ -184,12 +216,19 @@ class RegisterViewState extends State<RegisterView> {
                     setState(() => visiblePassword = !visiblePassword),
               ),
               const SizedBox(height: 24),
-              Container(
-                width: double.infinity,
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
-                child: Text(
-                    "Doit contenir au moins :\n  • 1 majuscule\n  • 1 chiffre\n  • 1 caractère spécial\n  • 8 caractères",
-                    style: BodyLargeRegular),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Doit contenir au moins :', style: BodyLargeRegular),
+                    _buildCriteriaRow('1 majuscule', hasUpperCase),
+                    _buildCriteriaRow('1 chiffre', hasDigit),
+                    _buildCriteriaRow(
+                        '1 caractère spécial', hasSpecialCharacter),
+                    _buildCriteriaRow('8 caractères', hasMinLength),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
               CustomTextField(

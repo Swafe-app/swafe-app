@@ -45,8 +45,6 @@ class BottomSheetContentState extends State<BottomSheetContent>
     userPosition = widget.userPosition ?? widget.position;
     basePosition = widget.position;
     _tabController = TabController(length: 2, vsync: this);
-
-    // Get the user's current location and set the marker coordinates
   }
 
   //Vérifie si le signalement est dans le cercle
@@ -61,8 +59,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
     if (user != null) {
       final selectedData = {
         'userId': user.uid,
-        'selectedDangerItems': _selectedDangerItems,
-        'selectedAnomaliesItems': _selectedAnomaliesItems,
+        'selectedDangerItems': _selectedDangerItems + _selectedAnomaliesItems,
         'coordinates': {
           'latitude': userPosition.latitude,
           'longitude': userPosition.longitude,
@@ -288,7 +285,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                         ),
                       ],
                     ),
-                  ),
+                  )
                 ],
               ),
             ),

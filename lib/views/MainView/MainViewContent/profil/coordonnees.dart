@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/components/appbar/appbar.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
 
 class ModifierCoordonnees extends StatefulWidget {
   const ModifierCoordonnees({super.key});
@@ -58,14 +58,17 @@ class _ModifierCoordonneesState extends State<ModifierCoordonnees>
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Vos informations ont été mises à jour.'),
+            content:
+                CustomSnackbar(label: 'Vos informations ont été mises à jour'),
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('Erreur lors de la mise à jour des informations : $e'),
+            content: CustomSnackbar(
+              label: 'Erreur lors de la mise à jour des informations : $e',
+              isError: true,
+            ),
           ),
         );
       }

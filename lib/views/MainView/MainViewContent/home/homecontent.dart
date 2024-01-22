@@ -2,31 +2,24 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
-import 'package:swafe/components/Button/iconbutton.dart';
+import 'package:swafe/components/IconButton/icon_button.dart';
 import 'package:swafe/components/marker/custom_grouped_marker.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-// fichier lib/views/MainView/MainViewContent/home/homecontent.dart dans l'application Flutter
 
-
-void main() => runApp(MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Map Example'),
-        ),
-        body: const HomeContent(),
-      ),
-    ));
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeContent extends StatefulWidget {
-  const HomeContent({Key? key}) : super(key: key);
+  const HomeContent({super.key});
 
   @override
   HomeContentState createState() => HomeContentState();
@@ -41,21 +34,13 @@ class HomeContentState extends State<HomeContent> {
   Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
 
-  Marker userLocationMarker = const Marker(
-    width: 80.0,
-    height: 80.0,
-    point: LatLng(0.0, 0.0),
-    child: Icon(
-      Icons.location_on,
-      color: Colors.blue,
-      size: 50.0,
-    ),
-  );
+  LatLng userLocation = const LatLng(0, 0);
 
   @override
   void initState() {
     super.initState();
     _requestLocationPermission();
+    _getDataFromFirebase();
   }
 
   void _getDataFromFirebase() {
@@ -67,19 +52,24 @@ class HomeContentState extends State<HomeContent> {
           Map<String, SignalementModel> data = {};
 
           rawData.forEach((key, value) {
+            double latitude =
+                (value['coordinates']['latitude'] as double?) ?? 0.0;
+            double longitude =
+                (value['coordinates']['longitude'] as double?) ?? 0.0;
+            List<String> selectedDangerItems =
+                List<String>.from(value['selectedDangerItems'] ?? []);
+
             data[key] = SignalementModel(
-              latitude: value['coordinates']['latitude'] as double,
-              longitude: value['coordinates']['longitude'] as double,
-              selectedDangerItems:
-                  List<String>.from(value['selectedDangerItems']),
-              userId: value['userId'] as String,
+              latitude: latitude,
+              longitude: longitude,
+              selectedDangerItems: selectedDangerItems,
+              userId: value['userId'] as String? ?? 'Inconnu',
             );
           });
 
-          // Mise à jour de la liste signalementMap
-          signalementMap = data;
-
-          // Appel à _buildMarkers pour mettre à jour l'interface utilisateur
+          setState(() {
+            signalementMap = data;
+          });
           _buildMarkers(zoom);
         } else {
           if (kDebugMode) {
@@ -100,20 +90,11 @@ class HomeContentState extends State<HomeContent> {
   }
 
   void updateLocationMarker(Position position) {
-    if (userLocationMarker.point.latitude == position.latitude &&
-        userLocationMarker.point.longitude == position.longitude) return;
+    if (userLocation.latitude == position.latitude &&
+        userLocation.longitude == position.longitude) return;
 
     setState(() {
-      userLocationMarker = Marker(
-        width: 80.0,
-        height: 80.0,
-        point: LatLng(position.latitude, position.longitude),
-        child: const Icon(
-          Icons.location_on,
-          color: Colors.blue,
-          size: 50.0,
-        ),
-      );
+      userLocation = LatLng(position.latitude, position.longitude);
     });
 
     _calculateCenter();
@@ -143,15 +124,23 @@ class HomeContentState extends State<HomeContent> {
   }
 
   void _callPolice() async {
+    await requestPhonePermission();
     String cleanedPhoneNumber = "17".replaceAll(RegExp(r'\D'), '');
     String url = "tel:$cleanedPhoneNumber";
-    if (await canLaunchUrlString(url)) {
-      await launchUrlString(url);
+    if (await launch(url)) {
+      await launch(url);
     } else {
-      if (kDebugMode) {
-        if (kDebugMode) {
-          print("Impossible de lancer l'appel vers $cleanedPhoneNumber");
-        }
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> requestPhonePermission() async {
+    PermissionStatus status = await Permission.phone.status;
+
+    if (!status.isGranted) {
+      PermissionStatus newStatus = await Permission.phone.request();
+      if (!newStatus.isGranted) {
+        print('Phone permission was denied');
       }
     }
   }
@@ -161,8 +150,8 @@ class HomeContentState extends State<HomeContent> {
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      _getDataFromFirebase();
       updateLocationMarker(position);
+      _buildMarkers(zoom);
     } catch (e) {
       if (kDebugMode) {
         print("Erreur lors de l'obtention de la position : $e");
@@ -182,14 +171,15 @@ class HomeContentState extends State<HomeContent> {
                 options: MapOptions(
                   onMapEvent: (event) {
                     if (event.source == MapEventSource.multiFingerEnd) {
-                      print(event.camera.zoom);
                       _buildMarkers(event.camera.zoom);
                     }
                   },
                   initialCenter: const LatLng(48.866667, 2.333333),
                   initialZoom: zoom,
-                  maxZoom: 14.92,
-                  interactionOptions: const InteractionOptions(rotationWinGestures: InteractiveFlag.none),
+                  maxZoom: 20,
+                  interactionOptions: const InteractionOptions(
+                    flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                  ),
                 ),
                 children: [
                   TileLayer(
@@ -206,25 +196,34 @@ class HomeContentState extends State<HomeContent> {
           ],
         ),
         Positioned(
-          bottom: MediaQuery.of(context).size.height * .4,
-          right: 0.01,
+          bottom: 272,
+          right: 12,
           child: CustomIconButton(
-            onPressed: () {
-              _showBottomSheet(context);
-            },
-            size: 70,
+            onPressed: () => _showBottomSheet(context),
+            type: IconButtonType.image,
             image: 'assets/images/report_logo.png',
           ),
         ),
         Positioned(
-          bottom: MediaQuery.of(context).size.height * .30,
-          right: 0.01,
+          bottom: 196,
+          right: 12,
           child: CustomIconButton(
-            onPressed: () {
-              _callPolice();
-            },
-            size: 70,
+            onPressed: () => _callPolice(),
+            type: IconButtonType.image,
             image: 'assets/images/call_logo.png',
+          ),
+        ),
+        Positioned(
+          bottom: 112,
+          left: 12,
+          child: CustomIconButton(
+            type: IconButtonType.square,
+            size: IconButtonSize.L,
+            iconColor: MyColors.secondary40,
+            icon: Icons.near_me_outlined,
+            onPressed: () {
+              _calculateCenter();
+            },
           ),
         ),
       ],
@@ -271,7 +270,7 @@ class HomeContentState extends State<HomeContent> {
     setState(() {
       List<Marker> markers = [];
       List<List<SignalementModel>> clusters = [];
-      double radius = 1700 / (pow(2, zoom) / 2); // Adjust the radius based on the zoom level
+      double radius = 800 / (pow(2, zoom) / 2);
 
       // Create clusters
       for (var signalement in signalementMap.values) {
@@ -279,8 +278,9 @@ class HomeContentState extends State<HomeContent> {
         for (var cluster in clusters) {
           for (var signalementInCluster in cluster) {
             if (calculateDistance(
-                LatLng(signalement.latitude, signalement.longitude),
-                LatLng(signalementInCluster.latitude, signalementInCluster.longitude)) <=
+                    LatLng(signalement.latitude, signalement.longitude),
+                    LatLng(signalementInCluster.latitude,
+                        signalementInCluster.longitude)) <=
                 radius) {
               cluster.add(signalement);
               added = true;
@@ -308,27 +308,43 @@ class HomeContentState extends State<HomeContent> {
           markers.add(CustomGroupedMarker(
             point: LatLng(avgLatitude, avgLongitude),
             numberReports: cluster.length,
-            imagePath: convertStringToReportingType(cluster[0].selectedDangerItems.first).pin,
+            imagePath: convertStringToReportingType(
+                    cluster[0].selectedDangerItems.first)
+                .pin,
           ));
         } else {
-          markers.add(
-              CustomMarker(
-                point: LatLng(avgLatitude, avgLongitude),
-                reportingType: convertStringToReportingType(cluster[0].selectedDangerItems.first),
-              ));
+          markers.add(CustomMarker(
+            point: LatLng(avgLatitude, avgLongitude),
+            reportingType: convertStringToReportingType(
+                cluster[0].selectedDangerItems.first),
+          ));
         }
       }
 
-      markers.add(userLocationMarker);
+      markers.add(
+        Marker(
+          width: 37.7,
+          height: 37.7,
+          point: userLocation,
+          child: SizedBox(
+            height: 37.7,
+            width: 37.7,
+            child: SvgPicture.asset(
+              'assets/images/userMarker.svg',
+              width: 37.7,
+              height: 37.7,
+            ),
+          ),
+        ),
+      );
       markersList = markers;
     });
   }
 
   void _calculateCenter() {
     setState(() {
-      if (userLocationMarker.point.latitude != 0.0 &&
-          userLocationMarker.point.longitude != 0.0) {
-        mapController.move(userLocationMarker.point, 13);
+      if (userLocation.latitude != 0.0 && userLocation.longitude != 0.0) {
+        mapController.move(userLocation, 13);
       } else if (signalementMap.isNotEmpty) {
         double sumLatitude = 0;
         double sumLongitude = 0;

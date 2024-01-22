@@ -5,6 +5,8 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ChangeUserInformation/ChangeEmail.dart';
 import 'package:swafe/views/MainView/MainViewContent/profil/ChangeUserInformation/ChangePhoneNumber.dart';
@@ -70,13 +72,18 @@ class UserProfileScreenState extends State<UserProfileScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Vos informations ont été mises à jour avec succès."),
+            content: CustomSnackbar(
+              label: "Vos informations ont été mises à jour avec succès.",
+            ),
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Erreur lors de la mise à jour des informations."),
+            content: CustomSnackbar(
+              label: "Erreur lors de la mise à jour des informations.",
+              isError: true,
+            ),
           ),
         );
       }
@@ -250,33 +257,41 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                               ),
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
+                          child: Opacity(
+                            opacity: 0.4,
+                            child: IgnorePointer(
+                              ignoring: true,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    'Pièce d’identité',
-                                    style: TitleSmallMedium,
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Pièce d’identité',
+                                        style: TitleSmallMedium,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '/',
+                                        style: TitleSmallMedium.copyWith(
+                                          color: MyColors.neutral40,
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Fournie',
-                                    style: TitleSmallMedium.copyWith(
-                                      color: MyColors.neutral40,
-                                    ),
-                                  )
+                                  const SizedBox(height: 20),
+                                  const CustomButton(
+                                    type: ButtonType.text,
+                                    label: 'Supprimer',
+                                    mainAxisSize: MainAxisSize.min,
+                                  ),
                                 ],
                               ),
-                              const SizedBox(height: 20),
-                              const CustomButton(
-                                type: ButtonType.text,
-                                label: 'Supprimer',
-                                mainAxisSize: MainAxisSize.min,
-                              )
-                            ],
+                            ),
                           ),
                         ),
                       ],

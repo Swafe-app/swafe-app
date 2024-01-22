@@ -7,6 +7,7 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 
 class ChangePhoneNumber extends StatefulWidget {
@@ -43,14 +44,19 @@ class ChangePhoneNumberState extends State<ChangePhoneNumber> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Vos informations ont été mises à jour avec succès."),
+            content: CustomSnackbar(
+              label: "Vos informations ont été mises à jour avec succès.",
+            ),
           ),
         );
         Navigator.of(context).pop();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Erreur lors de la mise à jour des informations."),
+            content: CustomSnackbar(
+              label: "Erreur lors de la mise à jour des informations.",
+              isError: true,
+            ),
           ),
         );
       }

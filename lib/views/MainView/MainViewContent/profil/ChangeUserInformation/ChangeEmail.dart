@@ -21,6 +21,8 @@ class ChangeEmail extends StatefulWidget {
 class ChangeEmailState extends State<ChangeEmail> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool visiblePassword = false;
   String errorMessage = '';
 
   @override
@@ -38,10 +40,18 @@ class ChangeEmailState extends State<ChangeEmail> {
     if (_formKey.currentState!.validate()) {
       try {
         User? user = FirebaseAuth.instance.currentUser;
+
+        // Reconnecter l'utilisateur
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: user?.email ?? '',
+          password: _passwordController.text.trim(),
+        );
         await user?.updateEmail(_emailController.text.trim());
+
         if (!user!.emailVerified) {
           user.sendEmailVerification();
         }
+
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => CodeValidationView(
             email: _emailController.text.trim(),
@@ -103,6 +113,23 @@ class ChangeEmailState extends State<ChangeEmail> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 24),
+              CustomTextField(
+                placeholder: 'Mot de passe',
+                controller: _passwordController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre mot de passe.';
+                  }
+                  return null;
+                },
+                obscureText: !visiblePassword,
+                rightIcon: visiblePassword
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+                onRightIconPressed: () =>
+                    setState(() => visiblePassword = !visiblePassword),
               ),
               const Spacer(),
               CustomButton(
