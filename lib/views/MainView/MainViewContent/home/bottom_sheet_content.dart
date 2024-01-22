@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
@@ -11,11 +12,14 @@ import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/typeReport/custom_report.dart';
+import 'package:swafe/views/MainView/MainViewContent/home/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
-  const BottomSheetContent({super.key, required this.position});
+  const BottomSheetContent(
+      {super.key, required this.position, this.userPosition});
 
   final LatLng position;
+  final LatLng? userPosition;
 
   @override
   BottomSheetContentState createState() => BottomSheetContentState();
@@ -27,27 +31,20 @@ class BottomSheetContentState extends State<BottomSheetContent>
   bool _isSelectionMade = false;
   final List<String> _selectedDangerItems = [];
   final List<String> _selectedAnomaliesItems = [];
-  LatLng userPosition = const LatLng(0, 0);
+  late LatLng userPosition;
   LatLng basePosition = const LatLng(0, 0);
   String pin = 'assets/images/pinDown.svg';
   String? address;
-  late LatLngBounds bounds;
   final mapController = MapController();
   final databaseReference = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
     super.initState();
-    userPosition = widget.position;
+    print("position : ${widget.userPosition}");
+    userPosition = widget.userPosition ?? widget.position;
     basePosition = widget.position;
     _tabController = TabController(length: 2, vsync: this);
-    bounds = LatLngBounds(
-        LatLng(widget.position.latitude - 0.00895,
-            widget.position.longitude - 0.00895),
-        LatLng(widget.position.latitude + 0.00895,
-            widget.position.longitude + 0.00895));
-    getAddressFromLatLng(widget.position);
-    // Get the user's current location and set the marker coordinates
   }
 
   //Vérifie si le signalement est dans le cercle
@@ -192,74 +189,102 @@ class BottomSheetContentState extends State<BottomSheetContent>
             borderRadius: BorderRadius.circular(16),
             child: SizedBox(
               height: 145,
-              child: FlutterMap(
-                mapController: mapController,
-                options: MapOptions(
-                  initialCenter: userPosition,
-                  initialCameraFit: CameraFit.insideBounds(bounds: bounds),
-                  minZoom: 15,
-                  maxZoom: 20,
-                  interactionOptions: const InteractionOptions(
-                    flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-                  ),
-                  onMapEvent: (event) {
-                    if (event.source.name == "dragEnd") {
-                      setState(() {
-                        pin = 'assets/images/pinDown.svg';
-                        getAddressFromLatLng(userPosition);
-                      });
-                    }
-                  },
-                  onPositionChanged: (position, hasGesture) {
-                    if (position.center != null) {
-                      if (isWithinCircle(
-                          basePosition, position.center!, 1000)) {
-                        setState(() {
-                          pin = 'assets/images/pinUp.svg';
-                          userPosition = position.center!;
-                        });
-                      } else {
-                        final bearing = const Distance()
-                            .bearing(basePosition, position.center!);
-                        final closestPoint = const Distance()
-                            .offset(basePosition, 1000, bearing);
-                        mapController.move(closestPoint, position.zoom!);
-                        setState(() {
-                          pin = 'assets/images/pinUp.svg';
-                          userPosition = closestPoint;
-                        });
-                      }
-                    }
-                  },
-                ),
+              child: Stack(
                 children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=By3OUeKIWraENXWoFzSV',
-                    subdomains: const ['a', 'b', 'c'],
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        width: 50.0,
-                        height: 50.0,
-                        point: userPosition,
-                        child: SvgPicture.asset(
-                          pin,
-                          width: 30,
-                        ),
+                  FlutterMap(
+                    mapController: mapController,
+                    options: MapOptions(
+                      initialCenter: LatLng(
+                        userPosition.latitude - 0.0003,
+                        userPosition.longitude,
+                      ),
+                      minZoom: 15,
+                      initialZoom: 16,
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.all &
+                            ~InteractiveFlag.rotate &
+                            ~InteractiveFlag.drag,
+                      ),
+                      onMapEvent: (event) {
+                        if (event.source.name == "dragEnd") {
+                          setState(() {
+                            pin = 'assets/images/pinDown.svg';
+                            getAddressFromLatLng(userPosition);
+                          });
+                        }
+                      },
+                      onPositionChanged: (position, hasGesture) {
+                        if (position.center != null) {
+                          if (isWithinCircle(
+                              basePosition, position.center!, 1000)) {
+                            setState(() {
+                              pin = 'assets/images/pinUp.svg';
+                              userPosition = position.center!;
+                            });
+                          } else {
+                            final bearing = const Distance()
+                                .bearing(basePosition, position.center!);
+                            final closestPoint = const Distance()
+                                .offset(basePosition, 1000, bearing);
+                            mapController.move(closestPoint, position.zoom!);
+                            setState(() {
+                              pin = 'assets/images/pinUp.svg';
+                              userPosition = closestPoint;
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
+                        subdomains: const ['a', 'b', 'c'],
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            width: 50.0,
+                            height: 50.0,
+                            point: userPosition,
+                            child: SvgPicture.asset(
+                              pin,
+                              width: 30,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  CircleLayer(
-                    circles: [
-                      CircleMarker(
-                        point: LatLng(basePosition.latitude - 0.0005,
-                            basePosition.longitude),
-                        radius: 310,
-                        color: MyColors.secondary40.withOpacity(0.2),
-                      )
-                    ],
+                  Positioned(
+                    bottom: 10,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomButton(
+                          onPressed: () async {
+                            print("userPosition : $userPosition");
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      FillAdressMap(latLng: widget.position)),
+                            );
+                            setState(() {
+                              userPosition = result;
+                              mapController.move(userPosition, 18);
+                            });
+                          },
+                          label: 'Modifier la position',
+                          type: ButtonType.filled,
+                          mainAxisSize: MainAxisSize.min,
+                          textColor: MyColors.secondary40,
+                          fillColor: MyColors.defaultWhite,
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

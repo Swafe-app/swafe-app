@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swafe/firebase/firebase_options.dart';
 import 'package:swafe/views/LoginRegister/register_view.dart';
 import 'package:swafe/views/LoginRegister/welcome_view.dart';
@@ -10,6 +11,7 @@ import 'package:swafe/views/MainView/home.dart';
 Future<void> main() async {
   // Initialisez Firebase
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
