@@ -1,182 +1,181 @@
 import 'dart:io';
-
 import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:swafe/DS/colors.dart';
-import 'package:swafe/DS/typographies.dart';
+import 'package:swafe/components/IconButton/icon_button.dart';
 
 class CameraIdentity extends StatefulWidget {
+  const CameraIdentity({super.key});
+
   @override
-  _CameraIdentityState createState() => _CameraIdentityState();
+  CameraIdentityState createState() => CameraIdentityState();
 }
 
-class _CameraIdentityState extends State<CameraIdentity> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+class CameraIdentityState extends State<CameraIdentity> {
+  late Future<void> _initializeCamera;
+  ValueNotifier<String> indicatormessage =
+      ValueNotifier("Prenez une photo de \n vous-même");
+  ValueNotifier<bool> autoCapture = ValueNotifier(false);
 
   @override
   void initState() {
     super.initState();
-    _controller = CameraController(
-      CameraDescription(
-        name: "0",
-        lensDirection: CameraLensDirection.front,
-        sensorOrientation: 0,
-      ),
-      ResolutionPreset.medium,
-    );
-    WidgetsFlutterBinding.ensureInitialized();
+    _initializeCamera = FaceCamera.initialize();
   }
 
-  Future<void> _initializeCamera() async {
-    final cameras = await availableCameras();
-    final firstCamera = cameras.last;
-
-    _controller = CameraController(
-      firstCamera,
-      ResolutionPreset.medium,
-    );
-
-    return _controller.initialize();
-  }
-
-  Future<void> detectFacesAndCapture() async {
-    try {
-      await _initializeControllerFuture;
-
-      // Create a FaceDetector instance.
-      final faceDetector =
-          FaceDetector(options: FaceDetectorOptions(enableContours: true));
-
-      // Get the camera image.
-      _controller.takePicture().then((XFile file) async {
-        final image = InputImage.fromFilePath(file.path);
-        final faces = await faceDetector.processImage(image);
-
-        // Check if any face is within the overlay.
-        for (final face in faces) {
-          if (isFaceInOverlay(face)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('THERE IS A FACE.')),
-            );
-          } else {}
-        }
-
-        // If no face is within the overlay, show a message to the user.
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Please position your face within the overlay.')),
-        );
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  bool isFaceInOverlay(Face face) {
+  bool isFaceInOval(Face face, Size size) {
     Rect faceRect = face.boundingBox;
 
-    // Define the overlay's dimensions
-    final overlayRect = Rect.fromLTRB(
-      100, // left
-      100, // top
-      MediaQuery.of(context).size.width - 100, // right
-      MediaQuery.of(context).size.height - 100, // bottom
+    // We define the oval's dimensions
+    final ovalRect = Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2.5),
+      width: size.width * 0.65, // adjust the width to suit your needs
+      height: size.height * 0.65, // adjust the height to suit your needs
     );
 
-    // Check if the face's bounding box is within the overlay
-    bool isWithinOverlay =
-        overlayRect.contains(Offset(faceRect.left, faceRect.top)) &&
-            overlayRect.contains(Offset(faceRect.right, faceRect.top)) &&
-            overlayRect.contains(Offset(faceRect.right, faceRect.bottom)) &&
-            overlayRect.contains(Offset(faceRect.left, faceRect.bottom));
+    // Check if we are within the oval
+    bool isWithinOval =
+        ovalRect.contains(Offset(faceRect.left, faceRect.top)) &&
+            ovalRect.contains(Offset(faceRect.right, faceRect.top)) &&
+            ovalRect.contains(Offset(faceRect.right, faceRect.bottom)) &&
+            ovalRect.contains(Offset(faceRect.left, faceRect.bottom));
 
-    return isWithinOverlay;
+    return isWithinOval;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder<void>(
-        future: FaceCamera.initialize(),
+    return FutureBuilder<void>(
+        future: _initializeCamera,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return Stack(
-              children: <Widget>[
-                SmartFaceCamera(
-                  autoCapture: true,
-                  onCapture: (File? image) {
-                    if (image != null) {
-                      print("Image captured");
-                    }
-                  },
-                  defaultCameraLens: CameraLens.front,
-                  onFaceDetected: (Face? face) {
-                    if (face != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Face detected.')));
-                    }
-                  },
-                  messageBuilder: (context, detectedFace) {
-                    return Positioned(
+            return Scaffold(
+              body: Stack(
+                children: <Widget>[
+                  SmartFaceCamera(
+                    captureControlBuilder: (context, detectedFace) {
+                      if (autoCapture.value) {
+                        // We define the widget of the capture button
+                        return Container(
+                            color: Colors.transparent,
+                            height: 50,
+                            child: Center(
+                              child: CustomIconButton(
+                                type: IconButtonType.outlined,
+                                isDisabled: autoCapture.value,
+                                size: IconButtonSize.L,
+                                icon: Icons.camera,
+                                iconColor: MyColors.defaultWhite,
+                              ),
+                            ),
+                        );
+                      }
+                      else {
+                        //We return an empty widget if we are not in the oval
+                        return const SizedBox(height: 0, width: 0,);
+                      }
+                    },
+                    messageBuilder: (context, detectedFace) {
+                      // We define the message of the widget
+                      return Positioned(
                         height: (MediaQuery.of(context).size.height * 1.05),
                         width: (MediaQuery.of(context).size.width * 1),
-                        child: const Padding(padding: EdgeInsets.only(left: 110.0, right: 110.0),child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Prennez une photo de \n vous-même",
-                              style: TextStyle(color: MyColors.defaultWhite,fontWeight: FontWeight.w700),textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              "Tenez votre appareil droit devant vous ou demandez à un ami de vous prendre en photo. Assurez-vous que l'ensemble de votre visage est visible.",
-                              style: TextStyle(color: MyColors.defaultWhite, fontSize: 12, fontWeight: FontWeight.w300),
-                              textAlign: TextAlign.center,
-                            )
-                          ],
-                        ),));
-                  },
-                  showControls: false,
-                  indicatorBuilder: (context, isFocused, size) {
-                    return CustomPaint(painter: FaceShapePainter());
-                  },
-                ),
-              ],
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 110.0, right: 110.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Opacity(
+                                opacity: 1,
+                                child: Container(
+                                  color: Colors.transparent, // Add this line
+                                  child: Text(
+                                    indicatormessage.value,
+                                    style: TextStyle(
+                                        color: MyColors.defaultWhite
+                                            .withOpacity(1.0),
+                                        fontWeight: FontWeight.w700),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                              Opacity(
+                                opacity: 1,
+                                child: Container(
+                                  color: Colors.transparent, // Add this line
+                                  child: Text(
+                                    "Tenez votre appareil droit devant vous ou demandez à un ami de vous prendre en photo. Assurez-vous que l'ensemble de votre visage est visible.",
+                                    style: TextStyle(
+                                        color: MyColors.defaultWhite
+                                            .withOpacity(1.0),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w300),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    //We define what we'll do with the picture we took
+                    onCapture: (File? image) {
+                      if (image != null) {
+                        Navigator.pop(context, image);
+                      }
+                    },
+                    //We define the front lens
+                    defaultCameraLens: CameraLens.front,
+                    indicatorBuilder: (context, isFocused, size) {
+                      //We check if the face of the user is in the oval
+                      if (isFocused!.face != null && isFaceInOval(isFocused.face!, size!)) {
+                        indicatormessage.value = "Ne bougez plus";
+                        autoCapture.value = true;
+                      } else {
+                        indicatormessage.value =
+                            "Prenez une photo de \n vous-même";
+                        autoCapture.value = false;
+                      }
+                      //We draw the shape of the displayed oval
+                      return CustomPaint(
+                        painter: FaceShapePainter(),
+                        child: Center(
+                          child: Container(
+                            height: 200,
+                            width: 100,
+                            color: Colors.transparent,
+                          ),
+                        ),
+                      );
+                    },
+                    showCaptureControl: true,
+                    //We hide the flash and the lens control
+                    showCameraLensControl: false,
+                    showFlashControl: false,
+                  ),
+                ],
+              ),
             );
           } else {
             return const Center(child: CircularProgressIndicator());
           }
-        },
-      ),
-    );
+        });
   }
 }
 
 class FaceShapePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    var backgroundPaint = Paint()
-      ..color = Colors.black.withOpacity(0.3)
-      ..style = PaintingStyle.fill;
-
     var borderPaint = Paint()
       ..color = Colors.white // Change this to the color you want for the border
-      ..strokeWidth = 2.0 // Change this to control the thickness of the border
+      ..strokeWidth = 4.0 // Increase this to make the border thicker
       ..style = PaintingStyle.stroke;
-
-    // Draw the background
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      backgroundPaint,
-    );
 
     // Define the overlay's dimensions
     final overlayRect = Rect.fromCenter(
       center: Offset(size.width / 2, size.height / 2.5),
-      width: size.width * 0.6, // adjust the width to suit your needs
+      width: size.width * 0.5, // adjust the width to suit your needs
       height: size.height * 0.5, // adjust the height to suit your needs
     );
 
