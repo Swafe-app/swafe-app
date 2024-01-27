@@ -265,7 +265,6 @@ class BottomSheetContentState extends State<BottomSheetContent>
                       children: [
                         CustomButton(
                           onPressed: () async {
-                            print("userPosition : $userPosition");
                             final result = await Navigator.push(
                               context,
                               MaterialPageRoute(

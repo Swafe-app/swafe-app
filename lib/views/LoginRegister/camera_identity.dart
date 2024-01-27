@@ -19,7 +19,7 @@ class CameraIdentityState extends State<CameraIdentity> {
   ValueNotifier<String> indicatorSubMessage =
       ValueNotifier("Tenez votre appareil droit devant vous ou demandez à un ami de vous prendre en photo. Assurez-vous que l'ensemble de votre visage est visible.");
   ValueNotifier<bool> autoCapture = ValueNotifier(false);
-  final ValueNotifier<File?> _capturedImage = ValueNotifier(null);
+  final ValueNotifier<File?> _selfie = ValueNotifier(null);
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class CameraIdentityState extends State<CameraIdentity> {
             return Scaffold(
               body: Stack(
                 children: <Widget>[
-                  if(_capturedImage.value == null)
+                  if(_selfie.value == null)
                     SmartFaceCamera(
                       captureControlBuilder: (context, detectedFace) {
                           // We define the widget of the capture button
@@ -88,7 +88,7 @@ class CameraIdentityState extends State<CameraIdentity> {
                           indicatormessage.value = "Vérifiez votre photo";
                           indicatorSubMessage.value =
                           "Veillez à ce que la photo soit bien éclairée et nette.";
-                          _capturedImage.value = image;
+                          _selfie.value = image;
                         });
                       },
                       //We define the front lens
@@ -124,9 +124,9 @@ class CameraIdentityState extends State<CameraIdentity> {
                       showCameraLensControl: false,
                       showFlashControl: false,
                     ),
-                  if (_capturedImage.value != null)
+                  if (_selfie.value != null)
                     Image.file(
-                      _capturedImage.value!,
+                      _selfie.value!,
                       height: MediaQuery
                           .of(context)
                           .size
@@ -185,7 +185,7 @@ class CameraIdentityState extends State<CameraIdentity> {
                         ),
                       ),
                     ),
-                  if(_capturedImage.value != null)
+                  if(_selfie.value != null)
                     Positioned(
                       bottom: MediaQuery
                           .of(context)
@@ -201,7 +201,7 @@ class CameraIdentityState extends State<CameraIdentity> {
                           children: [
                             CustomButton(
                               onPressed: () {
-                                Navigator.pop(context, _capturedImage);
+                                Navigator.pop(context, _selfie.value);
                               },
                               fillColor: MyColors.defaultWhite,
                               textColor: Colors.black,
@@ -212,7 +212,7 @@ class CameraIdentityState extends State<CameraIdentity> {
                             CustomButton(
                               onPressed: () {
                                 setState(() {
-                                  _capturedImage.value = null;
+                                  _selfie.value = null;
                                   indicatormessage.value = "Prenez une photo de \n vous-même";
                                 });
                               },
