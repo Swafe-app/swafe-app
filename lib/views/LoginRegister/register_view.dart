@@ -14,7 +14,6 @@ import 'package:swafe/components/appbar/appbar.dart';
 import 'package:swafe/helper/getFirebaseErrorMessage.dart';
 import 'package:swafe/views/LoginRegister/camera_identity.dart';
 import 'package:swafe/views/LoginRegister/checking_identity.dart';
-import 'package:swafe/views/LoginRegister/valide_email_code.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
