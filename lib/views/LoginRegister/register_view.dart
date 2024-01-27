@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -12,7 +12,8 @@ import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/components/appbar/appbar.dart';
 import 'package:swafe/helper/getFirebaseErrorMessage.dart';
-import 'package:swafe/views/LoginRegister/valide_email_code.dart';
+import 'package:swafe/views/LoginRegister/camera_identity.dart';
+import 'package:swafe/views/LoginRegister/checking_identity.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -39,6 +40,7 @@ class RegisterViewState extends State<RegisterView> {
   bool hasDigit = false;
   bool hasSpecialCharacter = false;
   bool hasMinLength = false;
+  late File? _selfie = File('');
 
   void _validatePassword(String value) {
     setState(() {
@@ -115,11 +117,8 @@ class RegisterViewState extends State<RegisterView> {
       case 1:
         return registerForm();
       case 2:
-        return CodeValidationView(
-          email: _emailController.text.trim(),
-          onSuccess: onEmailVerified,
-          customBackPageLogic: backPageLogic,
-        );
+        return identityForm();
+      case 3:
       default:
         return const CustomAppBar();
     }
@@ -256,6 +255,75 @@ class RegisterViewState extends State<RegisterView> {
               CustomButton(
                 label: 'Continuer',
                 onPressed: () => signUp(),
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget identityForm() {
+    return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
+        child: Form(
+          key: _registerFormKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              CustomAppBar(iconButtonOnPressed: backPageLogic),
+              const SizedBox(height: 24),
+              Text(
+                  textAlign: TextAlign.center,
+                  "Vérification d'identité",
+                  style: TitleLargeMedium),
+              const SizedBox(height: 24),
+              Text(
+                  textAlign: TextAlign.center,
+                  "Cette procédure nous permet de confirmer votre identité. La vérification d'identité est une des procédures que nous utilisons pour garantir la sécurité de Swafe.",
+                  style: SubtitleLargeRegular),
+              const SizedBox(height: 24),
+              Align(
+                alignment: Alignment.topLeft,
+                child: CustomButton(
+                  mainAxisSize: MainAxisSize.min,
+                  label: "Prendre un selfie",
+                  onPressed: () async{
+                    final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CameraIdentity()));
+                    if (result != null) {
+                      setState(() {
+                        _selfie = result;
+                      });
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  "jpeg/png (5Mo maximum)",
+                  style: TextStyle(
+                    color: Color(0xFF71787E),
+                    fontSize: 12,
+                    fontFamily: 'Manrope',
+                    fontWeight: FontWeight.w500,
+                    height: 0.11,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                  textAlign: TextAlign.center,
+                  "Les informations figurant sur votre pièces d’identité seront traitées conformément à notre Politique de confidentialité et ne seront pas communiquées aux autres.",
+                  style: SubtitleLargeRegular),
+              const SizedBox(height: 20),
+              CustomButton(
+                label: 'Continuer',
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CheckingIdentity())),
+                isDisabled: _selfie!.path.isEmpty,
               ),
             ],
           ),
