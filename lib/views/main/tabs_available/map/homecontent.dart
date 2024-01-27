@@ -21,6 +21,7 @@ import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/models/signalement/signalement_model.dart';
 import 'package:swafe/views/main/tabs_available/map/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -33,6 +34,9 @@ class HomeContentState extends State<HomeContent> {
   final MapController mapController = MapController();
   late Position position;
   double zoom = 9.2;
+  bool isPositionInitialized = false;
+
+  Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
   List<SignalementModel>? signalements;
@@ -109,6 +113,9 @@ class HomeContentState extends State<HomeContent> {
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
+      setState(() {
+        isPositionInitialized = true;
+      });
       updateLocationMarker(position);
     } catch (e) {
       if (kDebugMode) {
@@ -296,11 +303,12 @@ class HomeContentState extends State<HomeContent> {
           Positioned(
             bottom: 272,
             right: 12,
-            child: CustomIconButton(
+            child: isPositionInitialized ?
+            CustomIconButton(
               onPressed: () => _showBottomSheet(context),
               type: IconButtonType.image,
               image: 'assets/images/report_logo.png',
-            ),
+            ) : const CircularProgressIndicator(),
           ),
           Positioned(
             bottom: 196,
