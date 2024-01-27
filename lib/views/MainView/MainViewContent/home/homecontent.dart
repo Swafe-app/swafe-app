@@ -14,8 +14,6 @@ import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
 import 'package:permission_handler/permission_handler.dart';
 
 class HomeContent extends StatefulWidget {
@@ -30,6 +28,7 @@ class HomeContentState extends State<HomeContent> {
   final MapController mapController = MapController();
   late Position position;
   double zoom = 9.2;
+  bool isPositionInitialized = false;
 
   Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
@@ -150,6 +149,9 @@ class HomeContentState extends State<HomeContent> {
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
+      setState(() {
+        isPositionInitialized = true;
+      });
       updateLocationMarker(position);
       _buildMarkers(zoom);
     } catch (e) {
@@ -198,11 +200,12 @@ class HomeContentState extends State<HomeContent> {
         Positioned(
           bottom: 272,
           right: 12,
-          child: CustomIconButton(
+          child: isPositionInitialized ?
+            CustomIconButton(
             onPressed: () => _showBottomSheet(context),
             type: IconButtonType.image,
             image: 'assets/images/report_logo.png',
-          ),
+          ) : const CircularProgressIndicator(),
         ),
         Positioned(
           bottom: 196,
