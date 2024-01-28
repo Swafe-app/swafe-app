@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
+import 'package:swafe/services/user_service.dart';
 
 class CodeValidationView extends StatefulWidget {
   final String email;
@@ -26,6 +28,8 @@ class CodeValidationView extends StatefulWidget {
 class CodeValidationViewState extends State<CodeValidationView> {
   final GlobalKey<FormState> _valideCodeFormKey = GlobalKey<FormState>();
   String errorMessage = '';
+  final userServices= UserService();
+  final storage = FlutterSecureStorage();
 
   @override
   void initState() {
@@ -35,7 +39,7 @@ class CodeValidationViewState extends State<CodeValidationView> {
       const Duration(seconds: 3),
       (timer) async {
         // Vérifiez si l'utilisateur a validé son email
-        await FirebaseAuth.instance.currentUser!.reload();
+        /*await FirebaseAuth.instance.currentUser!.reload();
         var user = FirebaseAuth.instance.currentUser;
         if (user!.emailVerified) {
           timer.cancel();
@@ -45,13 +49,22 @@ class CodeValidationViewState extends State<CodeValidationView> {
             ),
           );
           widget.onSuccess();
-        }
+        }*/
+        await userServices.verifyEmail((await storage.read(key: 'token'))!).then((value) {
+          timer.cancel();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: CustomSnackbar(label: "Votre e-mail a été vérifié avec succès.")
+            ),
+          );
+          widget.onSuccess();
+        });
       },
     );
   }
 
   Future<void> checkEmailVerified() async {
-    User? user = FirebaseAuth.instance.currentUser;
+    /*User? user = FirebaseAuth.instance.currentUser;
     await user?.reload();
     if (user?.emailVerified ?? false) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -64,15 +77,19 @@ class CodeValidationViewState extends State<CodeValidationView> {
       setState(() {
         errorMessage = "Veuillez vérifier votre email pour continuer.";
       });
-    }
-  }
-
-  // Fonction pour renvoyer l'email de vérification
-  void resendVerificationEmail() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null && !user.emailVerified) {
-      await user.sendEmailVerification();
-    }
+    }*/
+    await userServices.verifyEmail((await storage.read(key: 'token'))!).then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: CustomSnackbar(label: "Votre e-mail a été vérifié avec succès.")
+        ),
+      );
+      widget.onSuccess();
+    }).catchError((error) {
+      setState(() {
+        errorMessage = "Veuillez vérifier votre email pour continuer.";
+      });
+    });
   }
 
   @override
@@ -104,23 +121,6 @@ class CodeValidationViewState extends State<CodeValidationView> {
                     style: BodyLargeMedium.copyWith(color: MyColors.error40),
                   ),
                 ),
-              InkWell(
-                onTap: resendVerificationEmail,
-                child: RichText(
-                  text: TextSpan(
-                    children: <TextSpan>[
-                      TextSpan(
-                          text: 'Vous ne l’avez pas reçu ? ',
-                          style: BodyLargeRegular),
-                      TextSpan(
-                        text: 'Renvoyer le lien',
-                        style: BodyLargeMedium.copyWith(
-                            color: MyColors.secondary40),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               const Spacer(),
               CustomButton(
                 label: 'Continuer',

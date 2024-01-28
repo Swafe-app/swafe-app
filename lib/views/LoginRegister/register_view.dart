@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:swafe/DS/colors.dart';
@@ -14,6 +15,7 @@ import 'package:swafe/components/appbar/appbar.dart';
 import 'package:swafe/helper/getFirebaseErrorMessage.dart';
 import 'package:swafe/views/LoginRegister/camera_identity.dart';
 import 'package:swafe/views/LoginRegister/checking_identity.dart';
+import 'package:swafe/services/user_service.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -25,6 +27,8 @@ class RegisterView extends StatefulWidget {
 class RegisterViewState extends State<RegisterView> {
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -33,7 +37,6 @@ class RegisterViewState extends State<RegisterView> {
   bool visibleConfirmPassword = false;
   String phoneCountryCode = '33';
   String errorMessage = '';
-  final _firebaseInstance = FirebaseAuth.instance;
   int activeStep = 1;
   int maxStep = 3;
   bool hasUpperCase = false;
@@ -41,6 +44,8 @@ class RegisterViewState extends State<RegisterView> {
   bool hasSpecialCharacter = false;
   bool hasMinLength = false;
   late File? _selfie = File('');
+  String token = '';
+  final storage = FlutterSecureStorage();
 
   void _validatePassword(String value) {
     setState(() {
@@ -68,45 +73,72 @@ class RegisterViewState extends State<RegisterView> {
         setState(() {
           errorMessage = '';
         });
-
-        // Enregistrez l'utilisateur
-        UserCredential userCredential =
-            await _firebaseInstance.createUserWithEmailAndPassword(
-                email: _emailController.text.trim(),
-                password: _passwordController.text.trim());
-
-        // Envoyez l'email de vérification
-        await userCredential.user?.sendEmailVerification();
-
+        final userServices = UserService();
         // Enregistrer le numéro de téléphone
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user?.uid)
-            .set({
-          'email': _emailController.text.trim(),
-          'firstName': "",
-          'lastName': "",
-          'phoneNumber': _phoneController.text.trim(),
-          'phoneCountryCode': phoneCountryCode,
+        userServices
+            .createUser(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+          _firstNameController.text.trim(),
+          _lastNameController.text.trim(),
+        )
+            .then((value) async {
+          token = value["token"];
+          await storage.write(key: 'token', value: value['token']);
+          await storage.write(key: 'emailVerified', value: value['user']['emailVerified'] ? 'true' : 'false');
+          await storage.write(key: 'selfieStatus', value: value['user']['selfieStatus']);
         });
+        userServices
+            .updateUser(
+                token,
+                _emailController.text.trim(),
+                _firstNameController.text.trim(),
+                _lastNameController.text.trim(),
+                phoneCountryCode,
+                _phoneController.text.trim())
+            .then((value) => print(value));
 
         // Passer a la prochaine étape
         setState(() {
           activeStep++;
         });
-      } on FirebaseAuthException catch (e) {
+      } catch (e) {
         if (kDebugMode) {
           print("Firebase Error: $e");
         }
         setState(() {
-          errorMessage = getFirebaseErrorMessage(e.code);
+          errorMessage = e.toString();
         });
+      }
+    }
+  }
+
+  Future<void> uploadSelfie() async {
+    setState(() {
+      errorMessage = '';
+    });
+    if (_registerFormKey.currentState!.validate()) {
+      try {
+        // Reset errorMessage
+        setState(() {
+          errorMessage = '';
+        });
+        final userServices = UserService();
+        print(_selfie!.path);
+        userServices
+            .uploadSelfie(
+              token,
+              _selfie!,
+            )
+            .then((value) => print(value));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const CheckingIdentity()));
       } catch (e) {
         if (kDebugMode) {
-          print("Error: $e");
+          print("Firebase Error: $e");
         }
         setState(() {
-          errorMessage = getFirebaseErrorMessage('');
+          errorMessage = e.toString();
         });
       }
     }
@@ -117,8 +149,9 @@ class RegisterViewState extends State<RegisterView> {
       case 1:
         return registerForm();
       case 2:
-        return identityForm();
+        return nameForm();
       case 3:
+        return identityForm();
       default:
         return const CustomAppBar();
     }
@@ -253,6 +286,60 @@ class RegisterViewState extends State<RegisterView> {
                   style: SubtitleLargeRegular),
               const SizedBox(height: 20),
               CustomButton(
+                  label: 'Continuer',
+                  onPressed: () {
+                    setState(() {
+                      activeStep++;
+                    });
+                  }),
+            ],
+          ),
+        ));
+  }
+
+  Widget nameForm() {
+    return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
+        child: Form(
+          key: _registerFormKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Column(
+            children: [
+              CustomAppBar(iconButtonOnPressed: backPageLogic),
+              const SizedBox(height: 24),
+              if (errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    errorMessage,
+                    style: BodyLargeMedium.copyWith(color: MyColors.error40),
+                  ),
+                ),
+              CustomTextField(
+                placeholder: 'Nom',
+                controller: _lastNameController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Veuillez entrer votre nom.";
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.name,
+              ),
+              const SizedBox(height: 24),
+              CustomTextField(
+                placeholder: 'Prénom',
+                controller: _firstNameController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Veuillez entrer votre prénom.";
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.name,
+              ),
+              const Spacer(),
+              CustomButton(
                 label: 'Continuer',
                 onPressed: () => signUp(),
               ),
@@ -287,7 +374,7 @@ class RegisterViewState extends State<RegisterView> {
                 child: CustomButton(
                   mainAxisSize: MainAxisSize.min,
                   label: "Prendre un selfie",
-                  onPressed: () async{
+                  onPressed: () async {
                     final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -322,7 +409,7 @@ class RegisterViewState extends State<RegisterView> {
               const SizedBox(height: 20),
               CustomButton(
                 label: 'Continuer',
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CheckingIdentity())),
+                onPressed: () => (uploadSelfie()),
                 isDisabled: _selfie!.path.isEmpty,
               ),
             ],

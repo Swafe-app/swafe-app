@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
-import 'package:swafe/helper/getFirebaseErrorMessage.dart';
+import 'package:swafe/services/user_service.dart';
+import 'package:swafe/views/LoginRegister/identity_form.dart';
+import 'package:swafe/views/LoginRegister/valide_email_code.dart';
 
 class LoginBottomSheet extends StatefulWidget {
   const LoginBottomSheet({super.key});
@@ -37,13 +38,33 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
 
   Future<void> signIn() async {
     if (_formKey.currentState!.validate()) {
-      try {
         // Reset errorMessage
         setState(() {
           errorMessage = '';
         });
+        final userService = UserService();
+        userService.login(
+            _emailController.text.trim(), _passwordController.text.trim())
+            .then((value) {print(value);if(value['user']['emailVerified'] == false) {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+              CodeValidationView(
+                email: _emailController.text.trim(), onSuccess: () {
+                Navigator.of(context).pushReplacementNamed('/home');
+              },)));
 
-        await _authInstance.signInWithEmailAndPassword(
+        }
+        if (value['user']['selfieStatus'] == 'rejected' ||
+            value['user']['selfieStatus'] == 'not_defined') {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const IdentityForm()));
+        }
+        }).catchError((error) {
+          setState(() {
+            errorMessage = error['data'];
+          });
+        });
+      }
+      /*await _authInstance.signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
         checkEmailVerified();
       } on FirebaseAuthException catch (e) {
@@ -60,8 +81,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
         setState(() {
           errorMessage = getFirebaseErrorMessage('');
         });
-      }
-    }
+      }*/
   }
 
   @override

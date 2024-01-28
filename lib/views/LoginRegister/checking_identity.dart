@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/typographies.dart';
+import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/IconButton/icon_button.dart';
 
@@ -14,6 +15,9 @@ class CheckingIdentity extends StatelessWidget {
         padding: const EdgeInsets.only(top: 60),
         child: Column(
           children: [
+            CustomAppBar(
+              iconButtonOnPressed: () => Navigator.pop(context),
+            ),
             Text(
               "Vérification d'identité",
               style: TitleMediumMedium.copyWith(fontWeight: FontWeight.bold),
