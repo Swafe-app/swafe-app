@@ -23,7 +23,7 @@ class UserService {
       }),
     );
     if (response.statusCode != 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(response.body)['message'];
     }
     else{
       final result = jsonDecode(response.body);
@@ -44,7 +44,7 @@ class UserService {
       }),
     );
     if (response.statusCode != 200) {
-      throw Exception('Failed to create user');
+      return jsonDecode(response.body)['message'];
     }
     else{
       final result = jsonDecode(response.body);
@@ -69,7 +69,27 @@ class UserService {
       }),
     );
     if (response.statusCode != 200) {
-      throw Exception('Failed to create user');
+      return jsonDecode(response.body)['message'];
+    }
+    else {
+      return jsonDecode(response.body);
+    }
+  }
+
+  Future<dynamic> updatePassword(String token, String password, String newPassword) async{
+    final response = await http.put(
+      Uri.parse("$_baseUrl/updatePassword"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode(<String, String>{
+        'password': password,
+        'newPassword': newPassword,
+      }),
+    );
+    if (response.statusCode != 200) {
+      return jsonDecode(response.body)['message'];
     }
     else {
       return jsonDecode(response.body);
@@ -102,7 +122,7 @@ class UserService {
 
     // Check the response
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(response.body)['message'];
     } else {
       throw Exception('${response.body}');
     }
@@ -116,7 +136,7 @@ class UserService {
       },
     );
     if (response.statusCode != 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(response.body)['message'];
     }
     else {
       return jsonDecode(response.body);

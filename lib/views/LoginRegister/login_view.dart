@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
@@ -21,7 +22,8 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
   final TextEditingController _passwordController = TextEditingController();
   bool visiblePassword = false;
   String errorMessage = '';
-  final _authInstance = FirebaseAuth.instance;
+  final storage = const FlutterSecureStorage();
+  //final _authInstance = FirebaseAuth.instance;
 
   Future<void> checkEmailVerified() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -45,11 +47,22 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
         final userService = UserService();
         userService.login(
             _emailController.text.trim(), _passwordController.text.trim())
-            .then((value) {print(value);if(value['user']['emailVerified'] == false) {
+            .then((value) {print(value);
+              storage.write(key: 'token', value: value['token']);
+              storage.write(key: 'emailVerified', value: value['user']['emailVerified'] ? 'true' : 'false');
+              storage.write(key: 'selfieStatus', value: value['user']['selfieStatus']);
+              if(value['user']['emailVerified'] == false) {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
               CodeValidationView(
                 email: _emailController.text.trim(), onSuccess: () {
-                Navigator.of(context).pushReplacementNamed('/home');
+                  if(value['user']['selfieStatus'] == 'pending')
+                    setState(() {
+                      errorMessage = "Veuillez attendre la validation de votre selfie pour vous connecter.";
+                    });
+                  else if(value['user']['selfieStatus'] == 'accepted')
+                    Navigator.of(context).pushReplacementNamed('/home');
+                  else
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const IdentityForm()));
               },)));
 
         }
@@ -58,9 +71,16 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
           Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const IdentityForm()));
         }
-        }).catchError((error) {
+        else if (value['user']['selfieStatus'] == 'pending') {
           setState(() {
-            errorMessage = error['data'];
+            errorMessage = "Veuillez attendre la validation de votre selfie pour vous connecter.";
+          });
+        }
+        else if (value['user']['selfieStatus'] == 'accepted') {
+          Navigator.of(context).pushReplacementNamed('/home');
+        }}).catchError((error) {
+          setState(() {
+            errorMessage = error;
           });
         });
       }

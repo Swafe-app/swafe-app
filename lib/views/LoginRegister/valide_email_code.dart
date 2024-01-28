@@ -50,7 +50,10 @@ class CodeValidationViewState extends State<CodeValidationView> {
           );
           widget.onSuccess();
         }*/
-        await userServices.verifyEmail((await storage.read(key: 'token'))!).then((value) {
+        String token = (await storage.read(key: 'token'))!;
+        print("token $token");
+        await userServices.verifyEmail(token).then((value) {
+          print(value);
           timer.cancel();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -78,7 +81,9 @@ class CodeValidationViewState extends State<CodeValidationView> {
         errorMessage = "Veuillez vérifier votre email pour continuer.";
       });
     }*/
-    await userServices.verifyEmail((await storage.read(key: 'token'))!).then((value) {
+    String token = (await storage.read(key: 'token'))!;
+    print("token $token");
+    await userServices.verifyEmail(token).then((value) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: CustomSnackbar(label: "Votre e-mail a été vérifié avec succès.")

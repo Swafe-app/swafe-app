@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
@@ -8,6 +9,8 @@ import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/helper/getFirebaseErrorMessage.dart';
+
+import '../../../../services/user_service.dart';
 
 class UpdatePasswordView extends StatefulWidget {
   const UpdatePasswordView({super.key});
@@ -59,7 +62,7 @@ class UpdatePasswordViewState extends State<UpdatePasswordView> {
     if (_formKey.currentState!.validate()) {
       if (_newPasswordController.text == _confirmNewPasswordController.text) {
         try {
-          User? user = FirebaseAuth.instance.currentUser;
+          /*User? user = FirebaseAuth.instance.currentUser;
 
           // Reconnecter l'utilisateur
           await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -68,8 +71,10 @@ class UpdatePasswordViewState extends State<UpdatePasswordView> {
           );
 
           // Mettre à jour le mot de passe
-          await user?.updatePassword(_newPasswordController.text);
-
+          await user?.updatePassword(_newPasswordController.text);*/
+          final userServices = UserService();
+          final storage = FlutterSecureStorage();
+          userServices.updatePassword((await storage.read(key: 'tokens'))!, _currentPasswordController.text, _newPasswordController.text);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: CustomSnackbar(
@@ -78,12 +83,12 @@ class UpdatePasswordViewState extends State<UpdatePasswordView> {
           );
 
           Navigator.of(context).pop();
-        } on FirebaseAuthException catch (e) {
+        } catch (e) {
           if (kDebugMode) {
             print("Firebase Error: $e");
           }
           setState(() {
-            errorMessage = getFirebaseErrorMessage(e.code);
+            errorMessage = e.toString();
           });
         } catch (e) {
           if (kDebugMode) {
