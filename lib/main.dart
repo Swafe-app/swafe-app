@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
     String? emailVerified = await storage.read(key: 'emailVerified');
     String? token = await storage.read(key: 'token');
     String? selfieStatus = await storage.read(key: 'selfieStatus');
-    if (emailVerified == 'true' && token != '' && selfieStatus == 'accepted')
+    if (token != '')
       return '/home';
     else
       return '/welcome';

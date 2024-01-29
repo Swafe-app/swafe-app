@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -12,6 +13,7 @@ import 'package:swafe/components/marker/custom_grouped_marker.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
+import 'package:swafe/services/report_service.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -27,6 +29,8 @@ class HomeContent extends StatefulWidget {
 
 class HomeContentState extends State<HomeContent> {
   final dbService = FirebaseDatabaseService();
+  final reportService = ReportService();
+  final storage = FlutterSecureStorage();
   final MapController mapController = MapController();
   late Position position;
   double zoom = 9.2;
@@ -43,44 +47,44 @@ class HomeContentState extends State<HomeContent> {
     _getDataFromFirebase();
   }
 
-  void _getDataFromFirebase() {
+  void _getDataFromFirebase() async {
     try {
-      dbService.databaseReference.child('signalements').onValue.listen((event) {
-        if (event.snapshot.value != null) {
-          Map<dynamic, dynamic> rawData =
-              event.snapshot.value as Map<dynamic, dynamic>;
-          Map<String, SignalementModel> data = {};
+      reportService.getList((await storage.read(key: 'token'))!).then((event) {
+        print("Report list : $event");
+        if (event != null && event != 'Signalements not found') {
+          List<SignalementModel> dataReport = [];
 
-          rawData.forEach((key, value) {
+          event.forEach((data) {
+            print(data);
             double latitude =
-                (value['coordinates']['latitude'] as double?) ?? 0.0;
+                (data['coordinates']['latitude'] as double?) ?? 0.0;
             double longitude =
-                (value['coordinates']['longitude'] as double?) ?? 0.0;
+                (data['coordinates']['longitude'] as double?) ?? 0.0;
             List<String> selectedDangerItems =
-                List<String>.from(value['selectedDangerItems'] ?? []);
+                List<String>.from(data['selectedDangerItems'] ?? []);
 
-            data[key] = SignalementModel(
+            dataReport.add(SignalementModel(
               latitude: latitude,
               longitude: longitude,
               selectedDangerItems: selectedDangerItems,
-              userId: value['userId'] as String? ?? 'Inconnu',
-            );
+              userId: data['userId'] as String? ?? 'Inconnu',
+            ));
           });
-
           setState(() {
-            signalementMap = data;
+            signalementMap = dataReport.asMap().map((key, value) =>
+                MapEntry(key.toString(), value));
           });
           _buildMarkers(zoom);
         } else {
           if (kDebugMode) {
-            print("Aucune donnée Firebase disponible.");
+            print("Aucune donnée disponible.");
           }
         }
       });
     } catch (error) {
       if (kDebugMode) {
         print(
-            "Erreur lors de la récupération des données depuis Firebase : $error");
+            "Erreur lors de la récupération des données : $error");
       }
     }
   }

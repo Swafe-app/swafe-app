@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
@@ -12,6 +13,7 @@ import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/typeReport/custom_report.dart';
+import 'package:swafe/services/report_service.dart';
 import 'package:swafe/views/MainView/MainViewContent/home/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
@@ -36,7 +38,9 @@ class BottomSheetContentState extends State<BottomSheetContent>
   String pin = 'assets/images/pinDown.svg';
   String? address;
   final mapController = MapController();
-  final databaseReference = FirebaseDatabase.instance.ref();
+  final ReportService reportService = ReportService();
+  final storage = const FlutterSecureStorage();
+  //final databaseReference = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
@@ -54,7 +58,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
   }
 
   //Envoi du signalement à Firebase
-  Future<void> _sendDataToFirebase() async {
+  /*Future<void> _sendDataToFirebase() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final selectedData = {
@@ -81,7 +85,22 @@ class BottomSheetContentState extends State<BottomSheetContent>
         }
       }
     }
-  }
+  }*/
+
+  Future<void> _sendReport() async {
+      try {
+
+        final user = reportService.createReport((await storage.read(key: 'token'))!, userPosition, _selectedDangerItems + _selectedAnomaliesItems)
+            .then((value) {print(value);Navigator.of(context).pop();});
+        if (kDebugMode) {
+          print("Données envoyées avec succès.");
+        }
+      } catch (error) {
+        if (kDebugMode) {
+          print("Erreur lors de l'envoi des données : $error");
+        }
+      }
+    }
 
   //Obtention de l'adresse à partir de la latitude et de la longitude
   Future<void> getAddressFromLatLng(LatLng position) async {
@@ -358,7 +377,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 label: 'Envoyer',
                 mainAxisSize: MainAxisSize.max,
                 isDisabled: _isSelectionMade ? false : true,
-                onPressed: () => _sendDataToFirebase(),
+                onPressed: () => _sendReport(),
               ),
             ],
           ),
