@@ -52,6 +52,24 @@ class UserService {
     }
   }
 
+  Future<dynamic> getUser(String token) async {
+    print("url : ${_baseUrl}");
+    final response = await http.get(
+      Uri.parse("$_baseUrl/get"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    if (response.statusCode != 200) {
+      return jsonDecode(response.body)['message'];
+    }
+    else{
+      final result = jsonDecode(response.body);
+      return result["data"];
+    }
+  }
+
   Future<dynamic> updateUser(String token,String email, String firstName, String lastName, String phoneCountryCode, String phoneNumber) async {
     print("url : ${_baseUrl}");
     final response = await http.put(
@@ -60,13 +78,6 @@ class UserService {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token'
       },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'firstName': firstName,
-        'lastName': lastName,
-        'phoneCountryCode': phoneCountryCode,
-        'phoneNumber': phoneNumber
-      }),
     );
     if (response.statusCode != 200) {
       return jsonDecode(response.body)['message'];
@@ -139,6 +150,20 @@ class UserService {
       return jsonDecode(response.body)['message'];
     }
     else {
+      return jsonDecode(response.body);
+    }
+  }
+
+  Future<dynamic> delete(String token) async {
+    final response = await http.delete(Uri.parse("$_baseUrl/delete"),
+    headers:  <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $token'
+    },);
+    if(response.statusCode != 200){
+      return jsonDecode(response.body)['message'];
+    }
+    else{
       return jsonDecode(response.body);
     }
   }
