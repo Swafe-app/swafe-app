@@ -17,7 +17,7 @@ class CameraIdentityState extends State<CameraIdentity> {
   ValueNotifier<String> indicatormessage =
       ValueNotifier("Prenez une photo de \n vous-même");
   ValueNotifier<String> indicatorSubMessage =
-      ValueNotifier("Tenez votre appareil droit devant vous ou demandez à un ami de vous prendre en photo. Assurez-vous que l'ensemble de votre visage est visible.");
+      ValueNotifier("Tenez votre appareil droit devant vous. Assurez-vous que l'ensemble de votre visage est visible.");
   ValueNotifier<bool> autoCapture = ValueNotifier(false);
   final ValueNotifier<File?> _selfie = ValueNotifier(null);
 

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/DS/typographies.dart';
-import 'MainViewContent/home/homecontent.dart';
+import '../main/MainViewContent/home/homecontent.dart';
 import 'profil.dart';
 import 'repertoire.dart';
 
-class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+class MainView extends StatelessWidget {
+  const MainView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class HomeView extends StatelessWidget {
 }
 
 class CustomNavbar extends StatefulWidget {
-  const CustomNavbar({Key? key}) : super(key: key);
+  const CustomNavbar({super.key});
 
   @override
   State<CustomNavbar> createState() => _CustomNavbarState();

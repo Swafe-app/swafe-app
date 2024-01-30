@@ -3,12 +3,12 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/views/LoginRegister/login_view.dart';
+import 'package:swafe/views/auth/login_view.dart';
 
-class WelcomeView extends StatelessWidget {
-  const WelcomeView({super.key});
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
 
-  // Fonction pour afficher la modal de connexion
+  // Show the login bottom sheet
   void _showLoginBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/UserProfileScreen.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/UpdatePassword.dart';
+import 'package:swafe/views/main/MainViewContent/profil/UserProfileScreen.dart';
+import 'package:swafe/views/main/MainViewContent/profil/UpdatePassword.dart';
 
 class ProfilContent extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -15,7 +15,7 @@ class ProfilContent extends StatelessWidget {
   Future<void> _signOut(BuildContext context) async {
     try {
       await _auth.signOut();
-      Navigator.of(context).pushReplacementNamed('/welcome');
+      Navigator.of(context).pushReplacementNamed('/home');
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());

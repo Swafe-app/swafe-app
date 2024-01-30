@@ -10,15 +10,15 @@ import '../../services/user_service.dart';
 import 'camera_identity.dart';
 import 'checking_identity.dart';
 
-class IdentityForm extends StatefulWidget {
-  const IdentityForm({super.key});
+class IdentityFormView extends StatefulWidget {
+  const IdentityFormView({super.key});
 
   @override
-    IdentityFormState createState() => IdentityFormState();
+    IdentityFormViewState createState() => IdentityFormViewState();
 
 }
 
-class IdentityFormState extends State<IdentityForm> {
+class IdentityFormViewState extends State<IdentityFormView> {
   File? _selfie = File('');
   final storage = const FlutterSecureStorage();
 

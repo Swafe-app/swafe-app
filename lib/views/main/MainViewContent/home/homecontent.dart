@@ -14,7 +14,7 @@ import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/services/report_service.dart';
-import 'package:swafe/views/MainView/MainViewContent/home/bottom_sheet_content.dart';
+import 'package:swafe/views/main/MainViewContent/home/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 

@@ -6,8 +6,8 @@ import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/services/user_service.dart';
-import 'package:swafe/views/LoginRegister/identity_form.dart';
-import 'package:swafe/views/LoginRegister/valide_email_code.dart';
+import 'package:swafe/views/auth/identity_form.dart';
+import 'package:swafe/views/auth/valide_email_code.dart';
 
 class LoginBottomSheet extends StatefulWidget {
   const LoginBottomSheet({super.key});
@@ -60,16 +60,16 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
                       errorMessage = "Veuillez attendre la validation de votre selfie pour vous connecter.";
                     });
                   else if(value['user']['selfieStatus'] == 'accepted')
-                    Navigator.of(context).pushReplacementNamed('/home');
+                    Navigator.of(context).pushReplacementNamed('/main');
                   else
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const IdentityForm()));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const IdentityFormView()));
               },)));
 
         }
         if (value['user']['selfieStatus'] == 'rejected' ||
             value['user']['selfieStatus'] == 'not_defined') {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const IdentityForm()));
+              MaterialPageRoute(builder: (context) => const IdentityFormView()));
         }
         else if (value['user']['selfieStatus'] == 'pending') {
           setState(() {
@@ -77,7 +77,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
           });
         }
         else if (value['user']['selfieStatus'] == 'accepted') {
-          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushReplacementNamed('/main');
         }}).catchError((error) {
           setState(() {
             errorMessage = error;

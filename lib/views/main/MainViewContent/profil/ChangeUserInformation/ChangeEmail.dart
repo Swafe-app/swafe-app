@@ -7,7 +7,7 @@ import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/helper/getFirebaseErrorMessage.dart';
-import 'package:swafe/views/LoginRegister/valide_email_code.dart';
+import 'package:swafe/views/auth/valide_email_code.dart';
 
 class ChangeEmail extends StatefulWidget {
   final String? email;

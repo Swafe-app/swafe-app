@@ -8,8 +8,8 @@ import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/ChangeUserInformation/ChangeEmail.dart';
-import 'package:swafe/views/MainView/MainViewContent/profil/ChangeUserInformation/ChangePhoneNumber.dart';
+import 'package:swafe/views/main/MainViewContent/profil/ChangeUserInformation/ChangeEmail.dart';
+import 'package:swafe/views/main/MainViewContent/profil/ChangeUserInformation/ChangePhoneNumber.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});

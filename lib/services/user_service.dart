@@ -1,170 +1,112 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:mime/mime.dart';
+import 'package:http/http.dart';
+import 'package:swafe/models/api_response_model.dart';
+import 'package:swafe/models/user/user_create_response_model.dart';
+import 'package:swafe/services/api_service.dart';
 
 class UserService {
-  final String _baseUrl = "${dotenv.env['API_URL']}/users";
+  final ApiService _apiService = ApiService();
 
-  Future<dynamic> createUser(String email, String password, String firstName, String lastName) async {
-    print("url : ${_baseUrl}");
-    final response = await http.post(
-      Uri.parse("$_baseUrl/create"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+  Future<dynamic> login(String email, String password) async {
+    final response = await _apiService.performRequest(
+      'users/login',
+      method: 'POST',
+      body: {
+        'email': email,
+        'password': password,
       },
-      body: jsonEncode(<String, String>{
+    );
+    return _processResponse(response);
+  }
+
+  Future<ApiResponse<CreateUserResponse>> create(
+      String email, String password, String firstName, String lastName) async {
+    final response = await _apiService.performRequest(
+      'users/create',
+      method: 'POST',
+      body: {
         'email': email,
         'password': password,
         'firstName': firstName,
         'lastName': lastName,
-      }),
-    );
-    if (response.statusCode != 200) {
-      return jsonDecode(response.body)['message'];
-    }
-    else{
-      final result = jsonDecode(response.body);
-      return result["data"];
-    }
-  }
-
-  Future<dynamic> login(String email, String password) async {
-    print("url : ${_baseUrl}");
-    final response = await http.post(
-      Uri.parse("$_baseUrl/login"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-      }),
-    );
-    if (response.statusCode != 200) {
-      return jsonDecode(response.body)['message'];
-    }
-    else{
-      final result = jsonDecode(response.body);
-      return result["data"];
-    }
-  }
-
-  Future<dynamic> getUser(String token) async {
-    print("url : ${_baseUrl}");
-    final response = await http.get(
-      Uri.parse("$_baseUrl/get"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token'
       },
     );
-    if (response.statusCode != 200) {
-      return jsonDecode(response.body)['message'];
-    }
-    else{
-      final result = jsonDecode(response.body);
-      return result["data"];
-    }
-  }
 
-  Future<dynamic> updateUser(String token,String email, String firstName, String lastName, String phoneCountryCode, String phoneNumber) async {
-    print("url : ${_baseUrl}");
-    final response = await http.put(
-      Uri.parse("$_baseUrl/update"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token'
-      },
+    dynamic jsonResponse = json.decode(response.body);
+    return ApiResponse<CreateUserResponse>.fromJson(
+      jsonResponse,
+      (data) => CreateUserResponse.fromJson(data),
     );
-    if (response.statusCode != 200) {
-      return jsonDecode(response.body)['message'];
-    }
-    else {
-      return jsonDecode(response.body);
-    }
   }
 
-  Future<dynamic> updatePassword(String token, String password, String newPassword) async{
-    final response = await http.put(
-      Uri.parse("$_baseUrl/updatePassword"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token'
-      },
-      body: jsonEncode(<String, String>{
+  Future<dynamic> getOne(String token) async {
+    final response = await _apiService.performRequest(
+      'users/one',
+      method: 'GET',
+      token: token,
+    );
+    return _processResponse(response);
+  }
+
+  Future<dynamic> update(String token, Map<String, dynamic> userData) async {
+    final response = await _apiService.performRequest(
+      'users/update',
+      method: 'PUT',
+      token: token,
+      body: userData,
+    );
+    return _processResponse(response);
+  }
+
+  Future<dynamic> updatePassword(
+      String token, String password, String newPassword) async {
+    final response = await _apiService.performRequest(
+      'users/updatePassword',
+      method: 'PUT',
+      token: token,
+      body: {
         'password': password,
         'newPassword': newPassword,
-      }),
+      },
     );
-    if (response.statusCode != 200) {
-      return jsonDecode(response.body)['message'];
-    }
-    else {
-      return jsonDecode(response.body);
-    }
+    return _processResponse(response);
   }
 
   Future<dynamic> uploadSelfie(String token, File file) async {
-    // Create a multipart request
-    var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/upload-selfie"));
-    print(request.url);
-    // Attach the file to the request
-    request.files.add(
-      await http.MultipartFile(
-        'file', // API parameter name for the file
-        file.readAsBytes().asStream(),
-        file.lengthSync(),
-        filename: file.path.split('/').last, // File name
-        contentType: MediaType('image', 'jpeg'), // Path to the file
-      ),
+    final response = await _apiService.performRequest(
+      'users/uploadSelfie',
+      method: 'POST',
+      token: token,
+      body: {
+        'file': file,
+      },
     );
-    // Add headers
-    request.headers['Authorization'] = 'Bearer $token';
-    request.headers['Content-Type'] = 'multipart/form-data'; // Set content type for file upload
-
-    // Send the request
-    var streamedResponse = await request.send();
-
-    // Get response
-    var response = await http.Response.fromStream(streamedResponse);
-
-    // Check the response
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body)['message'];
-    } else {
-      throw Exception('${response.body}');
-    }
+    return _processResponse(response);
   }
 
   Future<dynamic> verifyEmail(String token) async {
-    final response = await http.get(
-      Uri.parse("$_baseUrl/verifyEmail/$token"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+    final response = await _apiService.performRequest(
+      'users/verifyEmail/$token',
+      method: 'GET',
     );
-    if (response.statusCode != 200) {
-      return jsonDecode(response.body)['message'];
-    }
-    else {
-      return jsonDecode(response.body);
-    }
+    return _processResponse(response);
   }
 
   Future<dynamic> delete(String token) async {
-    final response = await http.delete(Uri.parse("$_baseUrl/delete"),
-    headers:  <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $token'
-    },);
-    if(response.statusCode != 200){
-      return jsonDecode(response.body)['message'];
-    }
-    else{
+    final response = await _apiService.performRequest(
+      'users/delete',
+      method: 'DELETE',
+      token: token,
+    );
+    return _processResponse(response);
+  }
+
+  dynamic _processResponse(Response response) {
+    if (response.statusCode == 200) {
       return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed: ${response.body}');
     }
   }
 }

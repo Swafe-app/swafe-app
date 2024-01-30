@@ -14,7 +14,7 @@ import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/typeReport/custom_report.dart';
 import 'package:swafe/services/report_service.dart';
-import 'package:swafe/views/MainView/MainViewContent/home/AdressLocation/FillAdressMap.dart';
+import 'package:swafe/views/main/MainViewContent/home/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
   const BottomSheetContent(
