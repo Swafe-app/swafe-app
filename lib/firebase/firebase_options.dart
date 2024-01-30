@@ -57,7 +57,7 @@ class DefaultFirebaseOptions {
         dotenv.env['FIREBASE_DB_URL']!,
     storageBucket: 'swafe-app.appspot.com',
     iosClientId:
-        dotenv.env['FIREBASE_IOS_CLIENT_ID']!,
+        dotenv.env['FIREBASE_IOS_ID']!,
     iosBundleId: 'com.example.swafe',
   );
 }
