@@ -2,23 +2,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swafe/firebase/firebase_options.dart';
-import 'package:swafe/views/LoginRegister/login_view.dart';
-import 'package:swafe/views/LoginRegister/register.dart';
+import 'package:swafe/views/LoginRegister/register_view.dart';
 import 'package:swafe/views/LoginRegister/welcome_view.dart';
 import 'package:swafe/views/MainView/home.dart';
 
 Future<void> main() async {
   // Initialisez Firebase
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
+    options: DefaultFirebaseOptions.currentPlatform,
+    name: dotenv.env['ENVIRONMENT'] == 'dev' ? 'swafe_dev' : 'swafe_prod',
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final FirebaseAuth _firebaseInstance = FirebaseAuth.instance;
+
+  String getInitialRoute() {
+    User? user = _firebaseInstance.currentUser;
+    if (user != null) {
+      return user.emailVerified ? '/home' : '/welcome';
+    }
+    return '/welcome';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,25 +39,21 @@ class MyApp extends StatelessWidget {
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.dark));
 
-    FirebaseAuth auth = FirebaseAuth.instance;
-    Widget initialPage;
+    String initialRoute = getInitialRoute();
 
-    final currentUser = auth.currentUser;
-    if (currentUser != null) {
-      initialPage =
-          HomeView(welcomeMessage: "Bienvenue ${currentUser.email} !");
-    } else {
-      initialPage = const WelcomeView();
-    }
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      home: initialPage,
-      routes: {
-        '/login': (context) => const LoginView(),
-        '/register': (context) => const RegisterView(),
-      },
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Swafe',
+        theme: ThemeData.light(),
+        initialRoute: initialRoute,
+        routes: {
+          '/register': (context) => const RegisterView(),
+          '/welcome': (context) => const WelcomeView(),
+          '/home': (context) => const HomeView(),
+        },
+      ),
     );
   }
 }

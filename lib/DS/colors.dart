@@ -6,6 +6,7 @@ class MyColors {
   static const Color secondary40 = Color(0xFF714DD8);
   static const Color secondary60 = Color(0xFFAE92FF);
   static const Color secondary70 = Color(0xFFCBB9FF);
+  static const Color success40 = Color(0xFFAECD54);
   static const Color error40 = Color(0xFFD32F2F);
   static const Color warn20 = Color(0xFFFBC02D);
   static const Color warn40 = Color(0xFFFFA000);
@@ -20,6 +21,7 @@ class MyColors {
   static const Color neutral60 = Color(0xFF9BA0A4);
   static const Color neutral70 = Color(0xFFB8BBBE);
   static const Color neutral80 = Color(0xFFD4D6D8);
+  static const Color neutral90 = Color(0xFFF8F8F8);
   static const Color neutral100 = Color(0xFFFFFFFF);
   static const Color defaultWhite = Color(0xFFFFFFFF);
 }

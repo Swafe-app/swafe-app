@@ -47,11 +47,12 @@ analysis_benchmark.json
 .packages.generated
 
 # Flutter/Dart/Pub related
+pubspec.lock
 **/doc/api/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
-**/generated_plugin_registrant.dart
+**/generated_plugin*
 .packages
 .pub-cache/
 .pub/
