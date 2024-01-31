@@ -3,21 +3,33 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:swafe/models/api_response_model.dart';
 import 'package:swafe/models/user/user_create_response_model.dart';
+import 'package:swafe/models/user/user_login_response_model.dart';
+import 'package:swafe/models/user/user_login_response_model.dart';
 import 'package:swafe/services/api_service.dart';
 
 class UserService {
   final ApiService _apiService = ApiService();
 
-  Future<dynamic> login(String email, String password) async {
-    final response = await _apiService.performRequest(
-      'users/login',
-      method: 'POST',
-      body: {
-        'email': email,
-        'password': password,
-      },
-    );
-    return _processResponse(response);
+  Future<ApiResponse<LoginUserResponse>> login(
+      String email, String password) async {
+    try {
+      final response = await _apiService.performRequest(
+        'users/login',
+        method: 'POST',
+        body: {
+          'email': email,
+          'password': password,
+        },
+      );
+
+      dynamic jsonResponse = json.decode(response.body);
+      return ApiResponse<LoginUserResponse>.fromJson(
+        jsonResponse,
+        (data) => LoginUserResponse.fromJson(data),
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<ApiResponse<CreateUserResponse>> create(

@@ -3,7 +3,7 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/views/auth/login_view.dart';
+import 'package:swafe/views/auth/login/login_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});

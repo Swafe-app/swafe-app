@@ -1,19 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl_phone_field/countries.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:swafe/DS/colors.dart';
-import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_event.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
-import 'package:swafe/helper/render_password_criteria.dart';
-import 'package:swafe/services/user_service.dart';
 import 'package:swafe/views/auth/register_view.dart';
 
 class NameForm extends StatefulWidget {
@@ -77,11 +69,11 @@ class NameFormState extends State<NameForm> {
             CustomAppBar(iconButtonOnPressed: widget.backPageLogic),
             const SizedBox(height: 24),
             CustomTextField(
-              placeholder: 'Nom',
-              controller: lastNameController,
+              placeholder: 'Prénom',
+              controller: firstNameController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return "Veuillez entrer votre nom.";
+                  return "Veuillez entrer votre prénom.";
                 }
                 return null;
               },
@@ -89,11 +81,11 @@ class NameFormState extends State<NameForm> {
             ),
             const SizedBox(height: 24),
             CustomTextField(
-              placeholder: 'Prénom',
-              controller: firstNameController,
+              placeholder: 'Nom',
+              controller: lastNameController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return "Veuillez entrer votre prénom.";
+                  return "Veuillez entrer votre nom.";
                 }
                 return null;
               },

@@ -6,7 +6,7 @@ import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/appbar/appbar.dart';
-import 'package:swafe/views/auth/register/3_identity_form_view.dart';
+import 'package:swafe/views/auth/identity/identity_form_view.dart';
 import 'package:swafe/views/auth/register/2_name_form_view.dart';
 import 'package:swafe/views/auth/register/1_register_form_view.dart';
 
@@ -35,7 +35,7 @@ class RegisterViewState extends State<RegisterView> {
   final RegistrationData registrationData = RegistrationData();
   final storage = const FlutterSecureStorage();
   int activeStep = 1;
-  int maxStep = 3;
+  int maxStep = 4;
 
   void nextStep() {
     setState(() {
@@ -74,10 +74,9 @@ class RegisterViewState extends State<RegisterView> {
       case 3:
         return IdentityForm(
           backPageLogic: backPageLogic,
-          nextStep: nextStep,
         );
       default:
-        return const CustomAppBar();
+        return const SizedBox();
     }
   }
 

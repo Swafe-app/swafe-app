@@ -4,18 +4,20 @@ abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
 
-class AuthLoading extends AuthState {}
+class LoginLoading extends AuthState {}
 
-class Authenticated extends AuthState {
+class LoginSelfieRedirect extends AuthState {}
+
+class LoginSuccess extends AuthState {
   final UserModel user;
 
-  Authenticated(this.user);
+  LoginSuccess(this.user);
 }
 
-class AuthError extends AuthState {
+class LoginError extends AuthState {
   final String message;
 
-  AuthError(this.message);
+  LoginError(this.message);
 }
 
 class RegisterLoading extends AuthState {}
@@ -27,7 +29,7 @@ class RegisterSuccess extends AuthState {
 }
 
 class RegisterError extends AuthState {
-  final String? message;
+  final String message;
 
   RegisterError(this.message);
 }
