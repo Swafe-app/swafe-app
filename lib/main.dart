@@ -12,7 +12,10 @@ Future<void> main() async {
   // Initialisez Firebase
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+    name: dotenv.env['ENVIRONMENT'] == 'dev' ? 'swafe_dev' : 'swafe_prod',
+  );
   runApp(MyApp());
 }
 
