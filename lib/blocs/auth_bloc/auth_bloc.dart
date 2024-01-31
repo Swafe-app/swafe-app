@@ -26,26 +26,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         ApiResponse<CreateUserResponse> response = await userService.create(
             event.email, event.password, event.firstName, event.lastName);
+
+        if (response.status == Status.ERROR) {
+          emit(RegisterError(response.message));
+          return;
+        }
+
         await storage.write(
           key: 'token',
           value: response.data!.token,
         );
-        await storage.write(
-          key: 'emailVerified',
-          value: response.data!.user.emailVerified ? 'true' : 'false',
-        );
-        await storage.write(
-          key: 'selfieStatus',
-          value: response.data!.user.selfieStatus,
-        );
-        print(await storage.read(key: 'token'));
-        print(await storage.read(key: 'emailVerified'));
-        print(await storage.read(key: 'selfieStatus'));
-        print(response.data!.user);
         emit(RegisterSuccess(response.data!.user));
       } catch (e) {
-        print(e.toString());
-        emit(RegisterError(e.toString()));
+        emit(RegisterError("Une erreur s'est produite, veuillez réessayer."));
         throw Exception(e);
       }
     });

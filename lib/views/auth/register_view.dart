@@ -6,9 +6,9 @@ import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/appbar/appbar.dart';
-import 'package:swafe/views/auth/register/identity_form_view.dart';
-import 'package:swafe/views/auth/register/name_form_view.dart';
-import 'package:swafe/views/auth/register/register_form_view.dart';
+import 'package:swafe/views/auth/register/3_identity_form_view.dart';
+import 'package:swafe/views/auth/register/2_name_form_view.dart';
+import 'package:swafe/views/auth/register/1_register_form_view.dart';
 
 class RegistrationData {
   String email;
@@ -17,8 +17,8 @@ class RegistrationData {
   String phoneCountryCode;
 
   RegistrationData({
-    this.email = 'test+1@test.fr',
-    this.password = 'Test1234+',
+    this.email = '',
+    this.password = '',
     this.phoneNumber = '',
     this.phoneCountryCode = '33',
   });
@@ -64,20 +64,17 @@ class RegisterViewState extends State<RegisterView> {
           registrationData: registrationData,
           backPageLogic: backPageLogic,
           nextStep: nextStep,
-          storage: storage,
         );
       case 2:
         return NameForm(
           registrationData: registrationData,
           backPageLogic: backPageLogic,
           nextStep: nextStep,
-          storage: storage,
         );
       case 3:
         return IdentityForm(
           backPageLogic: backPageLogic,
           nextStep: nextStep,
-          storage: storage,
         );
       default:
         return const CustomAppBar();
@@ -101,11 +98,19 @@ class RegisterViewState extends State<RegisterView> {
         }
         if (state is RegisterError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: CustomSnackbar(
                 isError: true,
-                label: "Une erreur s'est produite. Veuillez réessayer.",
+                label: state.message ?? 'Une erreur est survenu',
               ),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height - 160,
+                  right: 20,
+                  left: 20),
             ),
           );
         }

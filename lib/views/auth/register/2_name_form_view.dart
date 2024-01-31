@@ -20,14 +20,12 @@ class NameForm extends StatefulWidget {
   final RegistrationData registrationData;
   final VoidCallback backPageLogic;
   final VoidCallback nextStep;
-  final FlutterSecureStorage storage;
 
   const NameForm({
     super.key,
     required this.registrationData,
     required this.backPageLogic,
     required this.nextStep,
-    required this.storage,
   });
 
   @override
@@ -78,18 +76,6 @@ class NameFormState extends State<NameForm> {
           children: [
             CustomAppBar(iconButtonOnPressed: widget.backPageLogic),
             const SizedBox(height: 24),
-            BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-              if (state is RegisterError) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    state.message ?? 'Une erreur est survenu',
-                    style: BodyLargeMedium.copyWith(color: MyColors.error40),
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            }),
             CustomTextField(
               placeholder: 'Nom',
               controller: lastNameController,
@@ -115,6 +101,7 @@ class NameFormState extends State<NameForm> {
             ),
             const Spacer(),
             CustomButton(
+              isLoading: context.read<AuthBloc>().state is RegisterLoading,
               label: 'Continuer',
               onPressed: () => signUp(),
             ),

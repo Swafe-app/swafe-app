@@ -22,22 +22,26 @@ class UserService {
 
   Future<ApiResponse<CreateUserResponse>> create(
       String email, String password, String firstName, String lastName) async {
-    final response = await _apiService.performRequest(
-      'users/create',
-      method: 'POST',
-      body: {
-        'email': email,
-        'password': password,
-        'firstName': firstName,
-        'lastName': lastName,
-      },
-    );
+    try {
+      final response = await _apiService.performRequest(
+        'users/create',
+        method: 'POST',
+        body: {
+          'email': email,
+          'password': password,
+          'firstName': firstName,
+          'lastName': lastName,
+        },
+      );
 
-    dynamic jsonResponse = json.decode(response.body);
-    return ApiResponse<CreateUserResponse>.fromJson(
-      jsonResponse,
-      (data) => CreateUserResponse.fromJson(data),
-    );
+      dynamic jsonResponse = json.decode(response.body);
+      return ApiResponse<CreateUserResponse>.fromJson(
+        jsonResponse,
+        (data) => CreateUserResponse.fromJson(data),
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<dynamic> getOne(String token) async {

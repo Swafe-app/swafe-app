@@ -12,13 +12,11 @@ import 'package:swafe/views/auth/checking_identity.dart';
 class IdentityForm extends StatefulWidget {
   final VoidCallback backPageLogic;
   final VoidCallback nextStep;
-  final FlutterSecureStorage storage;
 
   const IdentityForm({
     super.key,
     required this.backPageLogic,
     required this.nextStep,
-    required this.storage,
   });
 
   @override
@@ -26,6 +24,7 @@ class IdentityForm extends StatefulWidget {
 }
 
 class IdentityFormState extends State<IdentityForm> {
+  final storage = const FlutterSecureStorage();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late File? _selfie = File('');
 
@@ -35,7 +34,7 @@ class IdentityFormState extends State<IdentityForm> {
         print(_selfie!.path);
         userServices
             .uploadSelfie(
-          await widget.storage.read(key: 'token') ?? '',
+          await storage.read(key: 'token') ?? '',
           _selfie!,
         )
             .then((value) => print(value));

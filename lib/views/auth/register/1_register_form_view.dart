@@ -17,14 +17,12 @@ class RegisterForm extends StatefulWidget {
   final RegistrationData registrationData;
   final VoidCallback backPageLogic;
   final VoidCallback nextStep;
-  final FlutterSecureStorage storage;
 
   const RegisterForm({
     super.key,
     required this.registrationData,
     required this.backPageLogic,
     required this.nextStep,
-    required this.storage,
   });
 
   @override
