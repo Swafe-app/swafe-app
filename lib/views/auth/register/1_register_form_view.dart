@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
-import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
-import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/helper/render_password_criteria.dart';
-import 'package:swafe/views/auth/register_view.dart';
+import 'package:swafe/views/auth/register/register_view.dart';
 
 class RegisterForm extends StatefulWidget {
   final RegistrationData registrationData;

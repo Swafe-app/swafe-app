@@ -3,8 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swafe/blocs/auth_bloc/auth_event.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/models/api_response_model.dart';
-import 'package:swafe/models/user/user_create_response_model.dart';
-import 'package:swafe/models/user/user_login_response_model.dart';
+import 'package:swafe/models/user/user_token_response_model.dart';
 import 'package:swafe/models/user/user_selfie_response_model.dart';
 import 'package:swafe/services/user_service.dart';
 
@@ -16,10 +15,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginEvent>((event, emit) async {
       emit(LoginLoading());
       try {
-        ApiResponse<LoginUserResponse> response =
+        ApiResponse<UserTokenResponse> response =
             await userService.login(event.email, event.password);
 
-        if (response.status == Status.ERROR) {
+        if (response.status == Status.error) {
           emit(LoginError(response.message));
           return;
         }
@@ -55,10 +54,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignUpEvent>((event, emit) async {
       emit(RegisterLoading());
       try {
-        ApiResponse<CreateUserResponse> response = await userService.create(
-            event.email, event.password, event.firstName, event.lastName);
+        ApiResponse<UserTokenResponse> response = await userService.create(
+            event.email,
+            event.password,
+            event.firstName,
+            event.lastName,
+            event.phoneNumber,
+            event.phoneCountryCode);
 
-        if (response.status == Status.ERROR) {
+        if (response.status == Status.error) {
           emit(RegisterError(response.message));
           return;
         }
@@ -67,7 +71,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           key: 'token',
           value: response.data!.token,
         );
-        emit(RegisterSuccess(response.data!.user));
+        emit(RegisterSuccess());
       } catch (e) {
         emit(RegisterError("Une erreur s'est produite, veuillez réessayer."));
         throw Exception(e);
@@ -79,7 +83,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ApiResponse<SelfieUserResponse> response =
             await userService.uploadSelfie(event.file);
 
-        if (response.status == Status.ERROR) {
+        if (response.status == Status.error) {
           emit(UploadSelfieError(response.message));
           return;
         }
@@ -88,6 +92,58 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } catch (e) {
         emit(UploadSelfieError(
             "Une erreur s'est produite, veuillez réessayer."));
+        throw Exception(e);
+      }
+    });
+    on<VerifyTokenEvent>((event, emit) async {
+      emit(VerifyTokenLoading());
+      try {
+        String? token = await storage.read(key: 'token');
+
+        if (token == null) {
+          emit(VerifyTokenError());
+          return;
+        }
+
+        ApiResponse<UserTokenResponse> response =
+            await userService.getOne(token);
+
+        if (response.status ==
+                Status.error /* || !response.data!.user.emailVerified */ ||
+            response.data!.user.selfieStatus != 'validated') {
+          emit(VerifyTokenError());
+          return;
+        }
+
+        await storage.write(
+          key: 'token',
+          value: response.data!.token,
+        );
+        emit(LoginSuccess(response.data!.user));
+      } catch (e) {
+        emit(VerifyTokenError());
+        throw Exception(e);
+      }
+    });
+    on<SignOutEvent>((event, emit) async {
+      await storage.delete(key: 'token');
+      emit(AuthInitial());
+    });
+    on<DeleteUserEvent>((event, emit) async {
+      emit(DeleteUserLoading());
+      try {
+        ApiResponse response = await userService.delete();
+
+        if (response.status == Status.error) {
+          emit(DeleteUserError(response.message));
+          return;
+        }
+
+        await storage.delete(key: 'token');
+        emit(DeleteUserSuccess());
+        emit(AuthInitial());
+      } catch (e) {
+        emit(DeleteUserError("Une erreur s'est produite, veuillez réessayer."));
         throw Exception(e);
       }
     });

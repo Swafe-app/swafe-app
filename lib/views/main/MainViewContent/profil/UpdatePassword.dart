@@ -73,8 +73,7 @@ class UpdatePasswordViewState extends State<UpdatePasswordView> {
           // Mettre à jour le mot de passe
           await user?.updatePassword(_newPasswordController.text);*/
           final userServices = UserService();
-          final storage = FlutterSecureStorage();
-          userServices.updatePassword((await storage.read(key: 'token'))!, _currentPasswordController.text, _newPasswordController.text);
+          userServices.updatePassword(_currentPasswordController.text, _newPasswordController.text);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: CustomSnackbar(

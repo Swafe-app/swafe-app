@@ -1,4 +1,4 @@
-enum Status { SUCCESS, ERROR }
+enum Status { success, error }
 
 class ApiResponse<T> {
   final Status status;
@@ -16,7 +16,7 @@ class ApiResponse<T> {
   factory ApiResponse.fromJson(
       Map<String, dynamic> json, Function fromJsonData) {
     return ApiResponse<T>(
-      status: json['status'] == "success" ? Status.SUCCESS : Status.ERROR,
+      status: json['status'] == "success" ? Status.success : Status.error,
       message: json['message'],
       data: json.containsKey('data') ? fromJsonData(json['data']) : null,
       errors:json.containsKey('errors') ? List<String>.from(json['errors']) : null

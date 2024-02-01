@@ -6,7 +6,7 @@ import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
-import 'package:swafe/views/auth/register_view.dart';
+import 'package:swafe/views/auth/register/register_view.dart';
 
 class NameForm extends StatefulWidget {
   final RegistrationData registrationData;

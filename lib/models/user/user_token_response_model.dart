@@ -1,16 +1,16 @@
 import 'package:swafe/models/user/user_model.dart';
 
-class CreateUserResponse {
+class UserTokenResponse {
   final UserModel user;
   final String token;
 
-  CreateUserResponse({
+  UserTokenResponse({
     required this.user,
     required this.token,
   });
 
-  factory CreateUserResponse.fromJson(Map<String, dynamic> json) {
-    return CreateUserResponse(
+  factory UserTokenResponse.fromJson(Map<String, dynamic> json) {
+    return UserTokenResponse(
       user: UserModel.fromJson(json['user']),
       token: json['token'],
     );

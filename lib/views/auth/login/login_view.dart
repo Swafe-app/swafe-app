@@ -24,7 +24,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
   final storage = const FlutterSecureStorage();
   bool visiblePassword = false;
 
-  void signIn() async {
+  void signIn() {
     if (formKey.currentState!.validate()) {
       BlocProvider.of<AuthBloc>(context).add(
         LoginEvent(

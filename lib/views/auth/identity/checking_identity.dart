@@ -55,7 +55,7 @@ class CheckingIdentity extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: CustomButton(
                   label: "Terminé",
-                  onPressed: () => Navigator.pushNamed(context, "/home"),
+                  onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
                   type: ButtonType.outlined,
                   fillColor: Colors.black,
                   strokeColor: Colors.black,

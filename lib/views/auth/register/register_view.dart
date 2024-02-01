@@ -5,7 +5,6 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
-import 'package:swafe/views/auth/identity/identity_form_view.dart';
 import 'package:swafe/views/auth/register/1_register_form_view.dart';
 import 'package:swafe/views/auth/register/2_name_form_view.dart';
 
@@ -76,10 +75,6 @@ class RegisterViewState extends State<RegisterView> {
           backPageLogic: backPageLogic,
           nextStep: nextStep,
         );
-      case 3:
-        return IdentityForm(
-          backPageLogic: backPageLogic,
-        );
       default:
         return const SizedBox();
     }
@@ -99,6 +94,7 @@ class RegisterViewState extends State<RegisterView> {
                   CustomSnackbar(label: "Votre compte a été créé avec succès."),
             ),
           );
+          Navigator.of(context).pushReplacementNamed('/upload-selfie');
         }
         if (state is RegisterError) {
           ScaffoldMessenger.of(context).showSnackBar(

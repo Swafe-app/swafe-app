@@ -4,6 +4,7 @@ abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
 
+// Login states
 class LoginLoading extends AuthState {}
 
 class LoginEmailNotVerified extends AuthState {}
@@ -22,13 +23,10 @@ class LoginError extends AuthState {
   LoginError(this.message);
 }
 
+// Register states
 class RegisterLoading extends AuthState {}
 
-class RegisterSuccess extends AuthState {
-  final UserModel user;
-
-  RegisterSuccess(this.user);
-}
+class RegisterSuccess extends AuthState {}
 
 class RegisterError extends AuthState {
   final String message;
@@ -36,6 +34,7 @@ class RegisterError extends AuthState {
   RegisterError(this.message);
 }
 
+// Upload selfie states
 class UploadSelfieLoading extends AuthState {}
 
 class UploadSelfieSuccess extends AuthState {}
@@ -44,4 +43,20 @@ class UploadSelfieError extends AuthState {
   final String message;
 
   UploadSelfieError(this.message);
+}
+
+// Verify token states
+class VerifyTokenLoading extends AuthState {}
+
+class VerifyTokenError extends AuthState {}
+
+// Delete user states
+class DeleteUserLoading extends AuthState {}
+
+class DeleteUserSuccess extends AuthState {}
+
+class DeleteUserError extends AuthState {
+  final String message;
+
+  DeleteUserError(this.message);
 }

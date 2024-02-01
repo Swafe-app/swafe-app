@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
+import 'package:swafe/blocs/auth_bloc/auth_event.dart';
+import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/firebase/firebase_options.dart';
 import 'package:swafe/views/auth/identity/checking_identity.dart';
 import 'package:swafe/views/auth/identity/identity_form_view.dart';
-import 'package:swafe/views/auth/register_view.dart';
+import 'package:swafe/views/auth/register/register_view.dart';
 import 'package:swafe/views/auth/valide_email_code_view.dart';
-import 'package:swafe/views/home_view.dart';
+import 'package:swafe/views/auth/home_view.dart';
 import 'package:swafe/views/main/main_view.dart';
 
 Future<void> main() async {
@@ -26,60 +27,41 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  final storage = const FlutterSecureStorage();
-
-  Future<String> getInitialRoute() async {
-    String? token = await storage.read(key: 'token');
-    if (token != '') {
-      return '/main';
-    } else {
-      return '/home';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
-
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: FutureBuilder<String>(
-        future: getInitialRoute(),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const MaterialApp(
-              debugShowCheckedModeBanner: false,
-              home: Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
-          } else {
-            return BlocProvider(
-              create: (context) => AuthBloc(),
-              child: MaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: 'Swafe',
-                theme: ThemeData.light(),
-                initialRoute: snapshot.data,
-                routes: {
-                  '/register': (context) => const RegisterView(),
-                  '/validate-email': (context) => const CodeValidationView(),
-                  '/upload-selfie': (context) => const IdentityForm(),
-                  '/checking-identity': (context) => const CheckingIdentity(),
-                  '/home': (context) => const HomeView(),
-                  '/main': (context) => const MainView(),
-                },
-              ),
-            );
-          }
+    return BlocProvider(
+      create: (context) => AuthBloc()..add(VerifyTokenEvent()),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Swafe',
+        theme: ThemeData.light(),
+        home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is LoginSuccess) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.of(context).pushReplacementNamed('/main');
+              });
+              return Container();
+            }
+            if (state is VerifyTokenError) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                Navigator.of(context).pushReplacementNamed('/home');
+              });
+              return Container();
+            }
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          },
+        ),
+        routes: {
+          '/register': (context) => const RegisterView(),
+          '/validate-email': (context) => const CodeValidationView(),
+          '/upload-selfie': (context) => const IdentityForm(),
+          '/checking-identity': (context) => const CheckingIdentity(),
+          '/home': (context) => const HomeView(),
+          '/main': (context) => const MainView(),
         },
       ),
     );
   }
 }
+

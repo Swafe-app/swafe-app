@@ -26,3 +26,9 @@ class UploadSelfieEvent extends AuthEvent {
 
   UploadSelfieEvent(this.file);
 }
+
+class VerifyTokenEvent extends AuthEvent {}
+
+class SignOutEvent extends AuthEvent {}
+
+class DeleteUserEvent extends AuthEvent {}
