@@ -7,8 +7,8 @@ import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_event.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
-import 'package:swafe/views/auth/identity/identity_form_view.dart';
 
 class LoginBottomSheet extends StatefulWidget {
   const LoginBottomSheet({super.key});
@@ -42,10 +42,25 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
         if (state is LoginSuccess) {
           Navigator.of(context).pushReplacementNamed('/main');
         }
+        if (state is LoginEmailNotVerified) {
+          Navigator.of(context).pushNamed('/validate-email');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: CustomSnackbar(
+                isError: true,
+                label: "Veuillez vérifier votre email pour continuer.",
+              ),
+            ),
+          );
+        }
         if (state is LoginSelfieRedirect) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const IdentityForm(),
+          Navigator.of(context).pushNamed('/upload-selfie');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: CustomSnackbar(
+                isError: true,
+                label: "Une photo de vous est requise pour continuer.",
+              ),
             ),
           );
         }

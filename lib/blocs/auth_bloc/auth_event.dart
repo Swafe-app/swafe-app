@@ -1,3 +1,5 @@
+import 'dart:io';
+
 abstract class AuthEvent {}
 
 class LoginEvent extends AuthEvent {
@@ -15,19 +17,12 @@ class SignUpEvent extends AuthEvent {
   final String phoneCountryCode;
   final String phoneNumber;
 
-  SignUpEvent(this.email, this.password, this.firstName, this.lastName, this.phoneCountryCode, this.phoneNumber);
-}
-
-class UpdateEvent extends AuthEvent {
-  final String token;
-  final Map<String, dynamic> userData;
-
-  UpdateEvent(this.token, this.userData);
+  SignUpEvent(this.email, this.password, this.firstName, this.lastName,
+      this.phoneCountryCode, this.phoneNumber);
 }
 
 class UploadSelfieEvent extends AuthEvent {
-  final String token;
-  final String selfie;
+  final File file;
 
-  UploadSelfieEvent(this.token, this.selfie);
+  UploadSelfieEvent(this.file);
 }

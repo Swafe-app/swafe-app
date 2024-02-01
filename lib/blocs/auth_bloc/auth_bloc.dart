@@ -5,7 +5,7 @@ import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/models/api_response_model.dart';
 import 'package:swafe/models/user/user_create_response_model.dart';
 import 'package:swafe/models/user/user_login_response_model.dart';
-import 'package:swafe/models/user/user_model.dart';
+import 'package:swafe/models/user/user_selfie_response_model.dart';
 import 'package:swafe/services/user_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -24,10 +24,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           return;
         }
 
-        if (response.data!.user.emailVerified == false) {
-          emit(LoginError("Veuillez vérifier votre email pour continuer."));
-          return;
-        }
+        // Comment this verification until backend is ready for sending email
+        // if (response.data!.user.emailVerified == false) {
+        //   emit(LoginEmailNotVerified());
+        //   return;
+        // }
 
         if (response.data!.user.selfieStatus == 'pending') {
           emit(LoginError("Votre photo est en cours de validation."));
@@ -69,6 +70,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(RegisterSuccess(response.data!.user));
       } catch (e) {
         emit(RegisterError("Une erreur s'est produite, veuillez réessayer."));
+        throw Exception(e);
+      }
+    });
+    on<UploadSelfieEvent>((event, emit) async {
+      emit(UploadSelfieLoading());
+      try {
+        ApiResponse<SelfieUserResponse> response =
+            await userService.uploadSelfie(event.file);
+
+        if (response.status == Status.ERROR) {
+          emit(UploadSelfieError(response.message));
+          return;
+        }
+
+        emit(UploadSelfieSuccess());
+      } catch (e) {
+        emit(UploadSelfieError(
+            "Une erreur s'est produite, veuillez réessayer."));
         throw Exception(e);
       }
     });

@@ -5,22 +5,27 @@ import 'package:swafe/DS/colors.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
-import 'package:swafe/components/appbar/appbar.dart';
 import 'package:swafe/views/auth/identity/identity_form_view.dart';
-import 'package:swafe/views/auth/register/2_name_form_view.dart';
 import 'package:swafe/views/auth/register/1_register_form_view.dart';
+import 'package:swafe/views/auth/register/2_name_form_view.dart';
 
 class RegistrationData {
   String email;
   String password;
+  String confirmPassword;
   String phoneNumber;
   String phoneCountryCode;
+  String firstName;
+  String lastName;
 
   RegistrationData({
     this.email = '',
     this.password = '',
+    this.confirmPassword = '',
     this.phoneNumber = '',
     this.phoneCountryCode = '33',
+    this.firstName = '',
+    this.lastName = '',
   });
 }
 
@@ -100,16 +105,17 @@ class RegisterViewState extends State<RegisterView> {
             SnackBar(
               content: CustomSnackbar(
                 isError: true,
-                label: state.message ?? 'Une erreur est survenu',
+                label: state.message,
               ),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
               margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height - 160,
-                  right: 20,
-                  left: 20),
+                bottom: MediaQuery.of(context).size.height - 160,
+                right: 20,
+                left: 20,
+              ),
             ),
           );
         }

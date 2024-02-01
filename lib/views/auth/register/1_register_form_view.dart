@@ -51,16 +51,26 @@ class RegisterFormState extends State<RegisterForm> {
         TextEditingController(text: widget.registrationData.phoneNumber);
     passwordController =
         TextEditingController(text: widget.registrationData.password);
-    confirmPasswordController = TextEditingController();
+    confirmPasswordController =
+        TextEditingController(text: widget.registrationData.confirmPassword);
+    _validatePassword(passwordController.text);
   }
 
   @override
   void dispose() {
+    saveData();
     emailController.dispose();
     phoneNumberController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  void saveData() {
+    widget.registrationData.email = emailController.text;
+    widget.registrationData.phoneNumber = phoneNumberController.text;
+    widget.registrationData.password = passwordController.text;
+    widget.registrationData.confirmPassword = confirmPasswordController.text;
   }
 
   void _validatePassword(String value) {
@@ -74,9 +84,7 @@ class RegisterFormState extends State<RegisterForm> {
 
   void formSubmit() {
     if (formKey.currentState!.validate()) {
-      widget.registrationData.email = emailController.text.trim();
-      widget.registrationData.password = passwordController.text.trim();
-      widget.registrationData.phoneNumber = phoneNumberController.text.trim();
+      saveData();
       widget.nextStep();
     }
   }

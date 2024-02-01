@@ -6,6 +6,8 @@ class AuthInitial extends AuthState {}
 
 class LoginLoading extends AuthState {}
 
+class LoginEmailNotVerified extends AuthState {}
+
 class LoginSelfieRedirect extends AuthState {}
 
 class LoginSuccess extends AuthState {
@@ -32,4 +34,14 @@ class RegisterError extends AuthState {
   final String message;
 
   RegisterError(this.message);
+}
+
+class UploadSelfieLoading extends AuthState {}
+
+class UploadSelfieSuccess extends AuthState {}
+
+class UploadSelfieError extends AuthState {
+  final String message;
+
+  UploadSelfieError(this.message);
 }

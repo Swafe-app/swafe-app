@@ -7,7 +7,7 @@ import 'package:swafe/components/AppBar/appbar.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/helper/getFirebaseErrorMessage.dart';
-import 'package:swafe/views/auth/valide_email_code.dart';
+import 'package:swafe/views/auth/valide_email_code_view.dart';
 
 class ChangeEmail extends StatefulWidget {
   final String? email;
@@ -55,7 +55,6 @@ class ChangeEmailState extends State<ChangeEmail> {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => CodeValidationView(
             email: _emailController.text.trim(),
-            onSuccess: onEmailVerified,
           ),
         ));
       } on FirebaseAuthException catch (e) {

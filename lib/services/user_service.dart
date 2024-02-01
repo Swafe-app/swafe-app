@@ -1,14 +1,17 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:swafe/models/api_response_model.dart';
 import 'package:swafe/models/user/user_create_response_model.dart';
 import 'package:swafe/models/user/user_login_response_model.dart';
-import 'package:swafe/models/user/user_login_response_model.dart';
+import 'package:swafe/models/user/user_selfie_response_model.dart';
 import 'package:swafe/services/api_service.dart';
 
 class UserService {
   final ApiService _apiService = ApiService();
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<ApiResponse<LoginUserResponse>> login(
       String email, String password) async {
@@ -89,16 +92,26 @@ class UserService {
     return _processResponse(response);
   }
 
-  Future<dynamic> uploadSelfie(String token, File file) async {
-    final response = await _apiService.performRequest(
-      'users/uploadSelfie',
-      method: 'POST',
-      token: token,
-      body: {
-        'file': file,
-      },
-    );
-    return _processResponse(response);
+
+  Future<ApiResponse<SelfieUserResponse>> uploadSelfie(File file) async {
+    try {
+      final response = await _apiService.performRequest(
+        'users/upload-selfie',
+        method: 'MULTIPART',
+        token: await storage.read(key: 'token'),
+        body: {
+          'file': file,
+        },
+      );
+
+      dynamic jsonResponse = json.decode(response.body);
+      return ApiResponse<SelfieUserResponse>.fromJson(
+        jsonResponse,
+        (data) => SelfieUserResponse.fromJson(data),
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<dynamic> verifyEmail(String token) async {

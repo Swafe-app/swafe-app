@@ -32,15 +32,21 @@ class NameFormState extends State<NameForm> {
   @override
   void initState() {
     super.initState();
-    firstNameController = TextEditingController();
-    lastNameController = TextEditingController();
+    firstNameController = TextEditingController(text: widget.registrationData.firstName);
+    lastNameController = TextEditingController(text: widget.registrationData.lastName);
   }
 
   @override
   void dispose() {
+    saveData();
     firstNameController.dispose();
     lastNameController.dispose();
     super.dispose();
+  }
+
+  void saveData() {
+    widget.registrationData.firstName = firstNameController.text;
+    widget.registrationData.lastName = lastNameController.text;
   }
 
   void signUp() {

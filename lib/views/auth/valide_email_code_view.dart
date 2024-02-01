@@ -11,15 +11,11 @@ import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/services/user_service.dart';
 
 class CodeValidationView extends StatefulWidget {
-  final String email;
-  final VoidCallback onSuccess;
-  final VoidCallback? customBackPageLogic;
+  final String? email;
 
   const CodeValidationView({
     super.key,
-    required this.email,
-    required this.onSuccess,
-    this.customBackPageLogic,
+    this.email,
   });
 
   @override
@@ -50,7 +46,6 @@ class CodeValidationViewState extends State<CodeValidationView> {
                   label: "Votre e-mail a été vérifié avec succès."),
             ),
           );
-          widget.onSuccess();
         });
       },
     );
@@ -73,7 +68,6 @@ class CodeValidationViewState extends State<CodeValidationView> {
           ),
         ),
       );
-      widget.onSuccess();
     }).catchError((error) {
       setState(() {
         errorMessage = "Veuillez vérifier votre email pour continuer.";
@@ -94,7 +88,7 @@ class CodeValidationViewState extends State<CodeValidationView> {
               const SizedBox(height: 24),
               Text(
                   textAlign: TextAlign.center,
-                  "Nous vous avons envoyé un lien de vérification sur la boite mail :\n ${widget.email}",
+                  "Nous vous avons envoyé un lien de vérification sur ${widget.email != null ? 'votre email :\n' : 'l\'email que vous avez fourni'}",
                   style: TitleLargeMedium),
               const SizedBox(height: 32),
               // const CustomTextField(placeholder: 'Code de vérification'),
