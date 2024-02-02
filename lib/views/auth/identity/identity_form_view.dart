@@ -124,7 +124,7 @@ class IdentityFormState extends State<IdentityForm> {
                       label: 'Continuer',
                       onPressed: () => uploadSelfie(),
                       isDisabled: _selfie.path.isEmpty,
-                      isLoading: context.read<AuthBloc>().state is LoginLoading,
+                      isLoading: context.watch<AuthBloc>().state is LoginLoading,
                     ),
                   ],
                 ),

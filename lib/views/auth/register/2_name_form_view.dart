@@ -32,8 +32,10 @@ class NameFormState extends State<NameForm> {
   @override
   void initState() {
     super.initState();
-    firstNameController = TextEditingController(text: widget.registrationData.firstName);
-    lastNameController = TextEditingController(text: widget.registrationData.lastName);
+    firstNameController =
+        TextEditingController(text: widget.registrationData.firstName);
+    lastNameController =
+        TextEditingController(text: widget.registrationData.lastName);
   }
 
   @override
@@ -99,7 +101,7 @@ class NameFormState extends State<NameForm> {
             ),
             const Spacer(),
             CustomButton(
-              isLoading: context.read<AuthBloc>().state is RegisterLoading,
+              isLoading: context.watch<AuthBloc>().state is RegisterLoading,
               label: 'Continuer',
               onPressed: () => signUp(),
             ),

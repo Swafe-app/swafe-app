@@ -10,7 +10,7 @@ import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/helper/getFirebaseErrorMessage.dart';
 
-import '../../../../services/user_service.dart';
+import '../../../../../services/user_service.dart';
 
 class UpdatePasswordView extends StatefulWidget {
   const UpdatePasswordView({super.key});

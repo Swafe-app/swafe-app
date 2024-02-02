@@ -11,8 +11,8 @@ import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/helper/format_phone_number.dart';
 import 'package:swafe/models/user/user_model.dart';
-import 'package:swafe/views/main/MainViewContent/profil/ChangeUserInformation/ChangeEmail.dart';
-import 'package:swafe/views/main/MainViewContent/profil/ChangeUserInformation/ChangePhoneNumber.dart';
+import 'package:swafe/views/main/MainViewContent/profil/user_info/change_email_view.dart';
+import 'package:swafe/views/main/MainViewContent/profil/user_info/change_phone_number_view.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -42,7 +42,7 @@ class UserProfileScreenState extends State<UserProfileScreen> {
     super.dispose();
   }
 
-  void updateUserData() async {
+  void updateUserData() {
     if (formKey.currentState!.validate()) {
       BlocProvider.of<AuthBloc>(context).add(
         UpdateUserEvent(
@@ -58,6 +58,10 @@ class UserProfileScreenState extends State<UserProfileScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is UpdateUserSuccess) {
+          // Update user information to render
+          setState(() {
+            user = context.read<AuthBloc>().user!;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: CustomSnackbar(
@@ -94,21 +98,6 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                 const SizedBox(height: 24),
                 Column(
                   children: [
-                    BlocBuilder<AuthBloc, AuthState>(
-                      builder: (context, state) {
-                        if (state is UpdateUserError) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: Text(
-                              state.message,
-                              style: BodyLargeMedium.copyWith(
-                                  color: MyColors.error40),
-                            ),
-                          );
-                        }
-                        return const SizedBox();
-                      },
-                    ),
                     CustomTextField(
                       placeholder: 'Prénom',
                       controller: firstNameController,
@@ -282,7 +271,7 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                 const Spacer(),
                 CustomButton(
                   isLoading:
-                      context.read<AuthBloc>().state is UpdateUserLoading,
+                      context.watch<AuthBloc>().state is UpdateUserLoading,
                   label: "Modifier",
                   onPressed: () => updateUserData(),
                 ),

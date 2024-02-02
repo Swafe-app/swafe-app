@@ -6,8 +6,8 @@ import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_event.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/components/Button/button.dart';
-import 'package:swafe/views/main/MainViewContent/profil/UpdatePassword.dart';
-import 'package:swafe/views/main/MainViewContent/profil/UserProfileScreen.dart';
+import 'package:swafe/views/main/MainViewContent/profil/update_password/update_password_view.dart';
+import 'package:swafe/views/main/MainViewContent/profil/user_info/user_info_view.dart';
 import 'package:swafe/views/main/MainViewContent/profil/confirm_delete_modal_view.dart';
 
 class ProfilContent extends StatelessWidget {

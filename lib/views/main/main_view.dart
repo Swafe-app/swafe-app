@@ -6,7 +6,7 @@ import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import '../main/MainViewContent/home/homecontent.dart';
-import 'MainViewContent/profil/profil.dart';
+import 'MainViewContent/profil/profil_view.dart';
 import 'repertoire.dart';
 
 class MainView extends StatelessWidget {

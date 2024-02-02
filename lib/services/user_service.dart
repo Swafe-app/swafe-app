@@ -89,8 +89,8 @@ class UserService {
     String? email,
     String? firstName,
     String? lastName,
-    String? phoneCountryCode,
     String? phoneNumber,
+    String? phoneCountryCode,
   ) async {
     try {
       final response = await _apiService.performRequest(
