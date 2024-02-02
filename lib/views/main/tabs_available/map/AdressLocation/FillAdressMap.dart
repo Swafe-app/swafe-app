@@ -11,6 +11,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/components/IconButton/icon_button.dart';
 
 import '../../../../../DS/spacing.dart';
 
@@ -192,14 +193,6 @@ class FillAdressMapState extends State<FillAdressMap>
               ),
               child: Column(
                 children: [
-                  Container(
-                    width: 160,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: MyColors.neutral70,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -294,6 +287,18 @@ class FillAdressMapState extends State<FillAdressMap>
                         }
                       })
                 ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 40,
+            left: 20,
+            child: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: CustomIconButton(
+                type: IconButtonType.square,
+                icon: Icons.arrow_back_ios_new,
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ),
           ),

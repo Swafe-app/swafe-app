@@ -29,13 +29,37 @@ enum SignalementDangerItemsEnum {
 }
 
 String signalementDangerItemEnumToString(SignalementDangerItemsEnum item) {
-  return item.toString().split('.').last;
+  switch (item) {
+    case SignalementDangerItemsEnum.autre:
+      return 'Autre';
+    case SignalementDangerItemsEnum.vol:
+      return 'Vol';
+    case SignalementDangerItemsEnum.harcelement:
+      return 'Harcèlement';
+    case SignalementDangerItemsEnum.agressionSexuelle:
+      return 'Agression sexuelle';
+    case SignalementDangerItemsEnum.agressionPhysique:
+      return 'Agression physique';
+    case SignalementDangerItemsEnum.jeMeFaisSuivre:
+      return 'Je me fais suivre';
+  }
 }
 
 SignalementDangerItemsEnum stringToSignalementDangerItemEnum(String item) {
-  return SignalementDangerItemsEnum.values.firstWhere(
-      (e) => e.toString().split('.').last == item,
-      orElse: () => SignalementDangerItemsEnum.autre);
+  switch (item) {
+    case 'Vol':
+      return SignalementDangerItemsEnum.vol;
+    case 'Harcèlement':
+      return SignalementDangerItemsEnum.harcelement;
+    case 'Agression sexuelle':
+      return SignalementDangerItemsEnum.agressionSexuelle;
+    case 'Agression physique':
+      return SignalementDangerItemsEnum.agressionPhysique;
+    case 'Je me fais suivre':
+      return SignalementDangerItemsEnum.jeMeFaisSuivre;
+    default:
+      throw SignalementDangerItemsEnum.autre;
+  }
 }
 
 class SignalementModel {

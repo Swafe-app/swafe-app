@@ -1,17 +1,20 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/DS/typographies.dart';
+import 'package:swafe/blocs/signalement_bloc/signalement_bloc.dart';
+import 'package:swafe/blocs/signalement_bloc/signalement_event.dart';
+import 'package:swafe/blocs/signalement_bloc/signalement_state.dart';
 import 'package:swafe/components/Button/button.dart';
+import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/typeReport/custom_report.dart';
-import 'package:swafe/services/report_service.dart';
+import 'package:swafe/models/signalement/signalement_model.dart';
 import 'package:swafe/views/main/tabs_available/map/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
@@ -28,22 +31,18 @@ class BottomSheetContent extends StatefulWidget {
 class BottomSheetContentState extends State<BottomSheetContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _isSelectionMade = false;
-  final List<String> _selectedDangerItems = [];
-  final List<String> _selectedAnomaliesItems = [];
+  bool isSelectionMade = false;
+  final List<ReportingType> selectedDangerItems = [];
+  final List<ReportingType> selectedAnomaliesItems = [];
   late LatLng userPosition;
   LatLng basePosition = const LatLng(0, 0);
   String pin = 'assets/images/pinDown.svg';
   String? address;
   final mapController = MapController();
-  final ReportService reportService = ReportService();
-  final storage = const FlutterSecureStorage();
-  //final databaseReference = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
     super.initState();
-    print("position : ${widget.userPosition}");
     userPosition = widget.userPosition ?? widget.position;
     basePosition = widget.position;
     _tabController = TabController(length: 2, vsync: this);
@@ -55,50 +54,47 @@ class BottomSheetContentState extends State<BottomSheetContent>
     return distance(center, point) <= radius;
   }
 
-  //Envoi du signalement à Firebase
-  /*Future<void> _sendDataToFirebase() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final selectedData = {
-        'userId': user.uid,
-        'selectedDangerItems': _selectedDangerItems + _selectedAnomaliesItems,
-        'coordinates': {
-          'latitude': userPosition.latitude,
-          'longitude': userPosition.longitude,
-        },
-      };
-
-      try {
-        await databaseReference
-            .child('signalements')
-            .push()
-            .set(selectedData)
-            .then((value) => Navigator.of(context).pop());
-        if (kDebugMode) {
-          print("Données envoyées à Firebase avec succès.");
-        }
-      } catch (error) {
-        if (kDebugMode) {
-          print("Erreur lors de l'envoi des données à Firebase : $error");
-        }
-      }
+  SignalementDangerItemsEnum reportingTypeToEnum(ReportingType type) {
+    switch (type) {
+      case ReportingType.autre:
+        return SignalementDangerItemsEnum.autre;
+      case ReportingType.vol:
+        return SignalementDangerItemsEnum.vol;
+      case ReportingType.harcelement:
+        return SignalementDangerItemsEnum.harcelement;
+      case ReportingType.agressionSexuelle:
+        return SignalementDangerItemsEnum.agressionSexuelle;
+      case ReportingType.violence:
+        return SignalementDangerItemsEnum.agressionPhysique;
+      case ReportingType.insecurite:
+        return SignalementDangerItemsEnum.jeMeFaisSuivre;
+      default:
+        return SignalementDangerItemsEnum.autre;
     }
-  }*/
+  }
 
-  Future<void> _sendReport() async {
-      try {
+  void sendReport() {
+    if (isSelectionMade) {
+      final List<SignalementDangerItemsEnum> selectedItems = [];
 
-        final user = reportService.createReport((await storage.read(key: 'token'))!, userPosition, _selectedDangerItems + _selectedAnomaliesItems)
-            .then((value) {print(value);Navigator.of(context).pop();});
-        if (kDebugMode) {
-          print("Données envoyées avec succès.");
-        }
-      } catch (error) {
-        if (kDebugMode) {
-          print("Erreur lors de l'envoi des données : $error");
-        }
+      for (var item in selectedDangerItems) {
+        selectedItems.add(reportingTypeToEnum(item));
       }
+      for (var item in selectedAnomaliesItems) {
+        selectedItems.add(reportingTypeToEnum(item));
+      }
+
+      BlocProvider.of<SignalementBloc>(context).add(
+        CreateSignalementEvent(
+          coordinates: SignalementCoordinates(
+            latitude: userPosition.latitude,
+            longitude: userPosition.longitude,
+          ),
+          selectedDangerItems: selectedItems,
+        ),
+      );
     }
+  }
 
   //Obtention de l'adresse à partir de la latitude et de la longitude
   Future<void> getAddressFromLatLng(LatLng position) async {
@@ -122,7 +118,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
 
   //Création des signalements sélectionnables
   List<Widget> _buildSelectableItems(
-      List<String> selectedItems, String tabName) {
+      List<ReportingType> selectedItems, String tabName) {
     late List<ReportingType> items;
     if (tabName == "Danger") {
       items = [
@@ -151,21 +147,17 @@ class BottomSheetContentState extends State<BottomSheetContent>
     }
 
     return items.map((item) {
-      final isSelected = selectedItems.contains(item.title);
+      final isSelected = selectedItems.contains(item);
       return CustomReport(
           reportingType: item,
           onPressed: () => setState(() {
                 if (!isSelected) {
-                  selectedItems.add(item.title);
-                  print(
-                      "Est il sélectionné ? $isSelected, ${selectedItems.toString()}");
+                  selectedItems.add(item);
                 } else {
-                  print(
-                      "Est il sélectionné ? $isSelected, ${selectedItems.toString()}");
-                  selectedItems.remove(item.title);
+                  selectedItems.remove(item);
                 }
-                _isSelectionMade = _selectedDangerItems.isNotEmpty ||
-                    _selectedAnomaliesItems.isNotEmpty;
+                isSelectionMade = selectedDangerItems.isNotEmpty ||
+                    selectedAnomaliesItems.isNotEmpty;
               }));
     }).toList();
   }
@@ -178,208 +170,236 @@ class BottomSheetContentState extends State<BottomSheetContent>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-      child: Column(
-        children: [
-          Container(
-            width: 160,
-            height: 8,
-            decoration: BoxDecoration(
-              color: MyColors.neutral70,
-              borderRadius: BorderRadius.circular(8),
+    return BlocListener<SignalementBloc, SignalementState>(
+      listener: (context, state) {
+        if (state is CreateSignalementSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: CustomSnackbar(
+                label: 'Votre signalement a bien été envoyé',
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Spécifier la situation rencontrée',
-            style: TitleLargeMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            textAlign: TextAlign.center,
-            'Votre signalement sera partagé avec toute la communauté. Tout les signalements sont anonymes.',
-            style: BodyLargeMedium,
-          ),
-          const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: SizedBox(
-              height: 145,
-              child: Stack(
-                children: [
-                  FlutterMap(
-                    mapController: mapController,
-                    options: MapOptions(
-                      initialCenter: LatLng(
-                        userPosition.latitude - 0.0003,
-                        userPosition.longitude,
-                      ),
-                      minZoom: 15,
-                      initialZoom: 16,
-                      interactionOptions: const InteractionOptions(
-                        flags: InteractiveFlag.all &
-                            ~InteractiveFlag.rotate &
-                            ~InteractiveFlag.drag,
-                      ),
-                      onMapEvent: (event) {
-                        if (event.source.name == "dragEnd") {
-                          setState(() {
-                            pin = 'assets/images/pinDown.svg';
-                            getAddressFromLatLng(userPosition);
-                          });
-                        }
-                      },
-                      onPositionChanged: (position, hasGesture) {
-                        if (position.center != null) {
-                          if (isWithinCircle(
-                              basePosition, position.center!, 1000)) {
+          );
+          Navigator.of(context).pop();
+        }
+        if (state is CreateSignalementError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: CustomSnackbar(
+                isError: true,
+                label: state.message,
+              ),
+            ),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+        child: Column(
+          children: [
+            Container(
+              width: 160,
+              height: 8,
+              decoration: BoxDecoration(
+                color: MyColors.neutral70,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Spécifier la situation rencontrée',
+              style: TitleLargeMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              textAlign: TextAlign.center,
+              'Votre signalement sera partagé avec toute la communauté. Tout les signalements sont anonymes.',
+              style: BodyLargeMedium,
+            ),
+            const SizedBox(height: 16),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: SizedBox(
+                height: 145,
+                child: Stack(
+                  children: [
+                    FlutterMap(
+                      mapController: mapController,
+                      options: MapOptions(
+                        initialCenter: LatLng(
+                          userPosition.latitude - 0.0003,
+                          userPosition.longitude,
+                        ),
+                        minZoom: 15,
+                        initialZoom: 16,
+                        interactionOptions: const InteractionOptions(
+                          flags: InteractiveFlag.all &
+                              ~InteractiveFlag.rotate &
+                              ~InteractiveFlag.drag,
+                        ),
+                        onMapEvent: (event) {
+                          if (event.source.name == "dragEnd") {
                             setState(() {
-                              pin = 'assets/images/pinUp.svg';
-                              userPosition = position.center!;
-                            });
-                          } else {
-                            final bearing = const Distance()
-                                .bearing(basePosition, position.center!);
-                            final closestPoint = const Distance()
-                                .offset(basePosition, 1000, bearing);
-                            mapController.move(closestPoint, position.zoom!);
-                            setState(() {
-                              pin = 'assets/images/pinUp.svg';
-                              userPosition = closestPoint;
+                              pin = 'assets/images/pinDown.svg';
+                              getAddressFromLatLng(userPosition);
                             });
                           }
-                        }
-                      },
-                    ),
-                    children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
-                        subdomains: const ['a', 'b', 'c'],
+                        },
+                        onPositionChanged: (position, hasGesture) {
+                          if (position.center != null) {
+                            if (isWithinCircle(
+                                basePosition, position.center!, 1000)) {
+                              setState(() {
+                                pin = 'assets/images/pinUp.svg';
+                                userPosition = position.center!;
+                              });
+                            } else {
+                              final bearing = const Distance()
+                                  .bearing(basePosition, position.center!);
+                              final closestPoint = const Distance()
+                                  .offset(basePosition, 1000, bearing);
+                              mapController.move(closestPoint, position.zoom!);
+                              setState(() {
+                                pin = 'assets/images/pinUp.svg';
+                                userPosition = closestPoint;
+                              });
+                            }
+                          }
+                        },
                       ),
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            width: 50.0,
-                            height: 50.0,
-                            point: userPosition,
-                            child: SvgPicture.asset(
-                              pin,
-                              width: 30,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    left: 0,
-                    right: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CustomButton(
-                          onPressed: () async {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      FillAdressMap(latLng: widget.position)),
-                            );
-                            setState(() {
-                              userPosition = result;
-                              mapController.move(userPosition, 18);
-                            });
-                          },
-                          label: 'Modifier la position',
-                          type: ButtonType.filled,
-                          mainAxisSize: MainAxisSize.min,
-                          textColor: MyColors.secondary40,
-                          fillColor: MyColors.defaultWhite,
+                        TileLayer(
+                          urlTemplate:
+                              'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
+                          subdomains: const ['a', 'b', 'c'],
+                        ),
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              width: 50.0,
+                              height: 50.0,
+                              point: userPosition,
+                              child: SvgPicture.asset(
+                                pin,
+                                width: 30,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          if (address != null && address!.isNotEmpty)
-            SizedBox(
-              width: double.infinity,
-              child: Text(
-                address!,
-                style: BodyLargeMedium,
-              ),
-            ),
-          const SizedBox(height: 16),
-          TabBar(
-            controller: _tabController,
-            indicatorColor: MyColors.secondary40,
-            labelColor: MyColors.primary10,
-            unselectedLabelColor: MyColors.neutral40,
-            labelStyle: BodyLargeRegular,
-            onTap: (value) => setState(() {
-              _selectedAnomaliesItems.clear();
-              _selectedDangerItems.clear();
-              _isSelectionMade = false;
-            }),
-            tabs: const [
-              Tab(
-                text: 'Dangers',
-              ),
-              Tab(
-                text: 'Anomalies',
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                GridView.count(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 32,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children:
-                      _buildSelectableItems(_selectedDangerItems, "Danger"),
+                    Positioned(
+                      bottom: 10,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomButton(
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        FillAdressMap(latLng: widget.position)),
+                              );
+                              if (result != null) {
+                                setState(() {
+                                  userPosition = result;
+                                  mapController.move(userPosition, 18);
+                                });
+                              }
+                            },
+                            label: 'Modifier la position',
+                            type: ButtonType.filled,
+                            mainAxisSize: MainAxisSize.min,
+                            textColor: MyColors.secondary40,
+                            fillColor: MyColors.defaultWhite,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
-                GridView.count(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 32,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: _buildSelectableItems(
-                      _selectedAnomaliesItems, "Anomalies"),
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (address != null && address!.isNotEmpty)
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  address!,
+                  style: BodyLargeMedium,
+                ),
+              ),
+            const SizedBox(height: 16),
+            TabBar(
+              controller: _tabController,
+              indicatorColor: MyColors.secondary40,
+              labelColor: MyColors.primary10,
+              unselectedLabelColor: MyColors.neutral40,
+              labelStyle: BodyLargeRegular,
+              onTap: (value) => setState(() {
+                selectedAnomaliesItems.clear();
+                selectedDangerItems.clear();
+                isSelectionMade = false;
+              }),
+              tabs: const [
+                Tab(
+                  text: 'Dangers',
+                ),
+                Tab(
+                  text: 'Anomalies',
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomButton(
-                type: ButtonType.outlined,
-                label: 'Annuler',
-                mainAxisSize: MainAxisSize.max,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+            const SizedBox(height: 32),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  GridView.count(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    children:
+                        _buildSelectableItems(selectedDangerItems, "Danger"),
+                  ),
+                  GridView.count(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    children: _buildSelectableItems(
+                        selectedAnomaliesItems, "Anomalies"),
+                  ),
+                ],
               ),
-              const SizedBox(width: 20),
-              CustomButton(
-                label: 'Envoyer',
-                mainAxisSize: MainAxisSize.max,
-                isDisabled: _isSelectionMade ? false : true,
-                onPressed: () => _sendReport(),
-              ),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomButton(
+                  type: ButtonType.outlined,
+                  label: 'Annuler',
+                  mainAxisSize: MainAxisSize.max,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                const SizedBox(width: 20),
+                CustomButton(
+                  label: 'Envoyer',
+                  mainAxisSize: MainAxisSize.max,
+                  isDisabled: isSelectionMade ? false : true,
+                  isLoading: context.watch<SignalementBloc>().state
+                      is CreateSignalementLoading,
+                  onPressed: () => sendReport(),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

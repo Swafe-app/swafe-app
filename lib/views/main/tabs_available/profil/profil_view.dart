@@ -111,7 +111,11 @@ class ProfilContent extends StatelessWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthInitial) {
-          Navigator.of(context).pop();
+          if (Navigator.canPop(context)) {
+            Navigator.of(context).pop();
+          } else {
+            Navigator.of(context).pushReplacementNamed('/home');
+          }
         }
       },
       child: Scaffold(
