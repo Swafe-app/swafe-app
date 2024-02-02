@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/components/IconButton/icon_button.dart';
@@ -14,11 +16,8 @@ import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/firebase/firebase_database_service.dart';
 import 'package:swafe/firebase/model/signalement.dart';
 import 'package:swafe/services/report_service.dart';
-import 'package:swafe/views/main/MainViewContent/home/bottom_sheet_content.dart';
+import 'package:swafe/views/main/tabs_available/map/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
-import 'package:permission_handler/permission_handler.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});

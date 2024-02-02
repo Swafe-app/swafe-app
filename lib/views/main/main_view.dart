@@ -5,9 +5,10 @@ import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
-import '../main/MainViewContent/home/homecontent.dart';
-import 'MainViewContent/profil/profil_view.dart';
-import 'repertoire.dart';
+import 'package:swafe/views/main/tabs_available/map/homecontent.dart';
+import 'package:swafe/views/main/tabs_available/profil/profil_view.dart';
+
+import 'tabs_available/repertoire/repertoire.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../components/Repertory/repertory.dart';
-import '../../models/repertory_category.dart';
-import '../../models/repertory_data.dart';
+import '../../../../components/Repertory/repertory.dart';
+import '../../../../models/repertory_category.dart';
+import '../../../../models/repertory_data.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class RepertoireContent extends StatefulWidget {

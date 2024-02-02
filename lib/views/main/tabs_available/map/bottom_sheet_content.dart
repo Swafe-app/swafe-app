@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -14,7 +12,7 @@ import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/typeReport/custom_report.dart';
 import 'package:swafe/services/report_service.dart';
-import 'package:swafe/views/main/MainViewContent/home/AdressLocation/FillAdressMap.dart';
+import 'package:swafe/views/main/tabs_available/map/AdressLocation/FillAdressMap.dart';
 
 class BottomSheetContent extends StatefulWidget {
   const BottomSheetContent(

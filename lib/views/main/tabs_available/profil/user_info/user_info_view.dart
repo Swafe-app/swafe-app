@@ -11,8 +11,8 @@ import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/TextField/textfield.dart';
 import 'package:swafe/helper/format_phone_number.dart';
 import 'package:swafe/models/user/user_model.dart';
-import 'package:swafe/views/main/MainViewContent/profil/user_info/change_email_view.dart';
-import 'package:swafe/views/main/MainViewContent/profil/user_info/change_phone_number_view.dart';
+import 'package:swafe/views/main/tabs_available/profil/user_info/change_email_view.dart';
+import 'package:swafe/views/main/tabs_available/profil/user_info/change_phone_number_view.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
