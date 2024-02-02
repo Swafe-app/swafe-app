@@ -11,11 +11,7 @@ class LoginEmailNotVerified extends AuthState {}
 
 class LoginSelfieRedirect extends AuthState {}
 
-class LoginSuccess extends AuthState {
-  final UserModel user;
-
-  LoginSuccess(this.user);
-}
+class LoginSuccess extends AuthState {}
 
 class LoginError extends AuthState {
   final String message;
@@ -48,6 +44,8 @@ class UploadSelfieError extends AuthState {
 // Verify token states
 class VerifyTokenLoading extends AuthState {}
 
+class VerifyTokenSuccess extends AuthState {}
+
 class VerifyTokenError extends AuthState {}
 
 // Delete user states
@@ -59,4 +57,15 @@ class DeleteUserError extends AuthState {
   final String message;
 
   DeleteUserError(this.message);
+}
+
+// Update user states
+class UpdateUserLoading extends AuthState {}
+
+class UpdateUserSuccess extends AuthState {}
+
+class UpdateUserError extends AuthState {
+  final String message;
+
+  UpdateUserError(this.message);
 }

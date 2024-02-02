@@ -3,6 +3,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swafe/blocs/auth_bloc/auth_event.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/models/api_response_model.dart';
+import 'package:swafe/models/user/user_model.dart';
+import 'package:swafe/models/user/user_response_model.dart';
 import 'package:swafe/models/user/user_token_response_model.dart';
 import 'package:swafe/models/user/user_selfie_response_model.dart';
 import 'package:swafe/services/user_service.dart';
@@ -10,6 +12,7 @@ import 'package:swafe/services/user_service.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserService userService = UserService();
   final FlutterSecureStorage storage = const FlutterSecureStorage();
+  UserModel? user;
 
   AuthBloc() : super(AuthInitial()) {
     on<LoginEvent>((event, emit) async {
@@ -45,7 +48,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           return;
         }
 
-        emit(LoginSuccess(response.data!.user));
+        user = response.data?.user;
+        emit(LoginSuccess());
       } catch (e) {
         emit(LoginError("Une erreur s'est produite, veuillez réessayer."));
         throw Exception(e);
@@ -55,12 +59,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(RegisterLoading());
       try {
         ApiResponse<UserTokenResponse> response = await userService.create(
-            event.email,
-            event.password,
-            event.firstName,
-            event.lastName,
-            event.phoneNumber,
-            event.phoneCountryCode);
+          event.email,
+          event.password,
+          event.firstName,
+          event.lastName,
+          event.phoneNumber,
+          event.phoneCountryCode,
+        );
 
         if (response.status == Status.error) {
           emit(RegisterError(response.message));
@@ -119,7 +124,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           key: 'token',
           value: response.data!.token,
         );
-        emit(LoginSuccess(response.data!.user));
+
+        user = response.data?.user;
+        emit(VerifyTokenSuccess());
       } catch (e) {
         emit(VerifyTokenError());
         throw Exception(e);
@@ -144,6 +151,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthInitial());
       } catch (e) {
         emit(DeleteUserError("Une erreur s'est produite, veuillez réessayer."));
+        throw Exception(e);
+      }
+    });
+    on<UpdateUserEvent>((event, emit) async {
+      emit(UpdateUserLoading());
+      try {
+        ApiResponse<UserResponse> response = await userService.update(
+          event.email,
+          event.firstName,
+          event.lastName,
+          event.phoneNumber,
+          event.phoneCountryCode,
+        );
+
+        if (response.status == Status.error) {
+          emit(UpdateUserError(response.message));
+          return;
+        }
+
+        user = response.data?.user;
+        emit(UpdateUserSuccess());
+      } catch (e) {
+        emit(UpdateUserError("Une erreur s'est produite, veuillez réessayer."));
         throw Exception(e);
       }
     });

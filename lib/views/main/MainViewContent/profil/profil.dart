@@ -109,7 +109,11 @@ class ProfilContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is AuthInitial) {
+          Navigator.of(context).pop();
+        }
+      },
       child: Scaffold(
         body: Container(
           padding: const EdgeInsets.fromLTRB(20, 60, 20, 60),
@@ -174,7 +178,8 @@ class ProfilContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              Image.asset('assets/images/Swafe_Logo.png', width: 40, height: 40),
+              Image.asset('assets/images/Swafe_Logo.png',
+                  width: 40, height: 40),
               const SizedBox(height: 8),
               Text(
                 'Version 1.1.0',

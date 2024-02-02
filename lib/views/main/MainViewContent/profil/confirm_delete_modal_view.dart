@@ -20,6 +20,7 @@ class ConfirmDeleteModal extends StatelessWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is DeleteUserSuccess) {
+          Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: CustomSnackbar(

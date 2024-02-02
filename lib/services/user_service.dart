@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:swafe/models/api_response_model.dart';
+import 'package:swafe/models/user/user_response_model.dart';
 import 'package:swafe/models/user/user_token_response_model.dart';
 import 'package:swafe/models/user/user_selfie_response_model.dart';
 import 'package:swafe/services/api_service.dart';
@@ -35,7 +36,13 @@ class UserService {
   }
 
   Future<ApiResponse<UserTokenResponse>> create(
-      String email, String password, String firstName, String lastName, String phoneNumber, String phoneCountryCode) async {
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+    String? phoneNumber,
+    String? phoneCountryCode,
+  ) async {
     try {
       final response = await _apiService.performRequest(
         'users/create',
@@ -78,14 +85,35 @@ class UserService {
     }
   }
 
-  Future<dynamic> update(Map<String, dynamic> userData) async {
-    final response = await _apiService.performRequest(
-      'users/update',
-      method: 'PUT',
-      token: await storage.read(key: 'token)'),
-      body: userData,
-    );
-    return _processResponse(response);
+  Future<ApiResponse<UserResponse>> update(
+    String? email,
+    String? firstName,
+    String? lastName,
+    String? phoneCountryCode,
+    String? phoneNumber,
+  ) async {
+    try {
+      final response = await _apiService.performRequest(
+        'users/update',
+        method: 'PUT',
+        token: await storage.read(key: 'token'),
+        body: {
+          'email': email ?? '',
+          'firstName': firstName ?? '',
+          'lastName': lastName ?? '',
+          'phoneCountryCode': phoneCountryCode ?? '',
+          'phoneNumber': phoneNumber ?? '',
+        },
+      );
+
+      dynamic jsonResponse = json.decode(response.body);
+      return ApiResponse<UserResponse>.fromJson(
+        jsonResponse,
+        (data) => UserResponse.fromJson(data),
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<dynamic> updatePassword(String password, String newPassword) async {

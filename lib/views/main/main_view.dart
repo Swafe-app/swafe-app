@@ -6,7 +6,7 @@ import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import '../main/MainViewContent/home/homecontent.dart';
-import 'profil.dart';
+import 'MainViewContent/profil/profil.dart';
 import 'repertoire.dart';
 
 class MainView extends StatelessWidget {
@@ -87,11 +87,7 @@ class _CustomNavbarState extends State<CustomNavbar> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthInitial) {
-          Navigator.of(context).pushReplacementNamed('/home');
-        }
-      },
+      listener: (context, state) {},
       child: WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(

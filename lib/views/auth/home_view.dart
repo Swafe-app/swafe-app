@@ -41,12 +41,10 @@ class HomeView extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 60, 20, 80),
             child: Column(
               children: [
-                const CustomAppBar(
-                  showIconButton: false,
-                ),
+                const CustomAppBar(showIconButton: false),
                 const SizedBox(height: 72),
                 Text(
-                  "Il n’a jamais été aussi\n simple d’aller d'un point A\n à un point B en toute\n sécurité",
+                  "Il n’a jamais été aussi\nsimple d’aller d'un point A\nà un point B en toute\nsécurité",
                   style:
                       TitleXLargeMedium.copyWith(color: MyColors.defaultWhite),
                   textAlign: TextAlign.left,

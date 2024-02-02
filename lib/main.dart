@@ -31,37 +31,40 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthBloc()..add(VerifyTokenEvent()),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Swafe',
-        theme: ThemeData.light(),
-        home: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            if (state is LoginSuccess) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pushReplacementNamed('/main');
-              });
-              return Container();
-            }
-            if (state is VerifyTokenError) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pushReplacementNamed('/home');
-              });
-              return Container();
-            }
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Swafe',
+          theme: ThemeData.light(),
+          home: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is VerifyTokenSuccess) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.of(context).pushReplacementNamed('/main');
+                });
+                return Container();
+              }
+              if (state is VerifyTokenError) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.of(context).pushReplacementNamed('/home');
+                });
+                return Container();
+              }
+              return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()));
+            },
+          ),
+          routes: {
+            '/register': (context) => const RegisterView(),
+            '/validate-email': (context) => const CodeValidationView(),
+            '/upload-selfie': (context) => const IdentityForm(),
+            '/checking-identity': (context) => const CheckingIdentity(),
+            '/home': (context) => const HomeView(),
+            '/main': (context) => const MainView(),
           },
         ),
-        routes: {
-          '/register': (context) => const RegisterView(),
-          '/validate-email': (context) => const CodeValidationView(),
-          '/upload-selfie': (context) => const IdentityForm(),
-          '/checking-identity': (context) => const CheckingIdentity(),
-          '/home': (context) => const HomeView(),
-          '/main': (context) => const MainView(),
-        },
       ),
     );
   }
 }
-

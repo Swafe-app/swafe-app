@@ -142,6 +142,7 @@ class LoginBottomSheetState extends State<LoginBottomSheet> {
               ),
               const SizedBox(height: 60),
               CustomButton(
+                isLoading: context.read<AuthBloc>().state is LoginLoading,
                 label: 'Continuer',
                 onPressed: () => signIn(),
               ),
