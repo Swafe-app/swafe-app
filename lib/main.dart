@@ -1,13 +1,10 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_event.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_bloc.dart';
-import 'package:swafe/firebase/firebase_options.dart';
 import 'package:swafe/views/auth/identity/checking_identity.dart';
 import 'package:swafe/views/auth/identity/identity_form_view.dart';
 import 'package:swafe/views/auth/register/register_view.dart';
@@ -18,10 +15,6 @@ import 'package:swafe/views/main/main_view.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-    name: dotenv.env['ENVIRONMENT'] == 'dev' ? 'swafe_dev' : 'swafe_prod',
-  );
   runApp(const MyApp());
 }
 

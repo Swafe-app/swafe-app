@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/spacing.dart';
+import 'package:swafe/DS/typographies.dart';
+import 'package:swafe/components/TextField/textfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../components/Repertory/repertory.dart';
 import '../../../../models/repertory_category.dart';
@@ -12,11 +14,11 @@ class RepertoireContent extends StatefulWidget {
   const RepertoireContent({super.key});
 
   @override
-  State<RepertoireContent> createState() => _RepertoireContentState();
+  State<RepertoireContent> createState() => RepertoireContentState();
 }
 
-class _RepertoireContentState extends State<RepertoireContent> {
-  final List<RepertoireCategory> _repertoireData = [
+class RepertoireContentState extends State<RepertoireContent> {
+  final List<RepertoireCategory> repertoireData = [
     RepertoireCategory(
       "Numéro en cas d’urgence - Par téléphone",
       [
@@ -118,36 +120,33 @@ class _RepertoireContentState extends State<RepertoireContent> {
       ],
     ),
   ];
-
-  List<RepertoireCategory> _filteredData = [];
+  List<RepertoireCategory> filteredData = [];
 
   @override
   void initState() {
     super.initState();
-    _filteredData = List.from(_repertoireData);
+    filteredData = repertoireData;
   }
 
   void _filterData(String query) {
     setState(() {
-      _filteredData = _repertoireData
-          .where((category) =>
-              category.name.toLowerCase().contains(query.toLowerCase()) ||
-              category.cards.any((card) =>
-                  card.name.toLowerCase().contains(query.toLowerCase()) ||
-                  card.description
-                      .toLowerCase()
-                      .contains(query.toLowerCase()) ||
-                  card.phoneNumber.contains(query)))
+      filteredData = repertoireData
+          .map((category) => RepertoireCategory(
+                category.name,
+                category.cards
+                    .where((card) => card.name.toLowerCase().contains(query.toLowerCase()))
+                    .toList(),
+              ))
+          .where((category) => category.cards.isNotEmpty)
           .toList();
     });
   }
 
-  void _callNumber(String phoneNumber) async {
+  void callNumber(String phoneNumber) async {
     await requestPhonePermission();
-    String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
-    String url = "tel:$cleanedPhoneNumber";
-    if (await launch(url)) {
-      await launch(url);
+    Uri url = Uri.parse('tel:$phoneNumber');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
     } else {
       throw 'Could not launch $url';
     }
@@ -159,105 +158,81 @@ class _RepertoireContentState extends State<RepertoireContent> {
     if (!status.isGranted) {
       PermissionStatus newStatus = await Permission.phone.request();
       if (!newStatus.isGranted) {
-        print('Phone permission was denied');
+        if (kDebugMode) {
+          print('Phone permission was denied');
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: Spacing.extraHuge),
-          Container(
-            color: MyColors.defaultWhite,
-            child: const Text(
-              "Numéros d'urgence",
-              style: TextStyle(
-                color: Color(0xFF021F40),
-                fontSize: 20,
-                fontFamily: 'SF Pro Display',
-                fontWeight: FontWeight.w500,
-                height: 0.07,
+      body: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: screenSize.height),
+        child: Column(
+          children: [
+            const SizedBox(height: 60),
+            Container(
+              color: MyColors.defaultWhite,
+              child: Text(
+                "Numéros d'urgence",
+                style: TitleLargeMedium,
               ),
             ),
-          ),
-          const SizedBox(height: Spacing.extraLarge),
-          Container(
-            color: MyColors.defaultWhite,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            // Reduced padding to 0
-            child: TextField(
-              onChanged: _filterData,
-              decoration: const InputDecoration(
-                hintText: "Rechercher",
-                suffixIcon: Icon(
-                  Icons.search,
-                  color: MyColors.primary10,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: MyColors.primary10,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(
-                    color: MyColors.neutral40,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _filteredData.length,
-              itemBuilder: (context, index) {
-                RepertoireCategory category = _filteredData[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                child: CustomTextField(
+                  placeholder: 'Rechercher',
+                  onChanged: _filterData,
+                )),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    if (index != 0) const SizedBox(height: 24),
-                    // Add spacing if not the first category
-                    Container(
-                      color: const Color(0xFFECECEC),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 12),
-                          Text(
-                            category.name,
-                            style: const TextStyle(
-                              color: Color(0xFF021F40),
-                              fontSize: 14,
-                              fontFamily: 'SF Pro Display',
-                              fontWeight: FontWeight.w500,
-                              height: 0.10,
-                              letterSpacing: 0.06,
+                    for (var category in filteredData)
+                      Container(
+                        color: MyColors.neutral80,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: Text(
+                                category.name,
+                                style: SubtitleLargeMedium.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          for (RepertoireCardData card in category.cards)
-                            RepertoireCard(
-                              cardData: card,
-                              onCardTapped: _callNumber,
-                            ),
-                        ],
+                            const SizedBox(height: 8),
+                            for (RepertoireCardData card in category.cards)
+                              Column(
+                                children: [
+                                  RepertoireCard(
+                                    cardData: card,
+                                    onCardTapped: callNumber,
+                                  ),
+                                  const SizedBox(height: 8),
+                                ],
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
+                    const SizedBox(height: 112),
                   ],
-                );
-              },
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-
-
-
