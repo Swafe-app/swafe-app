@@ -1,3 +1,5 @@
+import 'package:swafe/models/signalement/signalement_model.dart';
+
 enum ReportingType {
   insecurite(title: 'Je me fais suivre',pin: 'assets/images/insecurite.png',threat: 'assets/images/lowDangerPin.svg'),
   violence(title: 'Violence physique',pin: 'assets/images/violence.png',threat: 'assets/images/midDangerPin.svg'),
@@ -30,45 +32,45 @@ enum ReportingType {
   final String threat;
   final String title;
 }
-  ReportingType convertStringToReportingType(String reportingTypeString) {
+  ReportingType convertStringToReportingType(SignalementDangerItemsEnum reportingTypeString) {
     switch (reportingTypeString) {
-      case 'Je me fais suivre':
+      case SignalementDangerItemsEnum.jeMeFaisSuivre:
         return ReportingType.insecurite;
     // Default value for unrecognized types
-      case 'Violence physique':
+      case SignalementDangerItemsEnum.agressionPhysique:
         return ReportingType.violence;
-      case 'Violence verbale':
-        return ReportingType.violenceVerbale;
-      case 'Vol':
+      // case SignalementDangerItemsEnum.agressionVerbale
+      //   return ReportingType.violenceVerbale;
+      case SignalementDangerItemsEnum.vol:
         return ReportingType.vol;
-      case 'Harcèlement':
+      case SignalementDangerItemsEnum.harcelement:
         return ReportingType.harcelement;
-      case 'Agression Sexuelle':
+      case SignalementDangerItemsEnum.agressionSexuelle:
         return ReportingType.agressionSexuelle;
-      case 'Incendie':
-        return ReportingType.incendie;
-      case 'Météo':
-        return ReportingType.meteo;
-      case 'Travaux':
-        return ReportingType.travaux;
-      case 'Manque d\'accessibilité':
-        return ReportingType.accessibilite;
-      case 'Accident de voiture':
-        return ReportingType.voiture;
-      case 'Inondation':
-        return ReportingType.inondation;
-      case 'Trou sur la chaussée':
-        return ReportingType.chaussee;
-      case 'Obstacle sur la chaussée':
-        return ReportingType.obstacle;
-      case 'Personne ivre':
-        return ReportingType.ivresse;
-      case 'Conduite dangereuse':
-        return ReportingType.conduite;
-      case 'Feu de pieton dysfonctionnel':
-        return ReportingType.feuPieton;
-      case 'Mauvais éclairage':
-        return ReportingType.eclairage;
+      // case 'Incendie':
+      //   return ReportingType.incendie;
+      // case 'Météo':
+      //   return ReportingType.meteo;
+      // case 'Travaux':
+      //   return ReportingType.travaux;
+      // case 'Manque d\'accessibilité':
+      //   return ReportingType.accessibilite;
+      // case 'Accident de voiture':
+      //   return ReportingType.voiture;
+      // case 'Inondation':
+      //   return ReportingType.inondation;
+      // case 'Trou sur la chaussée':
+      //   return ReportingType.chaussee;
+      // case 'Obstacle sur la chaussée':
+      //   return ReportingType.obstacle;
+      // case 'Personne ivre':
+      //   return ReportingType.ivresse;
+      // case 'Conduite dangereuse':
+      //   return ReportingType.conduite;
+      // case 'Feu de pieton dysfonctionnel':
+      //   return ReportingType.feuPieton;
+      // case 'Mauvais éclairage':
+      //   return ReportingType.eclairage;
       default:
         return ReportingType.autre;
     }

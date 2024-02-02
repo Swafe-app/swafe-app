@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/auth_bloc/auth_event.dart';
 import 'package:swafe/blocs/auth_bloc/auth_state.dart';
+import 'package:swafe/blocs/signalement_bloc/signalement_bloc.dart';
 import 'package:swafe/firebase/firebase_options.dart';
 import 'package:swafe/views/auth/identity/checking_identity.dart';
 import 'package:swafe/views/auth/identity/identity_form_view.dart';
@@ -29,8 +30,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc()..add(VerifyTokenEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc()..add(VerifyTokenEvent()),
+        ),
+        BlocProvider<SignalementBloc>(
+          create: (context) => SignalementBloc(),
+        ),
+      ],
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: MaterialApp(
