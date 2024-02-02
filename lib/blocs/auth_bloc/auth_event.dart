@@ -54,3 +54,10 @@ class UpdateUserEvent extends AuthEvent {
     this.phoneCountryCode,
   });
 }
+
+class UpdatePasswordEvent extends AuthEvent {
+  final String oldPassword;
+  final String newPassword;
+
+  UpdatePasswordEvent(this.oldPassword, this.newPassword);
+}

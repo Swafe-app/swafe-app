@@ -2,11 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart';
 import 'package:swafe/models/api_response_model.dart';
 import 'package:swafe/models/user/user_response_model.dart';
-import 'package:swafe/models/user/user_token_response_model.dart';
 import 'package:swafe/models/user/user_selfie_response_model.dart';
+import 'package:swafe/models/user/user_token_response_model.dart';
 import 'package:swafe/services/api_service.dart';
 
 class UserService {
@@ -116,17 +115,26 @@ class UserService {
     }
   }
 
-  Future<dynamic> updatePassword(String password, String newPassword) async {
-    final response = await _apiService.performRequest(
-      'users/updatePassword',
-      method: 'PUT',
-      token: await storage.read(key: 'token'),
-      body: {
-        'password': password,
-        'newPassword': newPassword,
-      },
-    );
-    return _processResponse(response);
+  Future<ApiResponse<UserResponse>> updatePassword(String password, String newPassword) async {
+    try {
+      final response = await _apiService.performRequest(
+        'users/updatePassword',
+        method: 'PUT',
+        token: await storage.read(key: 'token'),
+        body: {
+          'password': password,
+          'newPassword': newPassword,
+        },
+      );
+
+      dynamic jsonResponse = json.decode(response.body);
+      return ApiResponse<UserResponse>.fromJson(
+        jsonResponse,
+        (data) => UserResponse.fromJson(data),
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<ApiResponse<SelfieUserResponse>> uploadSelfie(File file) async {
@@ -150,12 +158,19 @@ class UserService {
     }
   }
 
-  Future<dynamic> verifyEmail(String token) async {
-    final response = await _apiService.performRequest(
-      'users/verifyEmail/$token',
-      method: 'GET',
-    );
-    return _processResponse(response);
+  Future<ApiResponse> verifyEmail(String token) async {
+    try {
+      final response = await _apiService.performRequest(
+        'users/verifyEmail/$token',
+        method: 'GET',
+        token: await storage.read(key: 'token'),
+      );
+
+      dynamic jsonResponse = json.decode(response.body);
+      return ApiResponse.fromJson(jsonResponse, (data) => data);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<ApiResponse> delete() async {
@@ -170,14 +185,6 @@ class UserService {
       return ApiResponse.fromJson(jsonResponse, (data) => data);
     } catch (e) {
       rethrow;
-    }
-  }
-
-  dynamic _processResponse(Response response) {
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed: ${response.body}');
     }
   }
 }

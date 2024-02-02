@@ -69,3 +69,14 @@ class UpdateUserError extends AuthState {
 
   UpdateUserError(this.message);
 }
+
+// Update password states
+class UpdatePasswordLoading extends AuthState {}
+
+class UpdatePasswordSuccess extends AuthState {}
+
+class UpdatePasswordError extends AuthState {
+  final String message;
+
+  UpdatePasswordError(this.message);
+}

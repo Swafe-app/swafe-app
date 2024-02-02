@@ -134,6 +134,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
     on<SignOutEvent>((event, emit) async {
       await storage.delete(key: 'token');
+      user = null;
       emit(AuthInitial());
     });
     on<DeleteUserEvent>((event, emit) async {
@@ -147,6 +148,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
 
         await storage.delete(key: 'token');
+        user = null;
         emit(DeleteUserSuccess());
         emit(AuthInitial());
       } catch (e) {
@@ -174,6 +176,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(UpdateUserSuccess());
       } catch (e) {
         emit(UpdateUserError("Une erreur s'est produite, veuillez réessayer."));
+        throw Exception(e);
+      }
+    });
+    on<UpdatePasswordEvent>((event, emit) async {
+      emit(UpdatePasswordLoading());
+      try {
+        ApiResponse response = await userService.updatePassword(
+          event.oldPassword,
+          event.newPassword,
+        );
+
+        if (response.status == Status.error) {
+          emit(UpdatePasswordError(response.message));
+          return;
+        }
+
+        emit(UpdatePasswordSuccess());
+      } catch (e) {
+        emit(UpdatePasswordError("Une erreur s'est produite, veuillez réessayer."));
         throw Exception(e);
       }
     });
