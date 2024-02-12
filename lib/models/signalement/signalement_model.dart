@@ -58,7 +58,7 @@ SignalementDangerItemsEnum stringToSignalementDangerItemEnum(String item) {
     case 'Je me fais suivre':
       return SignalementDangerItemsEnum.jeMeFaisSuivre;
     default:
-      throw SignalementDangerItemsEnum.autre;
+      return SignalementDangerItemsEnum.autre;
   }
 }
 
