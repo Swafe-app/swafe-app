@@ -55,11 +55,7 @@ class CheckingIdentity extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: CustomButton(
                   label: "Terminé",
-<<<<<<<< HEAD:lib/views/auth/identity/checking_identity.dart
                   onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
-========
-                  onPressed: () => Navigator.pushNamed(context, "/home"),
->>>>>>>> 9dcb713 (Implement BloC, refoctoring register logic):lib/views/auth/checking_identity.dart
                   type: ButtonType.outlined,
                   fillColor: Colors.black,
                   strokeColor: Colors.black,

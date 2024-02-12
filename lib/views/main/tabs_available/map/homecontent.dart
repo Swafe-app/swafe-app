@@ -18,17 +18,9 @@ import 'package:swafe/components/IconButton/icon_button.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/marker/custom_grouped_marker.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
-<<<<<<<< HEAD:lib/views/main/tabs_available/map/homecontent.dart
 import 'package:swafe/models/signalement/signalement_model.dart';
 import 'package:swafe/views/main/tabs_available/map/bottom_sheet_content.dart';
-========
-import 'package:swafe/firebase/firebase_database_service.dart';
-import 'package:swafe/firebase/model/signalement.dart';
-import 'package:swafe/services/report_service.dart';
-import 'package:swafe/views/main/MainViewContent/home/bottom_sheet_content.dart';
->>>>>>>> 9dcb713 (Implement BloC, refoctoring register logic):lib/views/main/MainViewContent/home/homecontent.dart
 import 'package:url_launcher/url_launcher.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
