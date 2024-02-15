@@ -1,4 +1,4 @@
-String getFirebaseErrorMessage(String errorCode) {
+String getErrorMessage(String errorCode) {
   switch (errorCode) {
     case 'invalid-email':
       return 'L\'adresse e-mail fournie est mal formatée.';

@@ -11,7 +11,7 @@ class CustomMarker extends Marker {
 
   CustomMarker({
     required this.reportingType,
-    required LatLng point,
+    required super.point,
   }) : super(
           width: 132.0,
           height: 137.0,
@@ -50,6 +50,5 @@ class CustomMarker extends Marker {
               ),
             ],
           ),
-          point: point,
         );
 }

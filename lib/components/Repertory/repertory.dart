@@ -8,18 +8,16 @@ import '../../models/repertory_data.dart';
 class RepertoireCard extends StatelessWidget {
   final RepertoireCardData cardData;
   final Function(String) onCardTapped;
-  final EdgeInsetsGeometry? margin;
 
-  const RepertoireCard(
-      {super.key,
-        required this.cardData,
-        required this.onCardTapped,
-        this.margin});
+  const RepertoireCard({
+    super.key,
+    required this.cardData,
+    required this.onCardTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: margin,
       surfaceTintColor: MyColors.neutral100,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
