@@ -46,11 +46,11 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Cette application a besoin d'accéder à votre emplacement lorsque vous l'utilisez.</string>
+	<string>Votre localisation nous aidera à vous montrer plus rapidement les signalements autour de vous</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Cette application a besoin d'accéder à votre emplacement en permanence.</string>
 	<key>NSCameraUsageDescription</key>
-    <string>Cette application a besoin d'accéder à votre caméra</string>
+    <string>L'accès à la caméra nous permettra de prendre un selfie pour valider votre profile</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Cette application a besoin d'accéder à votre microphone</string>
 </dict>
