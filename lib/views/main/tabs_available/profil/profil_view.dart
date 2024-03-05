@@ -159,7 +159,7 @@ class ProfilContent extends StatelessWidget {
                 false,
                 false,
                 true,
-                true
+                false
               ]),
               // Catégorie "Nous contacter"
               _buildCategory(context, 'Nous contacter', [
@@ -183,7 +183,7 @@ class ProfilContent extends StatelessWidget {
               ], [
                 () {
                 Share.share(
-                  'Invitez vos amis à télécharger Swafe !',
+                  'Invitez vos amis à télécharger Swafe !${Platform.isAndroid ?  'https://play.google.com/store/apps/details?id=com.owl.swafe' : 'https://apps.apple.com/us/app/swafe/6476942292'}',
                 );
                 },
                 () { if(Platform.isAndroid) {
@@ -204,7 +204,7 @@ class ProfilContent extends StatelessWidget {
                 },
                 null,
               ], [
-                true,
+                false,
                 true,
                 true,
               ]),
