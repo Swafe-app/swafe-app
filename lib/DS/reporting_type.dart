@@ -97,38 +97,38 @@ ReportingType convertStringToReportingType(
     // Default value for unrecognized types
     case SignalementDangerItemsEnum.agressionPhysique:
       return ReportingType.violence;
-    // case SignalementDangerItemsEnum.agressionVerbale
-    //   return ReportingType.violenceVerbale;
+    case SignalementDangerItemsEnum.agressionVerbale:
+       return ReportingType.violenceVerbale;
     case SignalementDangerItemsEnum.vol:
       return ReportingType.vol;
     case SignalementDangerItemsEnum.harcelement:
       return ReportingType.harcelement;
     case SignalementDangerItemsEnum.agressionSexuelle:
       return ReportingType.agressionSexuelle;
-    // case 'Incendie':
-    //   return ReportingType.incendie;
-    // case 'Météo':
-    //   return ReportingType.meteo;
-    // case 'Travaux':
-    //   return ReportingType.travaux;
-    // case 'Manque d\'accessibilité':
-    //   return ReportingType.accessibilite;
-    // case 'Accident de voiture':
-    //   return ReportingType.voiture;
-    // case 'Inondation':
-    //   return ReportingType.inondation;
-    // case 'Trou sur la chaussée':
-    //   return ReportingType.chaussee;
-    // case 'Obstacle sur la chaussée':
-    //   return ReportingType.obstacle;
-    // case 'Personne ivre':
-    //   return ReportingType.ivresse;
-    // case 'Conduite dangereuse':
-    //   return ReportingType.conduite;
-    // case 'Feu de pieton dysfonctionnel':
-    //   return ReportingType.feuPieton;
-    // case 'Mauvais éclairage':
-    //   return ReportingType.eclairage;
+      case SignalementDangerItemsEnum.incendie:
+       return ReportingType.incendie;
+     case SignalementDangerItemsEnum.meteo:
+       return ReportingType.meteo;
+     case SignalementDangerItemsEnum.travaux:
+       return ReportingType.travaux;
+     case SignalementDangerItemsEnum.manqueAccessibilite:
+       return ReportingType.accessibilite;
+     case SignalementDangerItemsEnum.voiture:
+       return ReportingType.voiture;
+     case SignalementDangerItemsEnum.inondation:
+       return ReportingType.inondation;
+     case SignalementDangerItemsEnum.trouSurLaChaussee:
+       return ReportingType.chaussee;
+     case SignalementDangerItemsEnum.obstacleSurLaChaussee:
+       return ReportingType.obstacle;
+     case SignalementDangerItemsEnum.personneIvre:
+       return ReportingType.ivresse;
+     case SignalementDangerItemsEnum.conduiteDangereuse:
+       return ReportingType.conduite;
+     case SignalementDangerItemsEnum.feuDePietonDysfonctionnel:
+       return ReportingType.feuPieton;
+     case SignalementDangerItemsEnum.mauvaisEclairage:
+       return ReportingType.eclairage;
     default:
       return ReportingType.autre;
   }

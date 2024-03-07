@@ -68,6 +68,28 @@ class BottomSheetContentState extends State<BottomSheetContent>
         return SignalementDangerItemsEnum.agressionPhysique;
       case ReportingType.insecurite:
         return SignalementDangerItemsEnum.jeMeFaisSuivre;
+      case ReportingType.violenceVerbale:
+        return SignalementDangerItemsEnum.agressionVerbale;
+      case ReportingType.incendie:
+        return SignalementDangerItemsEnum.incendie;
+      case ReportingType.meteo:
+        return SignalementDangerItemsEnum.meteo;
+      case ReportingType.travaux:
+        return SignalementDangerItemsEnum.travaux;
+      case ReportingType.inondation:
+        return SignalementDangerItemsEnum.inondation;
+      case ReportingType.obstacle:
+        return SignalementDangerItemsEnum.obstacleSurLaChaussee;
+      case ReportingType.accessibilite:
+        return SignalementDangerItemsEnum.manqueAccessibilite;
+      case ReportingType.voiture:
+        return SignalementDangerItemsEnum.voiture;
+      case ReportingType.feuPieton:
+        return SignalementDangerItemsEnum.feuDePietonDysfonctionnel;
+      case ReportingType.eclairage:
+        return SignalementDangerItemsEnum.mauvaisEclairage;
+      case ReportingType.chaussee:
+        return SignalementDangerItemsEnum.trouSurLaChaussee;
       default:
         return SignalementDangerItemsEnum.autre;
     }
