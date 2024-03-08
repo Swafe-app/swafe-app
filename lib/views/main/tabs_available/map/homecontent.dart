@@ -183,6 +183,8 @@ class HomeContentState extends State<HomeContent> {
 
         if (cluster.length > 1) {
           markers.add(CustomGroupedMarker(
+            reports: cluster,
+            ctx: context,
             point: LatLng(avgLatitude, avgLongitude),
             numberReports: cluster.length,
             imagePath: convertStringToReportingType(
