@@ -27,13 +27,17 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Cette application a besoin d'accéder à votre caméra</string>
+	<string>Cette application a besoin d&apos;accéder à votre caméra.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Cette application a besoin d&apos;accéder à la gallerie.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Cette application a besoin d'accéder à votre emplacement en permanence.</string>
+	<string>Cette application a besoin d&apos;accéder à votre emplacement en permanence.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Cette application a besoin d&apos;accéder à votre emplacement en permanence.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Cette application a besoin d'accéder à votre emplacement lorsque vous l'utilisez.</string>
+	<string>Cette application a besoin d&apos;accéder à votre emplacement lorsque vous l&apos;utilisez.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Cette application a besoin d'accéder à votre microphone</string>
+	<string>Cette application a besoin d&apos;accéder à votre microphone.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
