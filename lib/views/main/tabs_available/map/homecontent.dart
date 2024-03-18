@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -29,7 +30,7 @@ class HomeContent extends StatefulWidget {
   HomeContentState createState() => HomeContentState();
 }
 
-class HomeContentState extends State<HomeContent> {
+class HomeContentState extends State<HomeContent> with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late Position position;
   double zoom = 9.2;
@@ -183,11 +184,12 @@ class HomeContentState extends State<HomeContent> {
 
         if (cluster.length > 1) {
           markers.add(CustomGroupedMarker(
+            reports: cluster,
             point: LatLng(avgLatitude, avgLongitude),
             numberReports: cluster.length,
             imagePath: convertStringToReportingType(
                 cluster[0].selectedDangerItems.first)
-                .pin,
+                .pin, ctx: context,
           ));
         } else {
           markers.add(CustomMarker(
@@ -218,10 +220,44 @@ class HomeContentState extends State<HomeContent> {
     });
   }
 
+  void _animatedMapMove(LatLng destLocation, double destZoom) {
+    // Create some tweens. These serve to split up the transition from one location to another.
+    // In our case, we want to split the transition be<tween> our current map center and the destination.
+    final latTween = Tween<double>(
+        begin: mapController.camera.center.latitude, end: destLocation.latitude);
+    final lngTween = Tween<double>(
+        begin: mapController.camera.center.longitude, end: destLocation.longitude);
+    final zoomTween = Tween<double>(begin: mapController.zoom, end: destZoom);
+
+    // Create a animation controller that has a duration and a TickerProvider.
+    final controller = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
+    // The animation determines what path the animation will take. You can try different Curves values, although I found
+    // fastOutSlowIn to be my favorite.
+    final Animation<double> animation =
+    CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+
+    controller.addListener(() {
+      mapController.move(
+          LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
+          zoomTween.evaluate(animation));
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
+
   void _calculateCenter() {
     setState(() {
       if (userLocation.latitude != 0.0 && userLocation.longitude != 0.0) {
-        mapController.move(userLocation, 13);
+        _animatedMapMove(userLocation, this.zoom);
       } else if (signalements!.isNotEmpty) {
         double sumLatitude = 0;
         double sumLongitude = 0;
@@ -231,9 +267,9 @@ class HomeContentState extends State<HomeContent> {
         });
         double avgLatitude = sumLatitude / signalements!.length;
         double avgLongitude = sumLongitude / signalements!.length;
-        mapController.move(LatLng(avgLatitude, avgLongitude), 13);
+        _animatedMapMove(LatLng(avgLatitude, avgLongitude), 13);
       } else {
-        mapController.move(const LatLng(48.866667, 2.333333), 13);
+        _animatedMapMove(const LatLng(48.866667, 2.333333), 13);
       }
     });
   }
