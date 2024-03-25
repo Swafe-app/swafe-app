@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:app_tutorial/app_tutorial.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,9 +24,12 @@ import 'package:swafe/models/signalement/signalement_model.dart';
 import 'package:swafe/views/main/tabs_available/map/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomeContent extends StatefulWidget {
-  const HomeContent({super.key});
+import '../../../tutorial/tutorialItemcontent.dart';
 
+class HomeContent extends StatefulWidget {
+  final GlobalKey navbarKey;
+
+  const HomeContent({super.key, required this.navbarKey});
   @override
   HomeContentState createState() => HomeContentState();
 }
@@ -37,12 +41,47 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
   List<SignalementModel>? signalements;
+  final policeButton = GlobalKey(debugLabel: 'callPoliceButton');
+  final reportButton = GlobalKey(debugLabel: 'reportButton');
+  List<TutorialItem> targets = [];
+
 
   @override
   void initState() {
-    super.initState();
     _requestLocationPermission();
     BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
+    initTutorial();
+    Future.delayed(const Duration(seconds: 1), () {
+      Tutorial.showTutorial(context, targets, onTutorialComplete: () {});
+    });
+    super.initState();
+  }
+
+
+  void initTutorial() {
+    targets.addAll({TutorialItem(
+      globalKey: policeButton,
+      child: TutorialItemContent(
+        targetKey: policeButton,
+          title: "Appel d'urgence à la police",
+          content: "En cas de dancer, chaque minute compte. Gagnez du temps, en cliquant sur ce bouton, vous pouvez facilement et rapidement appler les forces de l'ordre"),
+    ),
+      TutorialItem(
+        globalKey: reportButton,
+        child: TutorialItemContent(
+          targetKey: reportButton,
+            title: "Signaler un danger",
+            content: "Pour signaler un danger, cliquez sur ce bouton. Par la suite, vous pourrez spécifier le danger rencontré afin de prévenir la commnauté de celui-ci."),
+      ),
+      TutorialItem(
+        globalKey: widget.navbarKey,
+        child: TutorialItemContent(
+          targetKey: widget.navbarKey,
+            iscenter: true,
+            title: "Numéros d’urgence",
+            content: "Découvrez la liste des numéros d’urgence et des lignes d’aides. Vous pouvez les appeler à tout moment en cliquant sur l’icône téléphone. Ces services d’urgence sont ouverts 7j/7 24h/24."),
+      ),
+    });
   }
 
   double calculateDistance(LatLng point1, LatLng point2) {
@@ -333,6 +372,7 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
             bottom: 272,
             right: 12,
             child: CustomIconButton(
+              key: reportButton,
               onPressed: () => _showBottomSheet(context),
               type: IconButtonType.image,
               image: 'assets/images/report_logo.png',
@@ -342,6 +382,7 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
             bottom: 196,
             right: 12,
             child: CustomIconButton(
+              key: policeButton,
               onPressed: () => _callPolice(),
               type: IconButtonType.image,
               image: 'assets/images/call_logo.png',
