@@ -31,8 +31,8 @@ class TutorialItemContent extends StatelessWidget {
           top: position.dy -
               renderBox.size.height -
               MediaQuery.of(context).size.height * 0.125,
-          left: iscenter == true ? (width - containerWidth) / 2 : null,
-          right: iscenter == true ? (width - containerWidth) / 2 : 0,
+          left: iscenter == true ? (width - containerWidth) / 2 : iscenter == false ? 0 : null,
+          right: iscenter == true ? (width - containerWidth) / 2 : iscenter == false ? null : 0,
           child: Container(
             width: containerWidth,
             padding: const EdgeInsets.all(10.0),
@@ -44,7 +44,6 @@ class TutorialItemContent extends StatelessWidget {
               color: Colors.white,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
                   title,
@@ -89,11 +88,17 @@ class TutorialItemContent extends StatelessWidget {
                   const Spacer(),
                   const TextButton(
                     onPressed: null,
-                    child:
-                        Text(
-                          'Suivant >>',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                    child: Text(
+                      'Suivant',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: SvgPicture.asset(
+                      'assets/images/doubleArrow.svg',
+                    ),
                   ),
                 ],
               ),

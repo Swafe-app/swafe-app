@@ -8,12 +8,15 @@ import '../../DS/reporting_type.dart';
 
 class CustomMarker extends Marker {
   final ReportingType reportingType;
+  final GlobalKey? globalKey;
 
   CustomMarker({
+    this.globalKey,
     required this.reportingType,
     required super.point,
   }) : super(
           width: 132.0,
+          key: globalKey,
           height: 137.0,
           child: Stack(
             children: [

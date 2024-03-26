@@ -11,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_bloc.dart';
@@ -37,30 +38,38 @@ class HomeContent extends StatefulWidget {
 class HomeContentState extends State<HomeContent> with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late Position position;
-  double zoom = 9.2;
+  double zoom = 14;
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
   List<SignalementModel>? signalements;
+  bool tutorialDone = false;
   final policeButton = GlobalKey(debugLabel: 'callPoliceButton');
   final reportButton = GlobalKey(debugLabel: 'reportButton');
+  final reportModel = GlobalKey();
   List<TutorialItem> targets = [];
 
 
   @override
   void initState() {
     _requestLocationPermission();
-    BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
-    initTutorial();
-    Future.delayed(const Duration(seconds: 1), () {
-      Tutorial.showTutorial(context, targets, onTutorialComplete: () {});
-    });
+    checkIfFirstRun();
     super.initState();
   }
 
 
   void initTutorial() {
+    setState(() {
+      markersList = [
+        CustomMarker(
+          globalKey: reportModel,
+          point: LatLng(position.latitude - 0.001, position.longitude + 0.001),
+          reportingType: ReportingType.vol,
+        ),
+      ];
+    });
     targets.addAll({TutorialItem(
       globalKey: policeButton,
+      borderRadius: const Radius.circular(50),
       child: TutorialItemContent(
         targetKey: policeButton,
           title: "Appel d'urgence à la police",
@@ -68,10 +77,20 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
     ),
       TutorialItem(
         globalKey: reportButton,
+        borderRadius: const Radius.circular(50),
         child: TutorialItemContent(
           targetKey: reportButton,
             title: "Signaler un danger",
             content: "Pour signaler un danger, cliquez sur ce bouton. Par la suite, vous pourrez spécifier le danger rencontré afin de prévenir la commnauté de celui-ci."),
+      ),
+      TutorialItem(
+        globalKey: reportModel,
+        borderRadius: const Radius.circular(50),
+        child: TutorialItemContent(
+          iscenter: false,
+          targetKey: reportModel,
+            title: "Connaissez les dangers sur votre route",
+            content: "En cliquant sur un pin, vous pourrez connaître le type de danger, la position ainsi que le moment où il a été déclaré. Vous pouvez également certifier celui-ci en cliquant sur l’icône like."),
       ),
       TutorialItem(
         globalKey: widget.navbarKey,
@@ -82,6 +101,28 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
             content: "Découvrez la liste des numéros d’urgence et des lignes d’aides. Vous pouvez les appeler à tout moment en cliquant sur l’icône téléphone. Ces services d’urgence sont ouverts 7j/7 24h/24."),
       ),
     });
+  }
+
+  void checkIfFirstRun() async {
+    await _getUserLocation().then((value) => initTutorial());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+    if (isFirstRun) {
+      Future.delayed(const Duration(seconds: 1), () {
+        Tutorial.showTutorial(context, targets, onTutorialComplete: () {
+          BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
+          prefs.setBool('isFirstRun', false);
+          setState(() {
+            markersList = [];
+            tutorialDone = true;
+          });
+        });
+      });
+    } else {
+      setState(() {
+        tutorialDone = true;
+      });
+    }
   }
 
   double calculateDistance(LatLng point1, LatLng point2) {
@@ -144,7 +185,7 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
     }
   }
 
-  void _getUserLocation() async {
+  Future<void> _getUserLocation() async {
     try {
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
