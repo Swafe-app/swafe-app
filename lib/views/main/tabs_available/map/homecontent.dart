@@ -41,6 +41,7 @@ class HomeContentState extends State<HomeContent>
   final MapController mapController = MapController();
   late Position position;
   double zoom = 14;
+  bool isPositionInitialized = false;
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
   List<SignalementModel>? signalements;
@@ -271,12 +272,12 @@ class HomeContentState extends State<HomeContent>
         if (cluster.length > 1) {
           markers.add(CustomGroupedMarker(
             reports: cluster,
+            ctx: context,
             point: LatLng(avgLatitude, avgLongitude),
             numberReports: cluster.length,
             imagePath: convertStringToReportingType(
                     cluster[0].selectedDangerItems.first)
                 .pin,
-            ctx: context,
           ));
         } else {
           markers.add(CustomMarker(
@@ -423,12 +424,12 @@ class HomeContentState extends State<HomeContent>
           Positioned(
             bottom: 272,
             right: 12,
-            child: CustomIconButton(
-              key: reportButton,
+            child: isPositionInitialized ?
+            CustomIconButton(
               onPressed: () => _showBottomSheet(context),
               type: IconButtonType.image,
               image: 'assets/images/report_logo.png',
-            ),
+            ) : const CircularProgressIndicator(),
           ),
           Positioned(
             bottom: 196,

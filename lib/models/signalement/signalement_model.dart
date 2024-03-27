@@ -25,7 +25,20 @@ enum SignalementDangerItemsEnum {
   harcelement, // 'Harcèlement'
   agressionSexuelle, // 'Agression sexuelle'
   agressionPhysique, // 'Agression physique'
+  agressionVerbale, // 'Agression verbale'
   jeMeFaisSuivre, // 'Je me fais suivre'
+  incendie, // 'Incendie'
+  meteo, // 'Météo'
+  travaux, // 'Travaux'
+  manqueAccessibilite, // 'Manque d\'accessibilité'
+  voiture, // 'Accident de voiture'
+  inondation, // 'Inondation'
+  trouSurLaChaussee, // 'Trou sur la chaussée'
+  obstacleSurLaChaussee, // 'Obstacle sur la chaussée'
+  personneIvre, // 'Personne ivre'
+  conduiteDangereuse, // 'Conduite dangereuse'
+  feuDePietonDysfonctionnel, // 'Feu de piéton dysfonctionnel'
+  mauvaisEclairage, // 'Mauvais éclairage'
 }
 
 String signalementDangerItemEnumToString(SignalementDangerItemsEnum item) {
@@ -40,8 +53,34 @@ String signalementDangerItemEnumToString(SignalementDangerItemsEnum item) {
       return 'Agression sexuelle';
     case SignalementDangerItemsEnum.agressionPhysique:
       return 'Agression physique';
+    case SignalementDangerItemsEnum.agressionVerbale:
+      return 'Agression verbale';
     case SignalementDangerItemsEnum.jeMeFaisSuivre:
       return 'Je me fais suivre';
+    case SignalementDangerItemsEnum.incendie:
+      return 'Incendie';
+    case SignalementDangerItemsEnum.meteo:
+      return 'Météo';
+    case SignalementDangerItemsEnum.travaux:
+      return 'Travaux';
+    case SignalementDangerItemsEnum.manqueAccessibilite:
+      return 'Manque d\'accessibilité';
+    case SignalementDangerItemsEnum.voiture:
+      return 'Voiture';
+    case SignalementDangerItemsEnum.inondation:
+      return 'Inondation';
+    case SignalementDangerItemsEnum.trouSurLaChaussee:
+      return 'Trou sur la chaussée';
+    case SignalementDangerItemsEnum.obstacleSurLaChaussee:
+      return 'Obstacle sur la chaussée';
+    case SignalementDangerItemsEnum.personneIvre:
+      return 'Personne ivre';
+    case SignalementDangerItemsEnum.conduiteDangereuse:
+      return 'Conduite dangereuse';
+    case SignalementDangerItemsEnum.feuDePietonDysfonctionnel:
+      return 'Feu de piéton dysfonctionnel';
+    case SignalementDangerItemsEnum.mauvaisEclairage:
+      return 'Mauvais éclairage';
   }
 }
 
@@ -55,10 +94,36 @@ SignalementDangerItemsEnum stringToSignalementDangerItemEnum(String item) {
       return SignalementDangerItemsEnum.agressionSexuelle;
     case 'Agression physique':
       return SignalementDangerItemsEnum.agressionPhysique;
+    case 'Agression verbale':
+      return SignalementDangerItemsEnum.agressionVerbale;
     case 'Je me fais suivre':
       return SignalementDangerItemsEnum.jeMeFaisSuivre;
+    case 'Incendie':
+      return SignalementDangerItemsEnum.incendie;
+    case 'Météo':
+      return SignalementDangerItemsEnum.meteo;
+    case 'Travaux':
+      return SignalementDangerItemsEnum.travaux;
+    case 'Manque d\'accessibilité':
+      return SignalementDangerItemsEnum.manqueAccessibilite;
+    case 'Voiture':
+      return SignalementDangerItemsEnum.voiture;
+    case 'Inondation':
+      return SignalementDangerItemsEnum.inondation;
+    case 'Trou sur la chaussée':
+      return SignalementDangerItemsEnum.trouSurLaChaussee;
+    case 'Obstacle sur la chaussée':
+      return SignalementDangerItemsEnum.obstacleSurLaChaussee;
+    case 'Personne ivre':
+      return SignalementDangerItemsEnum.personneIvre;
+    case 'Conduite dangereuse':
+      return SignalementDangerItemsEnum.conduiteDangereuse;
+    case 'Feu de piéton dysfonctionnel':
+      return SignalementDangerItemsEnum.feuDePietonDysfonctionnel;
+    case 'Mauvais éclairage':
+      return SignalementDangerItemsEnum.mauvaisEclairage;
     default:
-      throw SignalementDangerItemsEnum.autre;
+      return SignalementDangerItemsEnum.autre;
   }
 }
 
