@@ -31,11 +31,13 @@ class HomeContent extends StatefulWidget {
   final GlobalKey navbarKey;
 
   const HomeContent({super.key, required this.navbarKey});
+
   @override
   HomeContentState createState() => HomeContentState();
 }
 
-class HomeContentState extends State<HomeContent> with TickerProviderStateMixin {
+class HomeContentState extends State<HomeContent>
+    with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late Position position;
   double zoom = 14;
@@ -48,14 +50,11 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
   final reportModel = GlobalKey();
   List<TutorialItem> targets = [];
 
-
   @override
   void initState() {
     _requestLocationPermission();
-    checkIfFirstRun();
     super.initState();
   }
-
 
   void initTutorial() {
     setState(() {
@@ -67,58 +66,64 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
         ),
       ];
     });
-    targets.addAll({TutorialItem(
-      globalKey: policeButton,
-      borderRadius: const Radius.circular(50),
-      child: TutorialItemContent(
-        targetKey: policeButton,
-          title: "Appel d'urgence à la police",
-          content: "En cas de dancer, chaque minute compte. Gagnez du temps, en cliquant sur ce bouton, vous pouvez facilement et rapidement appler les forces de l'ordre"),
-    ),
+    targets.addAll({
+      TutorialItem(
+        globalKey: policeButton,
+        borderRadius: const Radius.circular(50),
+        child: TutorialItemContent(
+            targetKey: policeButton,
+            title: "Appel d'urgence à la police",
+            content:
+                "En cas de dancer, chaque minute compte. Gagnez du temps, en cliquant sur ce bouton, vous pouvez facilement et rapidement appler les forces de l'ordre"),
+      ),
       TutorialItem(
         globalKey: reportButton,
         borderRadius: const Radius.circular(50),
         child: TutorialItemContent(
-          targetKey: reportButton,
+            targetKey: reportButton,
             title: "Signaler un danger",
-            content: "Pour signaler un danger, cliquez sur ce bouton. Par la suite, vous pourrez spécifier le danger rencontré afin de prévenir la commnauté de celui-ci."),
+            content:
+                "Pour signaler un danger, cliquez sur ce bouton. Par la suite, vous pourrez spécifier le danger rencontré afin de prévenir la commnauté de celui-ci."),
       ),
       TutorialItem(
         globalKey: reportModel,
         borderRadius: const Radius.circular(50),
         child: TutorialItemContent(
-          iscenter: false,
-          targetKey: reportModel,
+            iscenter: false,
+            targetKey: reportModel,
             title: "Connaissez les dangers sur votre route",
-            content: "En cliquant sur un pin, vous pourrez connaître le type de danger, la position ainsi que le moment où il a été déclaré. Vous pouvez également certifier celui-ci en cliquant sur l’icône like."),
+            content:
+                "En cliquant sur un pin, vous pourrez connaître le type de danger, la position ainsi que le moment où il a été déclaré. Vous pouvez également certifier celui-ci en cliquant sur l’icône like."),
       ),
       TutorialItem(
         globalKey: widget.navbarKey,
         child: TutorialItemContent(
-          targetKey: widget.navbarKey,
+            targetKey: widget.navbarKey,
             iscenter: true,
             title: "Numéros d’urgence",
-            content: "Découvrez la liste des numéros d’urgence et des lignes d’aides. Vous pouvez les appeler à tout moment en cliquant sur l’icône téléphone. Ces services d’urgence sont ouverts 7j/7 24h/24."),
+            content:
+                "Découvrez la liste des numéros d’urgence et des lignes d’aides. Vous pouvez les appeler à tout moment en cliquant sur l’icône téléphone. Ces services d’urgence sont ouverts 7j/7 24h/24."),
       ),
     });
   }
 
   void checkIfFirstRun() async {
-    await _getUserLocation().then((value) => initTutorial());
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
     if (isFirstRun) {
+      initTutorial();
       Future.delayed(const Duration(seconds: 1), () {
-        Tutorial.showTutorial(context, targets, onTutorialComplete: () {
-          BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
+        Tutorial.showTutorial(context, targets ,onTutorialComplete: () {
           prefs.setBool('isFirstRun', false);
           setState(() {
             markersList = [];
             tutorialDone = true;
           });
+          BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
         });
       });
     } else {
+      BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
       setState(() {
         tutorialDone = true;
       });
@@ -190,6 +195,7 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
+      checkIfFirstRun();
       updateLocationMarker(position);
     } catch (e) {
       if (kDebugMode) {
@@ -231,14 +237,14 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
         for (var cluster in clusters) {
           for (var signalementInCluster in cluster) {
             if (calculateDistance(
-                LatLng(
-                  signalement.coordinates.latitude,
-                  signalement.coordinates.longitude,
-                ),
-                LatLng(
-                  signalementInCluster.coordinates.latitude,
-                  signalementInCluster.coordinates.longitude,
-                )) <=
+                    LatLng(
+                      signalement.coordinates.latitude,
+                      signalement.coordinates.longitude,
+                    ),
+                    LatLng(
+                      signalementInCluster.coordinates.latitude,
+                      signalementInCluster.coordinates.longitude,
+                    )) <=
                 radius) {
               cluster.add(signalement);
               added = true;
@@ -268,8 +274,9 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
             point: LatLng(avgLatitude, avgLongitude),
             numberReports: cluster.length,
             imagePath: convertStringToReportingType(
-                cluster[0].selectedDangerItems.first)
-                .pin, ctx: context,
+                    cluster[0].selectedDangerItems.first)
+                .pin,
+            ctx: context,
           ));
         } else {
           markers.add(CustomMarker(
@@ -304,9 +311,11 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
     // Create some tweens. These serve to split up the transition from one location to another.
     // In our case, we want to split the transition be<tween> our current map center and the destination.
     final latTween = Tween<double>(
-        begin: mapController.camera.center.latitude, end: destLocation.latitude);
+        begin: mapController.camera.center.latitude,
+        end: destLocation.latitude);
     final lngTween = Tween<double>(
-        begin: mapController.camera.center.longitude, end: destLocation.longitude);
+        begin: mapController.camera.center.longitude,
+        end: destLocation.longitude);
     final zoomTween = Tween<double>(begin: mapController.zoom, end: destZoom);
 
     // Create a animation controller that has a duration and a TickerProvider.
@@ -315,7 +324,7 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
     // The animation determines what path the animation will take. You can try different Curves values, although I found
     // fastOutSlowIn to be my favorite.
     final Animation<double> animation =
-    CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
 
     controller.addListener(() {
       mapController.move(
@@ -358,7 +367,8 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
   Widget build(BuildContext context) {
     return BlocListener<SignalementBloc, SignalementState>(
       listener: (context, state) {
-        if (state is GetSignalementsSuccess || state is CreateSignalementSuccess) {
+        if ((state is GetSignalementsSuccess ||
+            state is CreateSignalementSuccess) & tutorialDone) {
           setState(() {
             signalements =
                 BlocProvider.of<SignalementBloc>(context).signalements;
@@ -398,7 +408,8 @@ class HomeContentState extends State<HomeContent> with TickerProviderStateMixin 
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
+                      urlTemplate:
+                          'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
                       subdomains: const ['a', 'b', 'c'],
                     ),
                     MarkerLayer(
