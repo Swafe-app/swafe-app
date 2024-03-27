@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share/share.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
@@ -9,6 +12,7 @@ import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/views/main/tabs_available/profil/confirm_delete_modal_view.dart';
 import 'package:swafe/views/main/tabs_available/profil/update_password/update_password_view.dart';
 import 'package:swafe/views/main/tabs_available/profil/user_info/user_info_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilContent extends StatelessWidget {
   const ProfilContent({super.key});
@@ -39,7 +43,7 @@ class ProfilContent extends StatelessWidget {
     String categoryName,
     List<String> items,
     List<IconData> icons,
-    List<Widget?>? navigation,
+    List<VoidCallback?>? navigation,
     List<bool>? disabled,
   ) {
     return Column(
@@ -89,11 +93,7 @@ class ProfilContent extends StatelessWidget {
                             // Vérifiez s'il y a une page de navigation associée
                             if (navigation != null &&
                                 navigation[index] != null) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => navigation[index]!,
-                                ),
-                              );
+                              navigation[index]!();
                             }
                           },
                   ),
@@ -136,15 +136,30 @@ class ProfilContent extends StatelessWidget {
                 Icons.notifications_active_outlined,
                 Icons.gavel_outlined,
               ], [
-                const UserProfileScreen(),
-                const UpdatePasswordView(),
+                () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const UserProfileScreen(),
+                    ),
+                  );
+                },
+                () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const UpdatePasswordView(),
+                    ),
+                  );
+                },
                 null,
-                null,
+                () async{
+                  String url = "https://www.privacypolicies.com/live/acd686f6-2e03-4928-b9e1-292e868a2713";
+                  await launch(url);
+                },
               ], [
                 false,
                 false,
                 true,
-                true
+                false
               ]),
               // Catégorie "Nous contacter"
               _buildCategory(context, 'Nous contacter', [
@@ -166,11 +181,30 @@ class ProfilContent extends StatelessWidget {
                 Icons.star_outline,
                 Icons.handshake_outlined,
               ], [
-                null,
-                null,
+                () {
+                Share.share(
+                  'Invitez vos amis à télécharger Swafe !${Platform.isAndroid ?  'https://play.google.com/store/apps/details?id=com.owl.swafe' : 'https://apps.apple.com/us/app/swafe/6476942292'}',
+                );
+                },
+                () { if(Platform.isAndroid) {
+                  // ignore: unnecessary_statements
+                  'https://play.google.com/store/apps/details?id=com.owl.swafe';
+                } else {
+                  // ignore: unnecessary_statements
+                  'https://apps.apple.com/us/app/swafe/6476942292';
+                }
+                },
+                () { if(Platform.isAndroid) {
+                  // ignore: unnecessary_statements
+                  'https://play.google.com/store/apps/details?id=com.owl.swafe';
+                } else {
+                  // ignore: unnecessary_statements
+                  'https://apps.apple.com/us/app/swafe/6476942292';
+                }
+                },
                 null,
               ], [
-                true,
+                false,
                 true,
                 true,
               ]),
