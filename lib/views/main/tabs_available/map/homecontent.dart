@@ -196,6 +196,9 @@ class HomeContentState extends State<HomeContent>
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
+      setState(() {
+        isPositionInitialized = true;
+      });
       checkIfFirstRun();
       updateLocationMarker(position);
     } catch (e) {
