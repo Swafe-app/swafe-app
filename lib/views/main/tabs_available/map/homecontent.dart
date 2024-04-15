@@ -446,7 +446,7 @@ class HomeContentState extends State<HomeContent>
           ),
           Positioned(
             bottom: 112,
-            left: 12,
+            right: 21,
             child: CustomIconButton(
               type: IconButtonType.square,
               size: IconButtonSize.L,
