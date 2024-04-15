@@ -40,7 +40,7 @@ class HomeContentState extends State<HomeContent>
     with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late Position position;
-  double zoom = 14;
+  double zoom = 18.2;
   bool isPositionInitialized = false;
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
