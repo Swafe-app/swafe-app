@@ -30,13 +30,6 @@ enum SignalementDangerItemsEnum {
   incendie, // 'Incendie'
   meteo, // 'Météo'
   travaux, // 'Travaux'
-  manqueAccessibilite, // 'Manque d\'accessibilité'
-  voiture, // 'Accident de voiture'
-  inondation, // 'Inondation'
-  trouSurLaChaussee, // 'Trou sur la chaussée'
-  obstacleSurLaChaussee, // 'Obstacle sur la chaussée'
-  personneIvre, // 'Personne ivre'
-  conduiteDangereuse, // 'Conduite dangereuse'
   feuDePietonDysfonctionnel, // 'Feu de piéton dysfonctionnel'
   mauvaisEclairage, // 'Mauvais éclairage'
 }
@@ -63,20 +56,6 @@ String signalementDangerItemEnumToString(SignalementDangerItemsEnum item) {
       return 'Météo';
     case SignalementDangerItemsEnum.travaux:
       return 'Travaux';
-    case SignalementDangerItemsEnum.manqueAccessibilite:
-      return 'Manque d\'accessibilité';
-    case SignalementDangerItemsEnum.voiture:
-      return 'Voiture';
-    case SignalementDangerItemsEnum.inondation:
-      return 'Inondation';
-    case SignalementDangerItemsEnum.trouSurLaChaussee:
-      return 'Trou sur la chaussée';
-    case SignalementDangerItemsEnum.obstacleSurLaChaussee:
-      return 'Obstacle sur la chaussée';
-    case SignalementDangerItemsEnum.personneIvre:
-      return 'Personne ivre';
-    case SignalementDangerItemsEnum.conduiteDangereuse:
-      return 'Conduite dangereuse';
     case SignalementDangerItemsEnum.feuDePietonDysfonctionnel:
       return 'Feu de piéton dysfonctionnel';
     case SignalementDangerItemsEnum.mauvaisEclairage:
@@ -104,20 +83,6 @@ SignalementDangerItemsEnum stringToSignalementDangerItemEnum(String item) {
       return SignalementDangerItemsEnum.meteo;
     case 'Travaux':
       return SignalementDangerItemsEnum.travaux;
-    case 'Manque d\'accessibilité':
-      return SignalementDangerItemsEnum.manqueAccessibilite;
-    case 'Voiture':
-      return SignalementDangerItemsEnum.voiture;
-    case 'Inondation':
-      return SignalementDangerItemsEnum.inondation;
-    case 'Trou sur la chaussée':
-      return SignalementDangerItemsEnum.trouSurLaChaussee;
-    case 'Obstacle sur la chaussée':
-      return SignalementDangerItemsEnum.obstacleSurLaChaussee;
-    case 'Personne ivre':
-      return SignalementDangerItemsEnum.personneIvre;
-    case 'Conduite dangereuse':
-      return SignalementDangerItemsEnum.conduiteDangereuse;
     case 'Feu de piéton dysfonctionnel':
       return SignalementDangerItemsEnum.feuDePietonDysfonctionnel;
     case 'Mauvais éclairage':

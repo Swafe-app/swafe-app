@@ -37,34 +37,6 @@ enum ReportingType {
       title: 'Travaux',
       pin: 'assets/images/travaux.png',
       threat: 'assets/images/lowDangerPin.svg'),
-  accessibilite(
-      title: 'Manque d\'accessibilité',
-      pin: 'assets/images/noImage.png',
-      threat: 'assets/images/lowDangerPin.svg'),
-  voiture(
-      title: 'Accident de voiture',
-      pin: 'assets/images/noImage.png',
-      threat: 'assets/images/lowDangerPin.svg'),
-  inondation(
-      title: 'Inondation',
-      pin: 'assets/images/noImage.png',
-      threat: 'assets/images/lowDangerPin.svg'),
-  chaussee(
-      title: 'Trou sur la chaussée',
-      pin: 'assets/images/noImage.png',
-      threat: 'assets/images/lowDangerPin.svg'),
-  obstacle(
-      title: 'Obstacle sur la chaussée',
-      pin: 'assets/images/noImage.png',
-      threat: 'assets/images/lowDangerPin.svg'),
-  ivresse(
-      title: 'Personne ivre',
-      pin: 'assets/images/noImage.png',
-      threat: 'assets/images/lowDangerPin.svg'),
-  conduite(
-      title: 'Conduite dangereuse',
-      pin: 'assets/images/noImage.png',
-      threat: 'assets/images/lowDangerPin.svg'),
   feuPieton(
       title: 'Feu de pieton dysfonctionnel',
       pin: 'assets/images/feuPieton.png',
@@ -111,20 +83,6 @@ ReportingType convertStringToReportingType(
        return ReportingType.meteo;
      case SignalementDangerItemsEnum.travaux:
        return ReportingType.travaux;
-     case SignalementDangerItemsEnum.manqueAccessibilite:
-       return ReportingType.accessibilite;
-     case SignalementDangerItemsEnum.voiture:
-       return ReportingType.voiture;
-     case SignalementDangerItemsEnum.inondation:
-       return ReportingType.inondation;
-     case SignalementDangerItemsEnum.trouSurLaChaussee:
-       return ReportingType.chaussee;
-     case SignalementDangerItemsEnum.obstacleSurLaChaussee:
-       return ReportingType.obstacle;
-     case SignalementDangerItemsEnum.personneIvre:
-       return ReportingType.ivresse;
-     case SignalementDangerItemsEnum.conduiteDangereuse:
-       return ReportingType.conduite;
      case SignalementDangerItemsEnum.feuDePietonDysfonctionnel:
        return ReportingType.feuPieton;
      case SignalementDangerItemsEnum.mauvaisEclairage:
