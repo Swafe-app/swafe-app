@@ -361,9 +361,9 @@ class HomeContentState extends State<HomeContent>
         });
         double avgLatitude = sumLatitude / signalements!.length;
         double avgLongitude = sumLongitude / signalements!.length;
-        _animatedMapMove(LatLng(avgLatitude, avgLongitude), 13);
+        _animatedMapMove(LatLng(avgLatitude, avgLongitude), mapController.camera.zoom);
       } else {
-        _animatedMapMove(const LatLng(48.866667, 2.333333), 13);
+        _animatedMapMove(const LatLng(48.866667, 2.333333), this.zoom);
       }
     });
   }
