@@ -76,20 +76,10 @@ class BottomSheetContentState extends State<BottomSheetContent>
         return SignalementDangerItemsEnum.meteo;
       case ReportingType.travaux:
         return SignalementDangerItemsEnum.travaux;
-      case ReportingType.inondation:
-        return SignalementDangerItemsEnum.inondation;
-      case ReportingType.obstacle:
-        return SignalementDangerItemsEnum.obstacleSurLaChaussee;
-      case ReportingType.accessibilite:
-        return SignalementDangerItemsEnum.manqueAccessibilite;
-      case ReportingType.voiture:
-        return SignalementDangerItemsEnum.voiture;
       case ReportingType.feuPieton:
         return SignalementDangerItemsEnum.feuDePietonDysfonctionnel;
       case ReportingType.eclairage:
         return SignalementDangerItemsEnum.mauvaisEclairage;
-      case ReportingType.chaussee:
-        return SignalementDangerItemsEnum.trouSurLaChaussee;
       default:
         return SignalementDangerItemsEnum.autre;
     }
@@ -156,12 +146,7 @@ class BottomSheetContentState extends State<BottomSheetContent>
     } else {
       items = [
         ReportingType.eclairage,
-        ReportingType.chaussee,
-        ReportingType.inondation,
         ReportingType.travaux,
-        ReportingType.obstacle,
-        ReportingType.accessibilite,
-        ReportingType.voiture,
         ReportingType.feuPieton,
       ];
     }
@@ -203,7 +188,16 @@ class BottomSheetContentState extends State<BottomSheetContent>
       listener: (context, state) {
         if (state is CreateSignalementSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height - 100,
+                right: 20,
+                left: 20,
+              ),
               content: CustomSnackbar(
                 label: 'Votre signalement a bien été envoyé',
               ),
@@ -256,11 +250,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
                       mapController: mapController,
                       options: MapOptions(
                         initialCenter: LatLng(
-                          userPosition.latitude - 0.0003,
+                          userPosition.latitude,
                           userPosition.longitude,
                         ),
                         minZoom: 15,
-                        initialZoom: 16,
+                        initialZoom: 18,
                         interactionOptions: const InteractionOptions(
                           flags: InteractiveFlag.all &
                               ~InteractiveFlag.rotate &
@@ -387,20 +381,20 @@ class BottomSheetContentState extends State<BottomSheetContent>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  GridView.count(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 32,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: _buildSelectableItems(
-                        selectedDangerItem, "Danger", handleDangerSelection),
-                  ),
-                  GridView.count(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 32,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: _buildSelectableItems(selectedAnomalyItem,
-                        "Anomalies", handleAnomalySelection),
-                  ),
+                    GridView.count(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 32,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      children: _buildSelectableItems(
+                          selectedDangerItem, "Danger", handleDangerSelection),
+                    ),
+                    GridView.count(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 32,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      children: _buildSelectableItems(selectedAnomalyItem,
+                          "Anomalies", handleAnomalySelection),
+                    ),
                 ],
               ),
             ),
