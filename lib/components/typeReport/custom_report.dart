@@ -28,40 +28,29 @@ class CustomReportState extends State<CustomReport> {
         widget.onPressed?.call();
       },
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 74,
-                height: 74,
-                decoration: ShapeDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(widget.reportingType.pin),
-                    fit: BoxFit.fill,
-                  ),
-                  shape: OvalBorder(
-                    side: BorderSide(
-                        width: 3,
-                        color: widget.isSelected
-                            ? MyColors.secondary40
-                            : MyColors.defaultWhite),
-                  ),
-                ),
+          Container(
+            width: 74,
+            height: 74,
+            decoration: ShapeDecoration(
+              image: DecorationImage(
+                image: AssetImage(widget.reportingType.pin),
+                fit: BoxFit.fill,
               ),
-            ],
-          ),
-          Expanded(
-            child: Text(
-              widget.reportingType.title,
-              textAlign: TextAlign.center,
-              style: TitleXSmallMedium,
+              shape: OvalBorder(
+                side: BorderSide(
+                    width: 3,
+                    color: widget.isSelected
+                        ? MyColors.secondary40
+                        : MyColors.defaultWhite),
+              ),
             ),
+          ),
+          Text(
+            widget.reportingType.title,
+            textAlign: TextAlign.center,
+            style: TitleXSmallMedium.copyWith(height: 1),
           ),
         ],
       ),

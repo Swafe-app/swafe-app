@@ -13,6 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
+import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_bloc.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_event.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_state.dart';
@@ -39,7 +40,7 @@ class HomeContentState extends State<HomeContent>
     with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late Position position;
-  double zoom = 17;
+  double zoom = 18;
   bool isPositionInitialized = false;
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
@@ -267,6 +268,7 @@ class HomeContentState extends State<HomeContent>
           ));
         } else {
           markers.add(CustomMarker(
+            onPressed: () => _showSignalementDetails(cluster[0]),
             point: center,
             reportingType: convertStringToReportingType(
                 cluster[0].selectedDangerItems.first),
@@ -352,6 +354,125 @@ class HomeContentState extends State<HomeContent>
     });
   }
 
+  void _showSignalementDetails(SignalementModel signalement) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      transitionDuration: const Duration(milliseconds: 500),
+      barrierLabel: MaterialLocalizations.of(context).dialogLabel,
+      barrierColor: Colors.black.withOpacity(0.5),
+      pageBuilder: (context, _, __) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 218,
+              padding: const EdgeInsets.fromLTRB(20, 32, 20, 16),
+              color: MyColors.neutral30,
+              child: Column(
+                children: [
+                  const SizedBox(height: 48),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          DefaultTextStyle(
+                            style: TitleXLargeMedium.copyWith(
+                                color: MyColors.neutral100,
+                                fontWeight: FontWeight.w700),
+                            child: Text(
+                              signalementDangerItemEnumToString(
+                                  signalement.selectedDangerItems.first),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          DefaultTextStyle(
+                            style: TitleXLargeMedium.copyWith(
+                                color: MyColors.neutral100,
+                                fontWeight: FontWeight.w700),
+                            child: Text(
+                              "${calculateDistance(userLocation, LatLng(
+                                    signalement.coordinates.latitude,
+                                    signalement.coordinates.longitude,
+                                  )).toStringAsFixed(2)} Km d'ici",
+                              style: TitleXXLargeMedium.copyWith(
+                                  color: MyColors.neutral100,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          DefaultTextStyle(
+                            style: TitleXLargeMedium.copyWith(
+                                color: MyColors.neutral100,
+                                fontWeight: FontWeight.w700),
+                            child: Text(
+                              "Il y a ${calculateCreatedTimeString(signalement.createdAt!)}",
+                              style: TitleSmallMedium.copyWith(
+                                  color: MyColors.neutral100),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Rounded Image of signalement 72px by 72px
+                      Container(
+                        width: 72,
+                        height: 72,
+                        decoration: ShapeDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              convertStringToReportingType(
+                                signalement.selectedDangerItems.first,
+                              ).pin,
+                            ),
+                          ),
+                          shape: const OvalBorder(
+                            side: BorderSide(
+                              width: 3,
+                              color: MyColors.defaultWhite,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ).drive(Tween<Offset>(
+            begin: const Offset(0, -1.0),
+            end: Offset.zero,
+          )),
+          child: child,
+        );
+      },
+    );
+  }
+
+  String calculateCreatedTimeString(DateTime dateTime) {
+    Duration difference = DateTime.now().difference(dateTime);
+    if (difference.inDays > 0) {
+      return "${difference.inDays} jours";
+    } else if (difference.inHours > 0) {
+      return "${difference.inHours} heures";
+    } else if (difference.inMinutes > 0) {
+      return "${difference.inMinutes} minutes";
+    } else {
+      return "${difference.inSeconds} secondes";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignalementBloc, SignalementState>(
@@ -392,6 +513,7 @@ class HomeContentState extends State<HomeContent>
                     initialCenter: const LatLng(48.866667, 2.333333),
                     initialZoom: zoom,
                     maxZoom: 20,
+                    minZoom: 10,
                     interactionOptions: const InteractionOptions(
                       flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                     ),
