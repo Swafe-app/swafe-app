@@ -351,7 +351,7 @@ class HomeContentState extends State<HomeContent>
   void _calculateCenter() {
     setState(() {
       if (userLocation.latitude != 0.0 && userLocation.longitude != 0.0) {
-        _animatedMapMove(userLocation, this.zoom);
+        _animatedMapMove(userLocation, zoom);
       } else if (signalements!.isNotEmpty) {
         double sumLatitude = 0;
         double sumLongitude = 0;
@@ -363,7 +363,7 @@ class HomeContentState extends State<HomeContent>
         double avgLongitude = sumLongitude / signalements!.length;
         _animatedMapMove(LatLng(avgLatitude, avgLongitude), mapController.camera.zoom);
       } else {
-        _animatedMapMove(const LatLng(48.866667, 2.333333), this.zoom);
+        _animatedMapMove(const LatLng(48.866667, 2.333333), zoom);
       }
     });
   }
