@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:app_tutorial/app_tutorial.dart';
 import 'package:flutter/foundation.dart';
@@ -40,7 +39,7 @@ class HomeContentState extends State<HomeContent>
     with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late Position position;
-  double zoom = 18.2;
+  double zoom = 17;
   bool isPositionInitialized = false;
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
@@ -232,51 +231,35 @@ class HomeContentState extends State<HomeContent>
   void _buildMarkers(double zoom) {
     setState(() {
       List<Marker> markers = [];
-      List<List<SignalementModel>> clusters = [];
-      double radius = 800 / (pow(2, zoom) / 2);
+      Map<String, List<SignalementModel>> grid = {};
+      double gridSize = 0.05 / zoom;
 
-      // Create clusters
       for (var signalement in signalements!) {
-        bool added = false;
-        for (var cluster in clusters) {
-          for (var signalementInCluster in cluster) {
-            if (calculateDistance(
-                    LatLng(
-                      signalement.coordinates.latitude,
-                      signalement.coordinates.longitude,
-                    ),
-                    LatLng(
-                      signalementInCluster.coordinates.latitude,
-                      signalementInCluster.coordinates.longitude,
-                    )) <=
-                radius) {
-              cluster.add(signalement);
-              added = true;
-              break;
-            }
-          }
-        }
-        if (!added) {
-          clusters.add([signalement]);
-        }
+        int gridX = (signalement.coordinates.longitude / gridSize).floor();
+        int gridY = (signalement.coordinates.latitude / gridSize).floor();
+        String gridKey = "$gridX,$gridY";
+
+        if (!grid.containsKey(gridKey)) grid[gridKey] = [];
+        grid[gridKey]!.add(signalement);
       }
 
-      // Create markers
-      for (var cluster in clusters) {
-        double sumLatitude = 0;
-        double sumLongitude = 0;
-        for (var signalement in cluster) {
-          sumLatitude += signalement.coordinates.latitude;
-          sumLongitude += signalement.coordinates.longitude;
-        }
-        double avgLatitude = sumLatitude / cluster.length;
-        double avgLongitude = sumLongitude / cluster.length;
+      for (var entry in grid.entries) {
+        var cluster = entry.value;
+        double sumLat = 0;
+        double sumLon = 0;
 
+        for (var signalement in cluster) {
+          sumLat += signalement.coordinates.latitude;
+          sumLon += signalement.coordinates.longitude;
+        }
+
+        LatLng center =
+            LatLng(sumLat / cluster.length, sumLon / cluster.length);
         if (cluster.length > 1) {
           markers.add(CustomGroupedMarker(
             reports: cluster,
             ctx: context,
-            point: LatLng(avgLatitude, avgLongitude),
+            point: center,
             numberReports: cluster.length,
             imagePath: convertStringToReportingType(
                     cluster[0].selectedDangerItems.first)
@@ -284,7 +267,7 @@ class HomeContentState extends State<HomeContent>
           ));
         } else {
           markers.add(CustomMarker(
-            point: LatLng(avgLatitude, avgLongitude),
+            point: center,
             reportingType: convertStringToReportingType(
                 cluster[0].selectedDangerItems.first),
           ));
@@ -361,7 +344,8 @@ class HomeContentState extends State<HomeContent>
         });
         double avgLatitude = sumLatitude / signalements!.length;
         double avgLongitude = sumLongitude / signalements!.length;
-        _animatedMapMove(LatLng(avgLatitude, avgLongitude), mapController.camera.zoom);
+        _animatedMapMove(
+            LatLng(avgLatitude, avgLongitude), mapController.camera.zoom);
       } else {
         _animatedMapMove(const LatLng(48.866667, 2.333333), zoom);
       }
