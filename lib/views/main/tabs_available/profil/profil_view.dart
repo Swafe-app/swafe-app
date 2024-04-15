@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:share/share.dart';
 import 'package:swafe/DS/colors.dart';
@@ -203,7 +204,7 @@ class ProfilContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              Image.asset('assets/images/Swafe_Logo.png',
+              SvgPicture.asset('assets/images/Swafe_Logo.svg',
                   width: 40, height: 40),
               const SizedBox(height: 8),
               Text(
