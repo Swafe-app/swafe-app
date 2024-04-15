@@ -12,15 +12,15 @@ import 'tabs_available/repertoire/repertoire.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return const CustomNavbar();
+    return CustomNavbar();
   }
 }
 
 class CustomNavbar extends StatefulWidget {
-  const CustomNavbar({super.key});
+  CustomNavbar({super.key});
+  final GlobalKey navbarKey = GlobalKey();
 
   @override
   State<CustomNavbar> createState() => _CustomNavbarState();
@@ -32,13 +32,13 @@ class _CustomNavbarState extends State<CustomNavbar> {
   Widget renderActiveIndexNavbar() {
     switch (activeNavIndex) {
       case 1:
-        return const HomeContent();
+        return HomeContent(navbarKey: widget.navbarKey );
       case 2:
         return const RepertoireContent();
       case 3:
         return const ProfilContent();
       default:
-        return const HomeContent();
+        return HomeContent(navbarKey: widget.navbarKey);
     }
   }
 
@@ -104,6 +104,7 @@ class _CustomNavbarState extends State<CustomNavbar> {
                 right: Spacing.medium,
                 bottom: Spacing.medium,
                 child: Container(
+                  key: widget.navbarKey,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 40.0,
                     vertical: 16.0,

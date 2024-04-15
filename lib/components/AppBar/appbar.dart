@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/IconButton/icon_button.dart';
 
@@ -30,7 +31,7 @@ class CustomAppBar extends StatelessWidget {
             icon: Icons.arrow_back_ios_new,
           ),
         if (showLogo)
-          Image.asset('assets/images/Swafe_Logo.png',
+          SvgPicture.asset('assets/images/Swafe_Logo.svg',
               width: 40, height: 40, fit: BoxFit.cover),
         if (title.isNotEmpty) Text(title, style: TitleLargeMedium),
         if ((showIconButton && (showLogo || title.isNotEmpty)))

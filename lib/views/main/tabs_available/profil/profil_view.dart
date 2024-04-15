@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:share/share.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
@@ -128,7 +130,6 @@ class ProfilContent extends StatelessWidget {
               _buildCategory(context, 'Paramètres', [
                 'Information personnelle',
                 'Mot de passe',
-                'Notifications',
                 'Mentions légales',
               ], [
                 Icons.person_outline,
@@ -150,63 +151,50 @@ class ProfilContent extends StatelessWidget {
                     ),
                   );
                 },
-                null,
-                () async{
-                  String url = "https://www.privacypolicies.com/live/acd686f6-2e03-4928-b9e1-292e868a2713";
-                  await launch(url);
+                () async {
+                  String url =
+                      "https://www.privacypolicies.com/live/acd686f6-2e03-4928-b9e1-292e868a2713";
+                  await launchUrl(url as Uri);
                 },
               ], [
                 false,
                 false,
-                true,
                 false
-              ]),
-              // Catégorie "Nous contacter"
-              _buildCategory(context, 'Nous contacter', [
-                'FAQ / Aide',
-              ], [
-                Icons.help_outline,
-              ], [
-                null,
-              ], [
-                true
               ]),
               // Catégorie "Soutenir l'app"
               _buildCategory(context, 'Soutenir l\'app', [
                 'Partager l\'application',
                 'Noter l\'application',
-                'Faire un don',
               ], [
                 Icons.ios_share_outlined,
                 Icons.star_outline,
-                Icons.handshake_outlined,
               ], [
                 () {
-                Share.share(
-                  'Invitez vos amis à télécharger Swafe !${Platform.isAndroid ?  'https://play.google.com/store/apps/details?id=com.owl.swafe' : 'https://apps.apple.com/us/app/swafe/6476942292'}',
-                );
+                  Share.share(
+                    'Invitez vos amis à télécharger Swafe !${Platform.isAndroid ? 'https://play.google.com/store/apps/details?id=com.owl.swafe' : 'https://apps.apple.com/us/app/swafe/6476942292'}',
+                  );
                 },
-                () { if(Platform.isAndroid) {
-                  // ignore: unnecessary_statements
-                  'https://play.google.com/store/apps/details?id=com.owl.swafe';
-                } else {
-                  // ignore: unnecessary_statements
-                  'https://apps.apple.com/us/app/swafe/6476942292';
-                }
+                () async {
+                  final InAppReview inAppReview = InAppReview.instance;
+
+                  if (await inAppReview.isAvailable()) {
+                    inAppReview.requestReview();
+                  } else {
+                    if (Platform.isAndroid) {
+                      await launchUrl(
+                        'https://play.google.com/store/apps/details?id=com.owl.swafe'
+                            as Uri,
+                      );
+                    } else {
+                      await launchUrl(
+                        'https://apps.apple.com/us/app/swafe/6476942292' as Uri,
+                      );
+                    }
+                  }
                 },
-                () { if(Platform.isAndroid) {
-                  // ignore: unnecessary_statements
-                  'https://play.google.com/store/apps/details?id=com.owl.swafe';
-                } else {
-                  // ignore: unnecessary_statements
-                  'https://apps.apple.com/us/app/swafe/6476942292';
-                }
-                },
-                null,
               ], [
                 false,
-                true,
-                true,
+                false,
               ]),
               const SizedBox(height: 24),
               SizedBox(
@@ -216,7 +204,7 @@ class ProfilContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              Image.asset('assets/images/Swafe_Logo.png',
+              SvgPicture.asset('assets/images/Swafe_Logo.svg',
                   width: 40, height: 40),
               const SizedBox(height: 8),
               Text(

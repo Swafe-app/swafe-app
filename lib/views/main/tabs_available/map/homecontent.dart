@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:app_tutorial/app_tutorial.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_bloc.dart';
@@ -22,29 +25,110 @@ import 'package:swafe/models/signalement/signalement_model.dart';
 import 'package:swafe/views/main/tabs_available/map/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../tutorial/tutorialItemcontent.dart';
+
 class HomeContent extends StatefulWidget {
-  const HomeContent({super.key});
+  final GlobalKey navbarKey;
+
+  const HomeContent({super.key, required this.navbarKey});
 
   @override
   HomeContentState createState() => HomeContentState();
 }
 
-class HomeContentState extends State<HomeContent> {
+class HomeContentState extends State<HomeContent>
+    with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late Position position;
-  double zoom = 9.2;
+  double zoom = 18.2;
   bool isPositionInitialized = false;
-
-  Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
   List<SignalementModel>? signalements;
+  bool tutorialDone = false;
+  final policeButton = GlobalKey(debugLabel: 'callPoliceButton');
+  final reportButton = GlobalKey(debugLabel: 'reportButton');
+  final reportModel = GlobalKey();
+  List<TutorialItem> targets = [];
 
   @override
   void initState() {
-    super.initState();
     _requestLocationPermission();
-    BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
+    super.initState();
+  }
+
+  void initTutorial() {
+    setState(() {
+      markersList = [
+        CustomMarker(
+          globalKey: reportModel,
+          point: LatLng(position.latitude - 0.001, position.longitude + 0.001),
+          reportingType: ReportingType.vol,
+        ),
+      ];
+    });
+    targets.addAll({
+      TutorialItem(
+        globalKey: policeButton,
+        borderRadius: const Radius.circular(50),
+        child: TutorialItemContent(
+            targetKey: policeButton,
+            title: "Appel d'urgence à la police",
+            content:
+                "En cas de dancer, chaque minute compte. Gagnez du temps, en cliquant sur ce bouton, vous pouvez facilement et rapidement appler les forces de l'ordre"),
+      ),
+      TutorialItem(
+        globalKey: reportButton,
+        borderRadius: const Radius.circular(50),
+        child: TutorialItemContent(
+            targetKey: reportButton,
+            title: "Signaler un danger",
+            content:
+                "Pour signaler un danger, cliquez sur ce bouton. Par la suite, vous pourrez spécifier le danger rencontré afin de prévenir la commnauté de celui-ci."),
+      ),
+      TutorialItem(
+        globalKey: reportModel,
+        borderRadius: const Radius.circular(50),
+        child: TutorialItemContent(
+            iscenter: false,
+            targetKey: reportModel,
+            title: "Connaissez les dangers sur votre route",
+            content:
+                "En cliquant sur un pin, vous pourrez connaître le type de danger, la position ainsi que le moment où il a été déclaré. Vous pouvez également certifier celui-ci en cliquant sur l’icône like."),
+      ),
+      TutorialItem(
+        globalKey: widget.navbarKey,
+        child: TutorialItemContent(
+            targetKey: widget.navbarKey,
+            iscenter: true,
+            title: "Numéros d’urgence",
+            content:
+                "Découvrez la liste des numéros d’urgence et des lignes d’aides. Vous pouvez les appeler à tout moment en cliquant sur l’icône téléphone. Ces services d’urgence sont ouverts 7j/7 24h/24."),
+      ),
+    });
+  }
+
+  void checkIfFirstRun() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+    if (isFirstRun) {
+      initTutorial();
+      Future.delayed(const Duration(seconds: 1), () {
+        Tutorial.showTutorial(context, targets, onTutorialComplete: () {
+          prefs.setBool('isFirstRun', false);
+          setState(() {
+            markersList = [];
+            tutorialDone = true;
+          });
+          BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
+        });
+      });
+    } else {
+      BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
+      setState(() {
+        tutorialDone = true;
+      });
+    }
   }
 
   double calculateDistance(LatLng point1, LatLng point2) {
@@ -107,7 +191,7 @@ class HomeContentState extends State<HomeContent> {
     }
   }
 
-  void _getUserLocation() async {
+  Future<void> _getUserLocation() async {
     try {
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
@@ -115,6 +199,7 @@ class HomeContentState extends State<HomeContent> {
       setState(() {
         isPositionInitialized = true;
       });
+      checkIfFirstRun();
       updateLocationMarker(position);
     } catch (e) {
       if (kDebugMode) {
@@ -156,14 +241,14 @@ class HomeContentState extends State<HomeContent> {
         for (var cluster in clusters) {
           for (var signalementInCluster in cluster) {
             if (calculateDistance(
-                LatLng(
-                  signalement.coordinates.latitude,
-                  signalement.coordinates.longitude,
-                ),
-                LatLng(
-                  signalementInCluster.coordinates.latitude,
-                  signalementInCluster.coordinates.longitude,
-                )) <=
+                    LatLng(
+                      signalement.coordinates.latitude,
+                      signalement.coordinates.longitude,
+                    ),
+                    LatLng(
+                      signalementInCluster.coordinates.latitude,
+                      signalementInCluster.coordinates.longitude,
+                    )) <=
                 radius) {
               cluster.add(signalement);
               added = true;
@@ -194,7 +279,7 @@ class HomeContentState extends State<HomeContent> {
             point: LatLng(avgLatitude, avgLongitude),
             numberReports: cluster.length,
             imagePath: convertStringToReportingType(
-                cluster[0].selectedDangerItems.first)
+                    cluster[0].selectedDangerItems.first)
                 .pin,
           ));
         } else {
@@ -226,10 +311,47 @@ class HomeContentState extends State<HomeContent> {
     });
   }
 
+  void _animatedMapMove(LatLng destLocation, double destZoom) {
+    // Create some tweens. These serve to split up the transition from one location to another.
+    // In our case, we want to split the transition be<tween> our current map center and the destination.
+    final latTween = Tween<double>(
+        begin: mapController.camera.center.latitude,
+        end: destLocation.latitude);
+    final lngTween = Tween<double>(
+        begin: mapController.camera.center.longitude,
+        end: destLocation.longitude);
+    final zoomTween =
+        Tween<double>(begin: mapController.camera.zoom, end: destZoom);
+
+    // Create a animation controller that has a duration and a TickerProvider.
+    final controller = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
+    // The animation determines what path the animation will take. You can try different Curves values, although I found
+    // fastOutSlowIn to be my favorite.
+    final Animation<double> animation =
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+
+    controller.addListener(() {
+      mapController.move(
+          LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
+          zoomTween.evaluate(animation));
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        controller.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
+
   void _calculateCenter() {
     setState(() {
       if (userLocation.latitude != 0.0 && userLocation.longitude != 0.0) {
-        mapController.move(userLocation, zoom);
+        _animatedMapMove(userLocation, this.zoom);
       } else if (signalements!.isNotEmpty) {
         double sumLatitude = 0;
         double sumLongitude = 0;
@@ -239,9 +361,9 @@ class HomeContentState extends State<HomeContent> {
         });
         double avgLatitude = sumLatitude / signalements!.length;
         double avgLongitude = sumLongitude / signalements!.length;
-        mapController.move(LatLng(avgLatitude, avgLongitude), mapController.camera.zoom);
+        _animatedMapMove(LatLng(avgLatitude, avgLongitude), mapController.camera.zoom);
       } else {
-        mapController.move(const LatLng(48.866667, 2.333333), zoom);
+        _animatedMapMove(const LatLng(48.866667, 2.333333), this.zoom);
       }
     });
   }
@@ -250,7 +372,9 @@ class HomeContentState extends State<HomeContent> {
   Widget build(BuildContext context) {
     return BlocListener<SignalementBloc, SignalementState>(
       listener: (context, state) {
-        if (state is GetSignalementsSuccess || state is CreateSignalementSuccess) {
+        if ((state is GetSignalementsSuccess ||
+                state is CreateSignalementSuccess) &
+            tutorialDone) {
           setState(() {
             signalements =
                 BlocProvider.of<SignalementBloc>(context).signalements;
@@ -290,7 +414,8 @@ class HomeContentState extends State<HomeContent> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: 'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
+                      urlTemplate:
+                          'https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}@2x.png?key=${dotenv.env['MAPTILER_API_KEY']}',
                       subdomains: const ['a', 'b', 'c'],
                     ),
                     MarkerLayer(
@@ -304,17 +429,19 @@ class HomeContentState extends State<HomeContent> {
           Positioned(
             bottom: 272,
             right: 12,
-            child: isPositionInitialized ?
-            CustomIconButton(
-              onPressed: () => _showBottomSheet(context),
-              type: IconButtonType.image,
-              image: 'assets/images/report_logo.png',
-            ) : const CircularProgressIndicator(),
+            child: isPositionInitialized
+                ? CustomIconButton(
+                    onPressed: () => _showBottomSheet(context),
+                    type: IconButtonType.image,
+                    image: 'assets/images/report_logo.png',
+                  )
+                : const CircularProgressIndicator(),
           ),
           Positioned(
             bottom: 196,
             right: 12,
             child: CustomIconButton(
+              key: policeButton,
               onPressed: () => _callPolice(),
               type: IconButtonType.image,
               image: 'assets/images/call_logo.png',
@@ -322,7 +449,7 @@ class HomeContentState extends State<HomeContent> {
           ),
           Positioned(
             bottom: 112,
-            left: 12,
+            right: 21,
             child: CustomIconButton(
               type: IconButtonType.square,
               size: IconButtonSize.L,

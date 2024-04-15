@@ -32,8 +32,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool isSelectionMade = false;
-  final List<ReportingType> selectedDangerItems = [];
-  final List<ReportingType> selectedAnomaliesItems = [];
+  ReportingType? selectedDangerItem;
+  ReportingType? selectedAnomalyItem;
   late LatLng userPosition;
   LatLng basePosition = const LatLng(0, 0);
   String pin = 'assets/images/pinDown.svg';
@@ -99,11 +99,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
     if (isSelectionMade) {
       final List<SignalementDangerItemsEnum> selectedItems = [];
 
-      for (var item in selectedDangerItems) {
-        selectedItems.add(reportingTypeToEnum(item));
+      if (selectedDangerItem != null) {
+        selectedItems.add(reportingTypeToEnum(selectedDangerItem!));
       }
-      for (var item in selectedAnomaliesItems) {
-        selectedItems.add(reportingTypeToEnum(item));
+      if (selectedAnomalyItem != null) {
+        selectedItems.add(reportingTypeToEnum(selectedAnomalyItem!));
       }
 
       BlocProvider.of<SignalementBloc>(context).add(
@@ -139,8 +139,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
   }
 
   //Création des signalements sélectionnables
-  List<Widget> _buildSelectableItems(
-      List<ReportingType> selectedItems, String tabName) {
+  List<Widget> _buildSelectableItems(ReportingType? selectedItem,
+      String tabName, Function(ReportingType) onSelect) {
     late List<ReportingType> items;
     if (tabName == "Danger") {
       items = [
@@ -167,19 +167,28 @@ class BottomSheetContentState extends State<BottomSheetContent>
     }
 
     return items.map((item) {
-      final isSelected = selectedItems.contains(item);
       return CustomReport(
-          reportingType: item,
-          onPressed: () => setState(() {
-                if (!isSelected) {
-                  selectedItems.add(item);
-                } else {
-                  selectedItems.remove(item);
-                }
-                isSelectionMade = selectedDangerItems.isNotEmpty ||
-                    selectedAnomaliesItems.isNotEmpty;
-              }));
+        reportingType: item,
+        isSelected: selectedItem == item,
+        onPressed: () => setState(() {
+          onSelect(item);
+        }),
+      );
     }).toList();
+  }
+
+  void handleDangerSelection(ReportingType type) {
+    setState(() {
+      selectedDangerItem = type;
+      isSelectionMade = true;
+    });
+  }
+
+  void handleAnomalySelection(ReportingType type) {
+    setState(() {
+      selectedAnomalyItem = type;
+      isSelectionMade = true;
+    });
   }
 
   @override
@@ -360,8 +369,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
               unselectedLabelColor: MyColors.neutral40,
               labelStyle: BodyLargeRegular,
               onTap: (value) => setState(() {
-                selectedAnomaliesItems.clear();
-                selectedDangerItems.clear();
+                selectedAnomalyItem = null;
+                selectedDangerItem = null;
                 isSelectionMade = false;
               }),
               tabs: const [
@@ -382,15 +391,15 @@ class BottomSheetContentState extends State<BottomSheetContent>
                     crossAxisCount: 3,
                     mainAxisSpacing: 32,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children:
-                        _buildSelectableItems(selectedDangerItems, "Danger"),
+                    children: _buildSelectableItems(
+                        selectedDangerItem, "Danger", handleDangerSelection),
                   ),
                   GridView.count(
                     crossAxisCount: 3,
                     mainAxisSpacing: 32,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: _buildSelectableItems(
-                        selectedAnomaliesItems, "Anomalies"),
+                    children: _buildSelectableItems(selectedAnomalyItem,
+                        "Anomalies", handleAnomalySelection),
                   ),
                 ],
               ),
