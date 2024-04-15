@@ -144,7 +144,6 @@ class BottomSheetContentState extends State<BottomSheetContent>
     late List<ReportingType> items;
     if (tabName == "Danger") {
       items = [
-        ReportingType.autre,
         ReportingType.vol,
         ReportingType.harcelement,
         ReportingType.agressionSexuelle,
@@ -156,7 +155,6 @@ class BottomSheetContentState extends State<BottomSheetContent>
       ];
     } else {
       items = [
-        ReportingType.autre,
         ReportingType.eclairage,
         ReportingType.chaussee,
         ReportingType.inondation,

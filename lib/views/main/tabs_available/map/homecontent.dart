@@ -229,7 +229,7 @@ class HomeContentState extends State<HomeContent> {
   void _calculateCenter() {
     setState(() {
       if (userLocation.latitude != 0.0 && userLocation.longitude != 0.0) {
-        mapController.move(userLocation, 13);
+        mapController.move(userLocation, zoom);
       } else if (signalements!.isNotEmpty) {
         double sumLatitude = 0;
         double sumLongitude = 0;
@@ -239,9 +239,9 @@ class HomeContentState extends State<HomeContent> {
         });
         double avgLatitude = sumLatitude / signalements!.length;
         double avgLongitude = sumLongitude / signalements!.length;
-        mapController.move(LatLng(avgLatitude, avgLongitude), 13);
+        mapController.move(LatLng(avgLatitude, avgLongitude), mapController.camera.zoom);
       } else {
-        mapController.move(const LatLng(48.866667, 2.333333), 13);
+        mapController.move(const LatLng(48.866667, 2.333333), zoom);
       }
     });
   }
