@@ -41,7 +41,7 @@ class HomeView extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 60, 20, 80),
             child: Column(
               children: [
-                const CustomAppBar(showIconButton: false),
+                const CustomAppBar(showIconButton: false, whiteIcon: true),
                 const SizedBox(height: 72),
                 Text(
                   "Il n’a jamais été aussi\nsimple d’aller d'un point A\nà un point B en toute\nsécurité",
