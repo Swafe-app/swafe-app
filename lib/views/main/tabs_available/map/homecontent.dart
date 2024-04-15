@@ -114,7 +114,7 @@ class HomeContentState extends State<HomeContent>
     if (isFirstRun) {
       initTutorial();
       Future.delayed(const Duration(seconds: 1), () {
-        Tutorial.showTutorial(context, targets ,onTutorialComplete: () {
+        Tutorial.showTutorial(context, targets, onTutorialComplete: () {
           prefs.setBool('isFirstRun', false);
           setState(() {
             markersList = [];
@@ -320,7 +320,8 @@ class HomeContentState extends State<HomeContent>
     final lngTween = Tween<double>(
         begin: mapController.camera.center.longitude,
         end: destLocation.longitude);
-    final zoomTween = Tween<double>(begin: mapController.zoom, end: destZoom);
+    final zoomTween =
+        Tween<double>(begin: mapController.camera.zoom, end: destZoom);
 
     // Create a animation controller that has a duration and a TickerProvider.
     final controller = AnimationController(
@@ -372,7 +373,8 @@ class HomeContentState extends State<HomeContent>
     return BlocListener<SignalementBloc, SignalementState>(
       listener: (context, state) {
         if ((state is GetSignalementsSuccess ||
-            state is CreateSignalementSuccess) & tutorialDone) {
+                state is CreateSignalementSuccess) &
+            tutorialDone) {
           setState(() {
             signalements =
                 BlocProvider.of<SignalementBloc>(context).signalements;
@@ -427,12 +429,13 @@ class HomeContentState extends State<HomeContent>
           Positioned(
             bottom: 272,
             right: 12,
-            child: isPositionInitialized ?
-            CustomIconButton(
-              onPressed: () => _showBottomSheet(context),
-              type: IconButtonType.image,
-              image: 'assets/images/report_logo.png',
-            ) : const CircularProgressIndicator(),
+            child: isPositionInitialized
+                ? CustomIconButton(
+                    onPressed: () => _showBottomSheet(context),
+                    type: IconButtonType.image,
+                    image: 'assets/images/report_logo.png',
+                  )
+                : const CircularProgressIndicator(),
           ),
           Positioned(
             bottom: 196,

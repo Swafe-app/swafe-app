@@ -154,7 +154,7 @@ class ProfilContent extends StatelessWidget {
                 () async {
                   String url =
                       "https://www.privacypolicies.com/live/acd686f6-2e03-4928-b9e1-292e868a2713";
-                  await launch(url);
+                  await launchUrl(url as Uri);
                 },
               ], [
                 false,
