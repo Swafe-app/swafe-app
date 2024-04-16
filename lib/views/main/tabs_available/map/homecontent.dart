@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:app_tutorial/app_tutorial.dart';
 import 'package:flutter/foundation.dart';
@@ -26,7 +27,7 @@ import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/models/signalement/signalement_model.dart';
 import 'package:swafe/models/user/user_model.dart';
 import 'package:swafe/views/main/tabs_available/map/bottom_sheet_content.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../tutorial/tutorialItemcontent.dart';
 
@@ -78,7 +79,7 @@ class HomeContentState extends State<HomeContent>
     _requestLocationPermission();
     timer = Timer.periodic(const Duration(seconds: 3), (Timer t) {
       setState(() {
-        userMarker = _buildUserMarker();
+        userMarker = _buildUserMarker(userLocation);
       });
     });
     user = context.read<AuthBloc>().user!;
@@ -166,7 +167,10 @@ class HomeContentState extends State<HomeContent>
   }
 
   double calculateDistance(LatLng point1, LatLng point2) {
-    return const Distance().as(LengthUnit.Kilometer, point1, point2);
+    const distance = Distance();
+    double meters = distance.as(LengthUnit.Meter, point1, point2);
+    double kilometers = meters / 1000;
+    return kilometers;
   }
 
   void updateLocationMarker(Position position) {
@@ -175,6 +179,8 @@ class HomeContentState extends State<HomeContent>
 
     setState(() {
       userLocation = LatLng(position.latitude, position.longitude);
+      userMarker =
+          _buildUserMarker(LatLng(position.latitude, position.longitude));
     });
 
     _calculateCenter();
@@ -210,8 +216,8 @@ class HomeContentState extends State<HomeContent>
     }
     String cleanedPhoneNumber = "17".replaceAll(RegExp(r'\D'), '');
     String url = "tel:$cleanedPhoneNumber";
-    if (await launchUrl(url as Uri)) {
-      await launchUrl(url as Uri);
+    if (await launchUrlString(url)) {
+      await launchUrlString(url);
     } else {
       throw 'Could not launch $url';
     }
@@ -259,7 +265,7 @@ class HomeContentState extends State<HomeContent>
     setState(() {
       List<Marker> markers = [];
       Map<String, List<SignalementModel>> grid = {};
-      double gridSize = 0.05 / zoom;
+      double gridSize = 0.0002 * pow(2, 20 - zoom);
 
       for (var signalement in signalements!) {
         int gridX = (signalement.coordinates.longitude / gridSize).floor();
@@ -306,7 +312,7 @@ class HomeContentState extends State<HomeContent>
     });
   }
 
-  Marker _buildUserMarker() {
+  Marker _buildUserMarker(LatLng userLocation) {
     return Marker(
       width: 37.7,
       height: 37.7,

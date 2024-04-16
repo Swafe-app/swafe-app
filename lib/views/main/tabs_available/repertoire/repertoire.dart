@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:swafe/DS/colors.dart';
-import 'package:swafe/DS/spacing.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/TextField/textfield.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import '../../../../components/Repertory/repertory.dart';
 import '../../../../models/repertory_category.dart';
 import '../../../../models/repertory_data.dart';
@@ -134,7 +132,8 @@ class RepertoireContentState extends State<RepertoireContent> {
           .map((category) => RepertoireCategory(
                 category.name,
                 category.cards
-                    .where((card) => card.name.toLowerCase().contains(query.toLowerCase()))
+                    .where((card) =>
+                        card.name.toLowerCase().contains(query.toLowerCase()))
                     .toList(),
               ))
           .where((category) => category.cards.isNotEmpty)
@@ -143,26 +142,16 @@ class RepertoireContentState extends State<RepertoireContent> {
   }
 
   void callNumber(String phoneNumber) async {
-      await requestPhonePermission();
-      String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
-      String url = "tel:$cleanedPhoneNumber";
-      if (await launch(url)) {
-        await launch(url);
-      } else {
-        throw 'Could not launch $url';
-    }
-  }
-
-  Future<void> requestPhonePermission() async {
     PermissionStatus status = await Permission.phone.status;
-
     if (!status.isGranted) {
-      PermissionStatus newStatus = await Permission.phone.request();
-      if (!newStatus.isGranted) {
-        if (kDebugMode) {
-          print('Phone permission was denied');
-        }
-      }
+      await Permission.phone.request();
+    }
+    String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
+    String url = "tel:$cleanedPhoneNumber";
+    if (await launchUrlString(url)) {
+      await launchUrlString(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
