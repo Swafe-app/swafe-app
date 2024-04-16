@@ -134,7 +134,6 @@ class ProfilContent extends StatelessWidget {
               ], [
                 Icons.person_outline,
                 Icons.lock_outline,
-                Icons.notifications_active_outlined,
                 Icons.gavel_outlined,
               ], [
                 () {
