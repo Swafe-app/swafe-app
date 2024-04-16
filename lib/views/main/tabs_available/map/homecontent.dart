@@ -49,7 +49,8 @@ class HomeContentState extends State<HomeContent>
 
   Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
-  Marker userMarker= Marker(width: 37.7,
+  Marker userMarker = Marker(
+    width: 37.7,
     height: 37.7,
     point: const LatLng(0, 0),
     child: SizedBox(
@@ -95,7 +96,8 @@ class HomeContentState extends State<HomeContent>
       markersList = [
         CustomMarker(
           globalKey: reportModel,
-          point: LatLng(position.latitude - 0.0001, position.longitude + 0.0001),
+          point:
+              LatLng(position.latitude - 0.0001, position.longitude + 0.0001),
           reportingType: ReportingType.vol,
         ),
       ];
@@ -150,7 +152,6 @@ class HomeContentState extends State<HomeContent>
         Tutorial.showTutorial(context, targets, onTutorialComplete: () {
           prefs.setBool('isFirstRun', false);
           setState(() {
-            markersList = [];
             tutorialDone = true;
           });
           BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
@@ -203,20 +204,16 @@ class HomeContentState extends State<HomeContent>
   }
 
   void _callPolice() async {
-    await requestPhonePermission();
-  String cleanedPhoneNumber = "17".replaceAll(RegExp(r'\D'), '');
-  String url = "tel:$cleanedPhoneNumber";
-    if (await launch(url)) {
-      await launch(url);
+    PermissionStatus status = await Permission.phone.status;
+    if (!status.isGranted) {
+      await Permission.phone.request();
+    }
+    String cleanedPhoneNumber = "17".replaceAll(RegExp(r'\D'), '');
+    String url = "tel:$cleanedPhoneNumber";
+    if (await launchUrl(url as Uri)) {
+      await launchUrl(url as Uri);
     } else {
       throw 'Could not launch $url';
-    }
-  }
-  Future<void> requestPhonePermission() async {
-    PermissionStatus status = await Permission.phone.status;
-
-    if (!status.isGranted) {
-      PermissionStatus newStatus = await Permission.phone.request();
     }
   }
 
@@ -310,21 +307,20 @@ class HomeContentState extends State<HomeContent>
   }
 
   Marker _buildUserMarker() {
-    return
-      Marker(
-        width: 37.7,
+    return Marker(
+      width: 37.7,
+      height: 37.7,
+      point: userLocation,
+      child: SizedBox(
         height: 37.7,
-        point: userLocation,
-        child: SizedBox(
-          height: 37.7,
+        width: 37.7,
+        child: SvgPicture.asset(
+          'assets/images/userMarker.svg',
           width: 37.7,
-          child: SvgPicture.asset(
-            'assets/images/userMarker.svg',
-            width: 37.7,
-            height: 37.7,
-          ),
+          height: 37.7,
         ),
-      );
+      ),
+    );
   }
 
   void _animatedMapMove(LatLng destLocation, double destZoom) {
@@ -397,8 +393,17 @@ class HomeContentState extends State<HomeContent>
           listener: (context, state) {
             if (state is DeleteSignalementSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: CustomSnackbar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height - 160,
+                    right: 20,
+                    left: 20,
+                  ),
+                  content: const CustomSnackbar(
                     label: 'Votre signalement a bien été supprimé.',
                   ),
                 ),
@@ -409,6 +414,15 @@ class HomeContentState extends State<HomeContent>
             if (state is CreateSignalementError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height - 160,
+                    right: 20,
+                    left: 20,
+                  ),
                   content: CustomSnackbar(
                     isError: true,
                     label: state.message,
@@ -419,8 +433,17 @@ class HomeContentState extends State<HomeContent>
             if (state is UpVoteSignalementSuccess ||
                 state is DownVoteSignalementSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: CustomSnackbar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height - 160,
+                    right: 20,
+                    left: 20,
+                  ),
+                  content: const CustomSnackbar(
                     label: 'Votre vote a bien été pris en compte.',
                   ),
                 ),
@@ -431,6 +454,15 @@ class HomeContentState extends State<HomeContent>
             if (state is UpVoteSignalementError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height - 160,
+                    right: 20,
+                    left: 20,
+                  ),
                   content: CustomSnackbar(
                     isError: true,
                     label: state.message,
@@ -441,6 +473,15 @@ class HomeContentState extends State<HomeContent>
             if (state is DownVoteSignalementError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height - 160,
+                    right: 20,
+                    left: 20,
+                  ),
                   content: CustomSnackbar(
                     isError: true,
                     label: state.message,
@@ -688,7 +729,7 @@ class HomeContentState extends State<HomeContent>
                 borderRadius: BorderRadius.circular(8),
               ),
               margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height - 100,
+                bottom: MediaQuery.of(context).size.height - 160,
                 right: 20,
                 left: 20,
               ),
@@ -728,7 +769,7 @@ class HomeContentState extends State<HomeContent>
                       subdomains: const ['a', 'b', 'c'],
                     ),
                     MarkerLayer(
-                      markers: markersList,
+                      markers: [userMarker] + markersList,
                     ),
                   ],
                 ),

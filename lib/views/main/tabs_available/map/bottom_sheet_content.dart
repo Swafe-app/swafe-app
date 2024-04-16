@@ -194,11 +194,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
                 borderRadius: BorderRadius.circular(8),
               ),
               margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height - 100,
+                bottom: MediaQuery.of(context).size.height - 160,
                 right: 20,
                 left: 20,
               ),
-              content: CustomSnackbar(
+              content: const CustomSnackbar(
                 label: 'Votre signalement a bien été envoyé',
               ),
             ),
