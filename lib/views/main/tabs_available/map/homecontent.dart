@@ -45,7 +45,23 @@ class HomeContentState extends State<HomeContent>
   late Position position;
   double zoom = 18;
   bool isPositionInitialized = false;
+  Timer? timer;
+
+  Map<String, SignalementModel> signalementMap = {};
   List<Marker> markersList = [];
+  Marker userMarker= Marker(width: 37.7,
+    height: 37.7,
+    point: const LatLng(0, 0),
+    child: SizedBox(
+      height: 37.7,
+      width: 37.7,
+      child: SvgPicture.asset(
+        'assets/images/userMarker.svg',
+        width: 37.7,
+        height: 37.7,
+      ),
+    ),
+  );
   LatLng userLocation = const LatLng(0, 0);
   List<SignalementModel>? signalements;
   bool tutorialDone = false;
@@ -57,9 +73,21 @@ class HomeContentState extends State<HomeContent>
 
   @override
   void initState() {
-    _requestLocationPermission();
     super.initState();
+    _requestLocationPermission();
+    timer = Timer.periodic(const Duration(seconds: 3), (Timer t) {
+      setState(() {
+        userMarker = _buildUserMarker();
+      });
+    });
     user = context.read<AuthBloc>().user!;
+    BlocProvider.of<SignalementBloc>(context).add(GetSignalementsEvent());
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   void initTutorial() {
@@ -67,7 +95,7 @@ class HomeContentState extends State<HomeContent>
       markersList = [
         CustomMarker(
           globalKey: reportModel,
-          point: LatLng(position.latitude - 0.001, position.longitude + 0.001),
+          point: LatLng(position.latitude - 0.0001, position.longitude + 0.0001),
           reportingType: ReportingType.vol,
         ),
       ];
@@ -175,24 +203,20 @@ class HomeContentState extends State<HomeContent>
   }
 
   void _callPolice() async {
-    Uri url = Uri.parse("tel:17");
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
+    await requestPhonePermission();
+  String cleanedPhoneNumber = "17".replaceAll(RegExp(r'\D'), '');
+  String url = "tel:$cleanedPhoneNumber";
+    if (await launch(url)) {
+      await launch(url);
     } else {
       throw 'Could not launch $url';
     }
   }
-
   Future<void> requestPhonePermission() async {
     PermissionStatus status = await Permission.phone.status;
 
     if (!status.isGranted) {
       PermissionStatus newStatus = await Permission.phone.request();
-      if (!newStatus.isGranted) {
-        if (kDebugMode) {
-          print('Phone permission was denied');
-        }
-      }
     }
   }
 
@@ -281,25 +305,26 @@ class HomeContentState extends State<HomeContent>
           ));
         }
       }
+      markersList = markers;
+    });
+  }
 
-      markers.add(
-        Marker(
-          width: 37.7,
+  Marker _buildUserMarker() {
+    return
+      Marker(
+        width: 37.7,
+        height: 37.7,
+        point: userLocation,
+        child: SizedBox(
           height: 37.7,
-          point: userLocation,
-          child: SizedBox(
-            height: 37.7,
+          width: 37.7,
+          child: SvgPicture.asset(
+            'assets/images/userMarker.svg',
             width: 37.7,
-            child: SvgPicture.asset(
-              'assets/images/userMarker.svg',
-              width: 37.7,
-              height: 37.7,
-            ),
+            height: 37.7,
           ),
         ),
       );
-      markersList = markers;
-    });
   }
 
   void _animatedMapMove(LatLng destLocation, double destZoom) {
@@ -658,6 +683,15 @@ class HomeContentState extends State<HomeContent>
         if (state is GetSignalementsError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height - 100,
+                right: 20,
+                left: 20,
+              ),
               content: CustomSnackbar(
                 isError: true,
                 label: state.message,
@@ -706,6 +740,7 @@ class HomeContentState extends State<HomeContent>
             right: 12,
             child: isPositionInitialized
                 ? CustomIconButton(
+                    key: reportButton,
                     onPressed: () => _showBottomSheet(context),
                     type: IconButtonType.image,
                     image: 'assets/images/report_logo.png',

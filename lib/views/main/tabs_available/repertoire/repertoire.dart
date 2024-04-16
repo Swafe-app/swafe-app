@@ -143,12 +143,13 @@ class RepertoireContentState extends State<RepertoireContent> {
   }
 
   void callNumber(String phoneNumber) async {
-    await requestPhonePermission();
-    Uri url = Uri.parse('tel:$phoneNumber');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      throw 'Could not launch $url';
+      await requestPhonePermission();
+      String cleanedPhoneNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
+      String url = "tel:$cleanedPhoneNumber";
+      if (await launch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
     }
   }
 

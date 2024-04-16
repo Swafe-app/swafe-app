@@ -63,7 +63,7 @@ class TutorialItemContent extends StatelessWidget {
           Positioned(
               top: position.dy -
                   renderBox.size.height +
-                  MediaQuery.of(context).size.height * 0.04,
+                  MediaQuery.of(context).size.height * 0.03,
               right: 25,
               child: SizedBox(
                 child: SvgPicture.asset(
