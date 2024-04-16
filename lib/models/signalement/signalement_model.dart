@@ -134,6 +134,9 @@ class SignalementModel {
   final List<SignalementDangerItemsEnum> selectedDangerItems;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  int upVote;
+  int downVote;
+  final List<String> userVotedList;
 
   SignalementModel({
     required this.id,
@@ -142,6 +145,9 @@ class SignalementModel {
     required this.selectedDangerItems,
     this.createdAt,
     this.updatedAt,
+    required this.upVote,
+    required this.downVote,
+    required this.userVotedList,
   });
 
   factory SignalementModel.fromJson(Map<String, dynamic> json) {
@@ -159,6 +165,9 @@ class SignalementModel {
           json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      upVote: json['upVote'],
+      downVote: json['downVote'],
+      userVotedList: List<String>.from(json['userVotedList']),
     );
   }
 
@@ -175,6 +184,8 @@ class SignalementModel {
           .toList(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'upVote': upVote,
+      'downVote': downVote,
     };
   }
 }

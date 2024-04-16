@@ -17,6 +17,7 @@ class MyColors {
   static const Color pinOrange2 = Color(0xFFF19C80);
   static const Color pinYellow1 = Color(0xFFEDCA4D);
   static const Color pinYellow2 = Color(0xFFEDCA4D);
+  static const Color neutral30 = Color(0xFF4F5458);
   static const Color neutral40 = Color(0xFF71787e);
   static const Color neutral60 = Color(0xFF9BA0A4);
   static const Color neutral70 = Color(0xFFB8BBBE);

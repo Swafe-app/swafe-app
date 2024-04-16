@@ -67,3 +67,25 @@ class DeleteSignalementError extends SignalementState {
 
   DeleteSignalementError(this.message);
 }
+
+// UpVote signalement states
+class UpVoteSignalementLoading extends SignalementState {}
+
+class UpVoteSignalementSuccess extends SignalementState {}
+
+class UpVoteSignalementError extends SignalementState {
+  final String message;
+
+  UpVoteSignalementError(this.message);
+}
+
+// DownVote signalement states
+class DownVoteSignalementLoading extends SignalementState {}
+
+class DownVoteSignalementSuccess extends SignalementState {}
+
+class DownVoteSignalementError extends SignalementState {
+  final String message;
+
+  DownVoteSignalementError(this.message);
+}

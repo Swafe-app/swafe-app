@@ -13,14 +13,18 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/reporting_type.dart';
+import 'package:swafe/DS/typographies.dart';
+import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_bloc.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_event.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_state.dart';
+import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/components/IconButton/icon_button.dart';
 import 'package:swafe/components/SnackBar/snackbar.dart';
 import 'package:swafe/components/marker/custom_grouped_marker.dart';
 import 'package:swafe/components/marker/custom_marker.dart';
 import 'package:swafe/models/signalement/signalement_model.dart';
+import 'package:swafe/models/user/user_model.dart';
 import 'package:swafe/views/main/tabs_available/map/bottom_sheet_content.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -39,7 +43,7 @@ class HomeContentState extends State<HomeContent>
     with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late Position position;
-  double zoom = 17;
+  double zoom = 18;
   bool isPositionInitialized = false;
   List<Marker> markersList = [];
   LatLng userLocation = const LatLng(0, 0);
@@ -49,11 +53,13 @@ class HomeContentState extends State<HomeContent>
   final reportButton = GlobalKey(debugLabel: 'reportButton');
   final reportModel = GlobalKey();
   List<TutorialItem> targets = [];
+  late UserModel user;
 
   @override
   void initState() {
     _requestLocationPermission();
     super.initState();
+    user = context.read<AuthBloc>().user!;
   }
 
   void initTutorial() {
@@ -257,6 +263,7 @@ class HomeContentState extends State<HomeContent>
             LatLng(sumLat / cluster.length, sumLon / cluster.length);
         if (cluster.length > 1) {
           markers.add(CustomGroupedMarker(
+            showSignalementDialog: _showSignalementDetails,
             reports: cluster,
             ctx: context,
             point: center,
@@ -267,6 +274,7 @@ class HomeContentState extends State<HomeContent>
           ));
         } else {
           markers.add(CustomMarker(
+            onPressed: () => _showSignalementDetails(cluster[0], false),
             point: center,
             reportingType: convertStringToReportingType(
                 cluster[0].selectedDangerItems.first),
@@ -352,12 +360,294 @@ class HomeContentState extends State<HomeContent>
     });
   }
 
+  void _showSignalementDetails(SignalementModel signalement, bool isGrouped) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      transitionDuration: const Duration(milliseconds: 500),
+      barrierLabel: MaterialLocalizations.of(context).dialogLabel,
+      barrierColor: Colors.black.withOpacity(0.5),
+      pageBuilder: (context, _, __) {
+        return BlocListener<SignalementBloc, SignalementState>(
+          listener: (context, state) {
+            if (state is DeleteSignalementSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: CustomSnackbar(
+                    label: 'Votre signalement a bien été supprimé.',
+                  ),
+                ),
+              );
+              Navigator.of(context).pop();
+              if (isGrouped) Navigator.of(context).pop();
+            }
+            if (state is CreateSignalementError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: CustomSnackbar(
+                    isError: true,
+                    label: state.message,
+                  ),
+                ),
+              );
+            }
+            if (state is UpVoteSignalementSuccess ||
+                state is DownVoteSignalementSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: CustomSnackbar(
+                    label: 'Votre vote a bien été pris en compte.',
+                  ),
+                ),
+              );
+              Navigator.of(context).pop();
+              if (isGrouped) Navigator.of(context).pop();
+            }
+            if (state is UpVoteSignalementError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: CustomSnackbar(
+                    isError: true,
+                    label: state.message,
+                  ),
+                ),
+              );
+            }
+            if (state is DownVoteSignalementError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: CustomSnackbar(
+                    isError: true,
+                    label: state.message,
+                  ),
+                ),
+              );
+            }
+          },
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 32, 20, 16),
+                    color: MyColors.neutral30,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 48),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 250),
+                                  child: DefaultTextStyle(
+                                    style: TitleXLargeMedium.copyWith(
+                                      color: MyColors.neutral100,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    child: Text(
+                                      signalementDangerItemEnumToString(
+                                          signalement
+                                              .selectedDangerItems.first),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                DefaultTextStyle(
+                                  style: TitleXLargeMedium.copyWith(
+                                      color: MyColors.neutral100,
+                                      fontWeight: FontWeight.w700),
+                                  child: Text(
+                                    "${calculateDistance(userLocation, LatLng(
+                                          signalement.coordinates.latitude,
+                                          signalement.coordinates.longitude,
+                                        )).toStringAsFixed(1)} Km d'ici",
+                                    style: TitleXXLargeMedium.copyWith(
+                                        color: MyColors.neutral100,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                DefaultTextStyle(
+                                  style: TitleXLargeMedium.copyWith(
+                                      color: MyColors.neutral100,
+                                      fontWeight: FontWeight.w700),
+                                  child: Text(
+                                    "Il y a ${calculateCreatedTimeString(signalement.createdAt!)}",
+                                    style: TitleSmallMedium.copyWith(
+                                        color: MyColors.neutral100),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: 72,
+                              height: 72,
+                              decoration: ShapeDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    convertStringToReportingType(
+                                      signalement.selectedDangerItems.first,
+                                    ).pin,
+                                  ),
+                                ),
+                                shape: const OvalBorder(
+                                  side: BorderSide(
+                                    width: 3,
+                                    color: MyColors.defaultWhite,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Positioned(
+                top: 170,
+                right: 20,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  decoration: ShapeDecoration(
+                    color: MyColors.neutral100,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      // Icon 12px by 12px
+                      const Icon(
+                        size: 32,
+                        Icons.thumb_up_alt_outlined,
+                        color: MyColors.primary10,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        signalement.upVote.toString(),
+                        style: TitleXLargeMedium.copyWith(
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 238,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (signalement.userId == user.uid)
+                        Expanded(
+                          child: CustomButton(
+                            isLoading: context.watch<SignalementBloc>().state
+                                is DeleteSignalementLoading,
+                            onPressed: () {
+                              BlocProvider.of<SignalementBloc>(context).add(
+                                  DeleteSignalementEvent(id: signalement.id));
+                            },
+                            label: "Supprimer",
+                          ),
+                        )
+                      else if (signalement.userVotedList.contains(user.uid))
+                        const Expanded(
+                          child: CustomButton(
+                            isDisabled: true,
+                            label: "Signalement déjà voté",
+                          ),
+                        )
+                      else ...[
+                        Expanded(
+                          child: CustomButton(
+                            isLoading: context.watch<SignalementBloc>().state
+                                    is DownVoteSignalementLoading ||
+                                context.watch<SignalementBloc>().state
+                                    is UpVoteSignalementLoading,
+                            fillColor: MyColors.neutral100,
+                            icon: Icons.thumb_down_alt_outlined,
+                            label: "Plus là",
+                            onPressed: () {
+                              BlocProvider.of<SignalementBloc>(context).add(
+                                DownVoteSignalementEvent(
+                                    id: signalement.id, userId: user.uid),
+                              );
+                            },
+                            type: ButtonType.outlined,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: CustomButton(
+                            isLoading: context.watch<SignalementBloc>().state
+                                    is DownVoteSignalementLoading ||
+                                context.watch<SignalementBloc>().state
+                                    is UpVoteSignalementLoading,
+                            icon: Icons.thumb_up_alt_outlined,
+                            label: "Toujours",
+                            onPressed: () {
+                              BlocProvider.of<SignalementBloc>(context).add(
+                                UpVoteSignalementEvent(
+                                    id: signalement.id, userId: user.uid),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOut,
+          ).drive(Tween<Offset>(
+            begin: const Offset(0, -1.0),
+            end: Offset.zero,
+          )),
+          child: child,
+        );
+      },
+    );
+  }
+
+  String calculateCreatedTimeString(DateTime dateTime) {
+    Duration difference = DateTime.now().difference(dateTime);
+    if (difference.inDays > 0) {
+      return "${difference.inDays} jours";
+    } else if (difference.inHours > 0) {
+      return "${difference.inHours} heures";
+    } else if (difference.inMinutes > 0) {
+      return "${difference.inMinutes} minutes";
+    } else {
+      return "${difference.inSeconds} secondes";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignalementBloc, SignalementState>(
       listener: (context, state) {
         if ((state is GetSignalementsSuccess ||
-                state is CreateSignalementSuccess) &
+                state is CreateSignalementSuccess ||
+                state is DeleteSignalementSuccess) &
             tutorialDone) {
           setState(() {
             signalements =
@@ -392,6 +682,7 @@ class HomeContentState extends State<HomeContent>
                     initialCenter: const LatLng(48.866667, 2.333333),
                     initialZoom: zoom,
                     maxZoom: 20,
+                    minZoom: 10,
                     interactionOptions: const InteractionOptions(
                       flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                     ),

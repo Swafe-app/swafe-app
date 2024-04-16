@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:swafe/DS/shadows.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/components/BottomSheet/GroupedMarkerBottomSheet.dart';
@@ -12,22 +11,29 @@ class CustomGroupedMarker extends Marker {
   final int numberReports;
   final List<SignalementModel> reports;
   final BuildContext ctx;
+  final void Function(SignalementModel, bool) showSignalementDialog;
 
   CustomGroupedMarker({
     required this.imagePath,
     required this.numberReports,
-    required LatLng point,
+    required super.point,
     required this.reports,
     required this.ctx,
+    required this.showSignalementDialog,
   }) : super(
           width: 80.0,
           height: 80.0,
           child: GestureDetector(
-              onTap: () {
-                showModalBottomSheet(context: ctx, builder: (BuildContext context) {
-                  return GroupedMarkerBottomSheet(reports: reports);
-                });
-              },
+            onTap: () {
+              showModalBottomSheet(
+                  context: ctx,
+                  builder: (BuildContext context) {
+                    return GroupedMarkerBottomSheet(
+                      reports: reports,
+                      showSignalementDialog: showSignalementDialog,
+                    );
+                  });
+            },
             child: Stack(
               children: [
                 Positioned(
@@ -67,7 +73,9 @@ class CustomGroupedMarker extends Marker {
                           width: 15,
                           height: 15,
                           child: Text(
-                            numberReports > 99 ? '99+' : numberReports.toString(),
+                            numberReports > 99
+                                ? '99+'
+                                : numberReports.toString(),
                             textAlign: TextAlign.center,
                             style: BodySmallRegular,
                           ),
@@ -79,6 +87,5 @@ class CustomGroupedMarker extends Marker {
               ],
             ),
           ),
-          point: point,
         );
 }
