@@ -212,7 +212,7 @@ class FillAdressMapState extends State<FillAdressMap>
                                   prediction.lng! as double);
                             } else {
                               await GeocodingPlatform.instance
-                                  .locationFromAddress(prediction.description!)
+                                  ?.locationFromAddress(prediction.description!)
                                   .then((value) {
                                 //if not we get the coordinates from the address using geocoding
                                 coords = LatLng(value.first.latitude,

@@ -134,7 +134,6 @@ class ProfilContent extends StatelessWidget {
               ], [
                 Icons.person_outline,
                 Icons.lock_outline,
-                Icons.notifications_active_outlined,
                 Icons.gavel_outlined,
               ], [
                 () {
@@ -154,7 +153,8 @@ class ProfilContent extends StatelessWidget {
                 () async {
                   String url =
                       "https://www.privacypolicies.com/live/acd686f6-2e03-4928-b9e1-292e868a2713";
-                  await launchUrl(url as Uri);
+                  Uri uri = Uri.parse(url);
+                  await launchUrl(uri);
                 },
               ], [
                 false,
