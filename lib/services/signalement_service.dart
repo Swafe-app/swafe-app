@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:swafe/models/api_response_model.dart';
+import 'package:swafe/models/signalement/signalement_downvote_response_model.dart';
 import 'package:swafe/models/signalement/signalement_model.dart';
+import 'package:swafe/models/signalement/signalement_upvote_response_model.dart';
 import 'package:swafe/services/api_service.dart';
 
 class SignalementService {
@@ -140,6 +142,44 @@ class SignalementService {
 
       dynamic jsonResponse = json.decode(response.body);
       return ApiResponse.fromJson(jsonResponse, (data) => data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ApiResponse<SignalementUpVoteResponse>> upVoteSignalement(
+      int id) async {
+    try {
+      final response = await _apiService.performRequest(
+        'signalements/upVote/$id',
+        method: 'GET',
+        token: await storage.read(key: 'token'),
+      );
+
+      dynamic jsonResponse = json.decode(response.body);
+      return ApiResponse<SignalementUpVoteResponse>.fromJson(
+        jsonResponse,
+        (data) => SignalementUpVoteResponse.fromJson(data),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ApiResponse<SignalementDownVoteResponse>> downVoteSignalement(
+      int id) async {
+    try {
+      final response = await _apiService.performRequest(
+        'signalements/downVote/$id',
+        method: 'GET',
+        token: await storage.read(key: 'token'),
+      );
+
+      dynamic jsonResponse = json.decode(response.body);
+      return ApiResponse<SignalementDownVoteResponse>.fromJson(
+        jsonResponse,
+        (data) => SignalementDownVoteResponse.fromJson(data),
+      );
     } catch (e) {
       rethrow;
     }

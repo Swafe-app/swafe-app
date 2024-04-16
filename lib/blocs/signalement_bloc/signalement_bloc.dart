@@ -2,7 +2,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_event.dart';
 import 'package:swafe/blocs/signalement_bloc/signalement_state.dart';
 import 'package:swafe/models/api_response_model.dart';
+import 'package:swafe/models/signalement/signalement_downvote_response_model.dart';
 import 'package:swafe/models/signalement/signalement_model.dart';
+import 'package:swafe/models/signalement/signalement_upvote_response_model.dart';
 import 'package:swafe/services/signalement_service.dart';
 
 class SignalementBloc extends Bloc<SignalementEvent, SignalementState> {
@@ -121,9 +123,52 @@ class SignalementBloc extends Bloc<SignalementEvent, SignalementState> {
           return;
         }
 
+        signalements!.removeWhere((element) => element.id == event.id);
         emit(DeleteSignalementSuccess());
       } catch (e) {
         emit(DeleteSignalementError(
+            "Une erreur s'est produite, veuillez réessayer."));
+        throw Exception(e);
+      }
+    });
+    on<UpVoteSignalementEvent>((event, emit) async {
+      emit(UpVoteSignalementLoading());
+      try {
+        ApiResponse<SignalementUpVoteResponse> response =
+            await signalementService.upVoteSignalement(event.id);
+
+        if (response.status == Status.error) {
+          emit(UpVoteSignalementError(response.message));
+          return;
+        }
+
+        signalements!.firstWhere((element) => element.id == event.id).upVote =
+            response.data!.upVote;
+        signalements!.firstWhere((element) => element.id == event.id).userVotedList.add(event.userId);
+        emit(UpVoteSignalementSuccess());
+      } catch (e) {
+        emit(UpVoteSignalementError(
+            "Une erreur s'est produite, veuillez réessayer."));
+        throw Exception(e);
+      }
+    });
+    on<DownVoteSignalementEvent>((event, emit) async {
+      emit(DownVoteSignalementLoading());
+      try {
+        ApiResponse<SignalementDownVoteResponse> response =
+            await signalementService.downVoteSignalement(event.id);
+
+        if (response.status == Status.error) {
+          emit(DownVoteSignalementError(response.message));
+          return;
+        }
+
+        signalements!.firstWhere((element) => element.id == event.id).downVote =
+            response.data!.downVote;
+        signalements!.firstWhere((element) => element.id == event.id).userVotedList.add(event.userId);
+        emit(DownVoteSignalementSuccess());
+      } catch (e) {
+        emit(DownVoteSignalementError(
             "Une erreur s'est produite, veuillez réessayer."));
         throw Exception(e);
       }

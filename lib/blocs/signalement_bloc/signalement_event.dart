@@ -39,3 +39,17 @@ class DeleteSignalementEvent extends SignalementEvent {
 
   DeleteSignalementEvent({required this.id});
 }
+
+class UpVoteSignalementEvent extends SignalementEvent {
+  int id;
+  String userId;
+
+  UpVoteSignalementEvent({required this.id, required this.userId});
+}
+
+class DownVoteSignalementEvent extends SignalementEvent {
+  int id;
+  String userId;
+
+  DownVoteSignalementEvent({required this.id, required this.userId});
+}
