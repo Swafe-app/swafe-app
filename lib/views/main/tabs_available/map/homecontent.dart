@@ -444,7 +444,7 @@ class HomeContentState extends State<HomeContent>
                     left: 20,
                   ),
                   content: const CustomSnackbar(
-                    label: 'Votre vote a bien été pris en compte.',
+                    label: 'Votre signalement a bien été pris en compte.',
                   ),
                 ),
               );
