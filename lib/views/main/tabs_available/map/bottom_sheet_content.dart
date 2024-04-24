@@ -32,8 +32,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool isSelectionMade = false;
-  final List<ReportingType> selectedDangerItems = [];
-  final List<ReportingType> selectedAnomaliesItems = [];
+  ReportingType? selectedDangerItem;
+  ReportingType? selectedAnomalyItem;
   late LatLng userPosition;
   LatLng basePosition = const LatLng(0, 0);
   String pin = 'assets/images/pinDown.svg';
@@ -76,20 +76,10 @@ class BottomSheetContentState extends State<BottomSheetContent>
         return SignalementDangerItemsEnum.meteo;
       case ReportingType.travaux:
         return SignalementDangerItemsEnum.travaux;
-      case ReportingType.inondation:
-        return SignalementDangerItemsEnum.inondation;
-      case ReportingType.obstacle:
-        return SignalementDangerItemsEnum.obstacleSurLaChaussee;
-      case ReportingType.accessibilite:
-        return SignalementDangerItemsEnum.manqueAccessibilite;
-      case ReportingType.voiture:
-        return SignalementDangerItemsEnum.voiture;
       case ReportingType.feuPieton:
         return SignalementDangerItemsEnum.feuDePietonDysfonctionnel;
       case ReportingType.eclairage:
         return SignalementDangerItemsEnum.mauvaisEclairage;
-      case ReportingType.chaussee:
-        return SignalementDangerItemsEnum.trouSurLaChaussee;
       default:
         return SignalementDangerItemsEnum.autre;
     }
@@ -99,11 +89,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
     if (isSelectionMade) {
       final List<SignalementDangerItemsEnum> selectedItems = [];
 
-      for (var item in selectedDangerItems) {
-        selectedItems.add(reportingTypeToEnum(item));
+      if (selectedDangerItem != null) {
+        selectedItems.add(reportingTypeToEnum(selectedDangerItem!));
       }
-      for (var item in selectedAnomaliesItems) {
-        selectedItems.add(reportingTypeToEnum(item));
+      if (selectedAnomalyItem != null) {
+        selectedItems.add(reportingTypeToEnum(selectedAnomalyItem!));
       }
 
       BlocProvider.of<SignalementBloc>(context).add(
@@ -139,12 +129,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
   }
 
   //Création des signalements sélectionnables
-  List<Widget> _buildSelectableItems(
-      List<ReportingType> selectedItems, String tabName) {
+  List<Widget> _buildSelectableItems(ReportingType? selectedItem,
+      String tabName, Function(ReportingType) onSelect) {
     late List<ReportingType> items;
     if (tabName == "Danger") {
       items = [
-        ReportingType.autre,
         ReportingType.vol,
         ReportingType.harcelement,
         ReportingType.agressionSexuelle,
@@ -156,32 +145,35 @@ class BottomSheetContentState extends State<BottomSheetContent>
       ];
     } else {
       items = [
-        ReportingType.autre,
         ReportingType.eclairage,
-        ReportingType.chaussee,
-        ReportingType.inondation,
         ReportingType.travaux,
-        ReportingType.obstacle,
-        ReportingType.accessibilite,
-        ReportingType.voiture,
         ReportingType.feuPieton,
       ];
     }
 
     return items.map((item) {
-      final isSelected = selectedItems.contains(item);
       return CustomReport(
-          reportingType: item,
-          onPressed: () => setState(() {
-                if (!isSelected) {
-                  selectedItems.add(item);
-                } else {
-                  selectedItems.remove(item);
-                }
-                isSelectionMade = selectedDangerItems.isNotEmpty ||
-                    selectedAnomaliesItems.isNotEmpty;
-              }));
+        reportingType: item,
+        isSelected: selectedItem == item,
+        onPressed: () => setState(() {
+          onSelect(item);
+        }),
+      );
     }).toList();
+  }
+
+  void handleDangerSelection(ReportingType type) {
+    setState(() {
+      selectedDangerItem = type;
+      isSelectionMade = true;
+    });
+  }
+
+  void handleAnomalySelection(ReportingType type) {
+    setState(() {
+      selectedAnomalyItem = type;
+      isSelectionMade = true;
+    });
   }
 
   @override
@@ -196,8 +188,17 @@ class BottomSheetContentState extends State<BottomSheetContent>
       listener: (context, state) {
         if (state is CreateSignalementSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: CustomSnackbar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height - 160,
+                right: 20,
+                left: 20,
+              ),
+              content: const CustomSnackbar(
                 label: 'Votre signalement a bien été envoyé',
               ),
             ),
@@ -249,11 +250,11 @@ class BottomSheetContentState extends State<BottomSheetContent>
                       mapController: mapController,
                       options: MapOptions(
                         initialCenter: LatLng(
-                          userPosition.latitude - 0.0003,
+                          userPosition.latitude,
                           userPosition.longitude,
                         ),
                         minZoom: 15,
-                        initialZoom: 16,
+                        initialZoom: 18,
                         interactionOptions: const InteractionOptions(
                           flags: InteractiveFlag.all &
                               ~InteractiveFlag.rotate &
@@ -362,8 +363,8 @@ class BottomSheetContentState extends State<BottomSheetContent>
               unselectedLabelColor: MyColors.neutral40,
               labelStyle: BodyLargeRegular,
               onTap: (value) => setState(() {
-                selectedAnomaliesItems.clear();
-                selectedDangerItems.clear();
+                selectedAnomalyItem = null;
+                selectedDangerItem = null;
                 isSelectionMade = false;
               }),
               tabs: const [
@@ -380,20 +381,20 @@ class BottomSheetContentState extends State<BottomSheetContent>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  GridView.count(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 32,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children:
-                        _buildSelectableItems(selectedDangerItems, "Danger"),
-                  ),
-                  GridView.count(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 32,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: _buildSelectableItems(
-                        selectedAnomaliesItems, "Anomalies"),
-                  ),
+                    GridView.count(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 32,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      children: _buildSelectableItems(
+                          selectedDangerItem, "Danger", handleDangerSelection),
+                    ),
+                    GridView.count(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 32,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      children: _buildSelectableItems(selectedAnomalyItem,
+                          "Anomalies", handleAnomalySelection),
+                    ),
                 ],
               ),
             ),

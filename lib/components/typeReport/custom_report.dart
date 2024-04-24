@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 
@@ -7,8 +9,13 @@ import '../../DS/reporting_type.dart';
 class CustomReport extends StatefulWidget {
   final ReportingType reportingType;
   final VoidCallback? onPressed;
+  final bool isSelected;
 
-  const CustomReport({Key? key, required this.reportingType, this.onPressed})
+  const CustomReport(
+      {Key? key,
+      required this.reportingType,
+      this.onPressed,
+      required this.isSelected})
       : super(key: key);
 
   @override
@@ -16,57 +23,36 @@ class CustomReport extends StatefulWidget {
 }
 
 class CustomReportState extends State<CustomReport> {
-  bool _isSelected = false;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {
-        if (widget.onPressed != null)
-          {
-            widget.onPressed!(),
-          },
-        setState(() {
-          // Toggle the isSelected state
-          // If it was selected, make it unselected; if it was unselected, make it selected
-          _isSelected = !_isSelected;
-        })
+      onTap: () {
+        widget.onPressed?.call();
       },
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 74,
-                height: 74,
-                decoration: ShapeDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(widget.reportingType.pin),
-                    fit: BoxFit.fill,
-                  ),
-                  shape: OvalBorder(
-                    side: BorderSide(
-                        width: 3,
-                        color: _isSelected
-                            ? MyColors.secondary40
-                            : MyColors.defaultWhite),
-                  ),
-                ),
+          Container(
+            width: 74,
+            height: 74,
+            decoration: ShapeDecoration(
+              image: DecorationImage(
+                image: AssetImage(widget.reportingType.pin),
+                fit: BoxFit.fill,
               ),
-            ],
-          ),
-          Expanded(
-            child: Text(
-              widget.reportingType.title,
-              textAlign: TextAlign.center,
-              style: TitleXSmallMedium,
+              shape: OvalBorder(
+                side: BorderSide(
+                    width: 3,
+                    color: widget.isSelected
+                        ? MyColors.secondary40
+                        : MyColors.defaultWhite),
+              ),
             ),
+          ),
+          Text(
+            widget.reportingType.title,
+            textAlign: TextAlign.center,
+            style: TitleXSmallMedium.copyWith(height: 1),
           ),
         ],
       ),

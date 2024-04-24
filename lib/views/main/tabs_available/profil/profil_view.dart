@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:share/share.dart';
 import 'package:swafe/DS/colors.dart';
 import 'package:swafe/DS/typographies.dart';
 import 'package:swafe/blocs/auth_bloc/auth_bloc.dart';
@@ -9,6 +14,7 @@ import 'package:swafe/components/Button/button.dart';
 import 'package:swafe/views/main/tabs_available/profil/confirm_delete_modal_view.dart';
 import 'package:swafe/views/main/tabs_available/profil/update_password/update_password_view.dart';
 import 'package:swafe/views/main/tabs_available/profil/user_info/user_info_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilContent extends StatelessWidget {
   const ProfilContent({super.key});
@@ -39,7 +45,7 @@ class ProfilContent extends StatelessWidget {
     String categoryName,
     List<String> items,
     List<IconData> icons,
-    List<Widget?>? navigation,
+    List<VoidCallback?>? navigation,
     List<bool>? disabled,
   ) {
     return Column(
@@ -89,11 +95,7 @@ class ProfilContent extends StatelessWidget {
                             // Vérifiez s'il y a une page de navigation associée
                             if (navigation != null &&
                                 navigation[index] != null) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => navigation[index]!,
-                                ),
-                              );
+                              navigation[index]!();
                             }
                           },
                   ),
@@ -128,51 +130,71 @@ class ProfilContent extends StatelessWidget {
               _buildCategory(context, 'Paramètres', [
                 'Information personnelle',
                 'Mot de passe',
-                'Notifications',
                 'Mentions légales',
               ], [
                 Icons.person_outline,
                 Icons.lock_outline,
-                Icons.notifications_active_outlined,
                 Icons.gavel_outlined,
               ], [
-                const UserProfileScreen(),
-                const UpdatePasswordView(),
-                null,
-                null,
+                () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const UserProfileScreen(),
+                    ),
+                  );
+                },
+                () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const UpdatePasswordView(),
+                    ),
+                  );
+                },
+                () async {
+                  String url =
+                      "https://www.privacypolicies.com/live/acd686f6-2e03-4928-b9e1-292e868a2713";
+                  Uri uri = Uri.parse(url);
+                  await launchUrl(uri);
+                },
               ], [
                 false,
                 false,
-                true,
-                true
-              ]),
-              // Catégorie "Nous contacter"
-              _buildCategory(context, 'Nous contacter', [
-                'FAQ / Aide',
-              ], [
-                Icons.help_outline,
-              ], [
-                null,
-              ], [
-                true
+                false
               ]),
               // Catégorie "Soutenir l'app"
               _buildCategory(context, 'Soutenir l\'app', [
                 'Partager l\'application',
                 'Noter l\'application',
-                'Faire un don',
               ], [
                 Icons.ios_share_outlined,
                 Icons.star_outline,
-                Icons.handshake_outlined,
               ], [
-                null,
-                null,
-                null,
+                () {
+                  Share.share(
+                    'Invitez vos amis à télécharger Swafe !${Platform.isAndroid ? 'https://play.google.com/store/apps/details?id=com.owl.swafe' : 'https://apps.apple.com/us/app/swafe/6476942292'}',
+                  );
+                },
+                () async {
+                  final InAppReview inAppReview = InAppReview.instance;
+
+                  if (await inAppReview.isAvailable()) {
+                    inAppReview.requestReview();
+                  } else {
+                    if (Platform.isAndroid) {
+                      await launchUrl(
+                        'https://play.google.com/store/apps/details?id=com.owl.swafe'
+                            as Uri,
+                      );
+                    } else {
+                      await launchUrl(
+                        'https://apps.apple.com/us/app/swafe/6476942292' as Uri,
+                      );
+                    }
+                  }
+                },
               ], [
-                true,
-                true,
-                true,
+                false,
+                false,
               ]),
               const SizedBox(height: 24),
               SizedBox(
@@ -182,7 +204,7 @@ class ProfilContent extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              Image.asset('assets/images/Swafe_Logo.png',
+              SvgPicture.asset('assets/images/Swafe_Logo.svg',
                   width: 40, height: 40),
               const SizedBox(height: 8),
               Text(
